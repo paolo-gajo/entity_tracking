@@ -1,2 +1,6 @@
 data/
 notebooks/
+.env/
+diagrams/
+.vscode/
+__pycache__
