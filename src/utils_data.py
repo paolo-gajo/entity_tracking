@@ -122,6 +122,7 @@ class ListOfDictsDataset(Dataset):
             word_ids = self.data[i]['tokens'].word_ids()
             self.data[i]['step_indices_tokens'] = [0 if wid is None else self.data[i]['step_indices'][wid] for wid in word_ids]
             self.data[i]['head_indices_tokens'] = self.get_head_indices_tokens(word_ids, self.data[i]['head_indices'])
+    
     def add_bos_eos(self):
         for i in tqdm(range(len(self.data))):
             self.data[i]['tokens']['input_ids'] = [self.tokenizer.bos_token_id] + self.data[i]['tokens']['input_ids'] + [self.tokenizer.eos_token_id]

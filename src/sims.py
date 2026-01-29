@@ -1,9 +1,5 @@
 import torch
 from transformers import (
-    # GPT2Model,
-    # GPT2Tokenizer,
-    # BertModel,
-    # BertTokenizer,
     AutoModel,
     AutoTokenizer
     )
@@ -67,12 +63,9 @@ for step in range(num_steps):
     auc_list = []
     for i in range(batch['input_ids'].size(0)):
         G = batch['edges'][i]
-        # import pdb;pdb.set_trace()
         if not nx.is_directed_acyclic_graph(G):
-            # print('Skipped cyclic')
             continue
         if nx.dag_longest_path_length(G) < 2:
-            # print('Skipped short')
             continue
         A = nx.to_numpy_array(G, nodelist=sorted(G.nodes()))
         step_indices = batch['step_indices_tokens'][i]
