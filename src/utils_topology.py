@@ -36,24 +36,35 @@ def get_ordered_text(order_batch, words, step_indices):
         ordered_words_string_batch.append(' '.join(ordered_words_list))
     return ordered_words_string_batch
 
-def make_edge_list(head_indices, step_indices):
-    edges = []
-    for i, j in enumerate(head_indices):
-        src = step_indices[i]
-        tgt = step_indices[j]        
-        if src != tgt and tgt != 0:
-            edges.append((src, tgt))
-    return edges
+class Grapher:
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
 
-def graph_from_erfgc(head_indices, step_indices):
-    G = nx.DiGraph()
-    edges = make_edge_list(head_indices=head_indices, step_indices=step_indices)
-    G.add_edges_from(edges)
-    # if len(G.nodes()) < max(step_indices) and len(G.nodes()) > 0:
-    #     import pdb; pdb.set_trace()
-    unique_steps = set(step_indices) - {0}
-    G.add_nodes_from(unique_steps)
-    return G
+    def make_edge_list(self, tokens, head_indices, step_indices, prepend_zeroes = True):
+        if prepend_zeroes:
+            head_indices = [0] + head_indices
+            step_indices = [0] + step_indices
+        edges = []
+        for i, j in enumerate(head_indices):
+            src = step_indices[i]
+            tgt = step_indices[j]
+            if src != tgt and tgt != 0:
+                edges.append((src, tgt))
+                # src_decoded = self.tokenizer.decode(tokens[i])
+                # tgt_decoded = self.tokenizer.decode(tokens[j])
+                # print(f'{src_decoded} --> {tgt_decoded}')
+        return edges
+
+    def graph_from_erfgc(self, tokens, head_indices, step_indices):
+        G = nx.DiGraph()
+        edges = self.make_edge_list(tokens, head_indices=head_indices, step_indices=step_indices)
+        G.add_edges_from(edges)
+        # if len(G.nodes()) < max(step_indices) and len(G.nodes()) > 0:
+        #     import pdb; pdb.set_trace()
+        unique_steps = set(step_indices) - {0}
+        G.add_nodes_from(unique_steps)
+        print(G.edges)
+        return G
 
 def main():
     json_path = './data/erfgc/bio/train.json'
@@ -64,11 +75,11 @@ def main():
 
     for data_idx in tqdm(range(len(data))):
         sample = data[data_idx]
-        head_indices = np.array([0] + sample['head_indices'])
         words = np.array(['root'] + sample['words'])
-        step_indices = np.array([0] + sample['step_indices'])
-
-        G = graph_from_erfgc(head_indices, step_indices)
+        head_indices = sample['head_indices']
+        step_indices = sample['step_indices']
+        grapher = Grapher()
+        G = grapher.graph_from_erfgc(head_indices, step_indices)
         N = len(G.nodes)
 
         if N < 2:
@@ -91,9 +102,6 @@ def main():
     for k in range(9):
         L = len(list(permutations(range(k))))
         print(k, L)
-
-    # save_graph_plot(G, f'./diagrams/{N}', f"graph_{data_idx}.pdf")
-    # save_graph_plot(G, 'test', f"graph_{data_idx}.pdf")
 
 if __name__ == "__main__":
     main()
