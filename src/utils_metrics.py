@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import roc_auc_score
 import torch
 
-def get_auc(S: torch.Tensor, A: np.ndarray) -> float:
+def get_auc(S: torch.Tensor, A: np.ndarray, verbose = False) -> float:
     """
     Compute ROC–AUC between continuous scores S and binary adjacency A.
     Diagonal is excluded. S is torch (n,n). A is numpy (n,n).
@@ -20,4 +20,9 @@ def get_auc(S: torch.Tensor, A: np.ndarray) -> float:
     # AUC undefined if only one class present
     if np.unique(y_true).size < 2:
         return float("nan")
-    return roc_auc_score(y_true, y_score)
+    score = roc_auc_score(y_true, y_score)
+    if verbose:
+        print(A_np)
+        print(S_np)
+        print(score)
+    return score

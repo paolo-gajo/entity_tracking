@@ -1,6 +1,12 @@
 import torch
-from transformers.models.gpt2.modeling_gpt2 import GPT2LMHeadModel
-from transformers.models.gpt2.tokenization_gpt2_fast import GPT2TokenizerFast
+from transformers import (
+    # GPT2Model,
+    # GPT2Tokenizer,
+    # BertModel,
+    # BertTokenizer,
+    AutoModel,
+    AutoTokenizer
+    )
 from utils_data import ListOfDictsDataset
 from torch.utils.data.dataloader import DataLoader
 from torch.optim import AdamW
@@ -10,21 +16,29 @@ import networkx as nx
 import json
 import numpy as np
 
-json_path = './data/erfgc/bio/test.json'
-
-with open(json_path, 'r', encoding='utf8') as f:
-    data = json.load(f)
+json_path_list = [
+    './data/erfgc/bio/train.json',
+    './data/erfgc/bio/val.json',
+    './data/erfgc/bio/test.json',
+    ]
+data = []
+for json_path in json_path_list:
+    with open(json_path, 'r', encoding='utf8') as f:
+        data += json.load(f)
 
 batch_size = 1
 
 model_name = 'openai-community/gpt2'
+# model_name = 'google-bert/bert-base-uncased'
 
-tokenizer = GPT2TokenizerFast.from_pretrained(model_name, add_prefix_space=True)
+model = AutoModel.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
+
 if not tokenizer.pad_token_id:
     tokenizer.pad_token_id = tokenizer.eos_token_id
 if not tokenizer.bos_token_id:
     tokenizer.bos_token_id = tokenizer.eos_token_id
-model = GPT2LMHeadModel.from_pretrained(model_name)
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = model.to(device)
 dataset = ListOfDictsDataset(data, tokenizer)
@@ -46,11 +60,8 @@ for step in range(num_steps):
 
     batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
 
-    model_output = model.transformer(**batch)
+    model_output = model(**batch)
     lhs = model_output.last_hidden_state
-    # logits = model.lm_head(lhs)
-    
-    # print(batch)
 
     H_steps_batched = []
     auc_list = []
@@ -78,13 +89,12 @@ for step in range(num_steps):
         Hn = Hc / (Hc.norm(dim=1, keepdim=True) + 1e-8)
         S = Hn @ Hn.T  # (n_nodes, n_nodes)
 
-        auc = get_auc(S, A)
-        # print(S, A, auc)
-        # print('-' * 100)
+        auc = get_auc(S, A, verbose=True)
         if not np.isnan(auc):
             auc_list.append(auc)
-
         H_steps_batched.append(H_steps)
+mean_auc = sum(auc_list) / len(auc_list)
+print(mean_auc)
 
     # if len(auc_list) > 0:
     #     mean_auc = sum(auc_list) / len(auc_list)

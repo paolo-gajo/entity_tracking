@@ -40,7 +40,7 @@ class Grapher:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
 
-    def make_edge_list(self, tokens, head_indices, step_indices, prepend_zeroes = True):
+    def make_edge_list(self, tokens, head_indices, step_indices, prepend_zeroes = False):
         if prepend_zeroes:
             head_indices = [0] + head_indices
             step_indices = [0] + step_indices
@@ -50,9 +50,6 @@ class Grapher:
             tgt = step_indices[j]
             if src != tgt and tgt != 0:
                 edges.append((src, tgt))
-                # src_decoded = self.tokenizer.decode(tokens[i])
-                # tgt_decoded = self.tokenizer.decode(tokens[j])
-                # print(f'{src_decoded} --> {tgt_decoded}')
         return edges
 
     def graph_from_erfgc(self, tokens, head_indices, step_indices):
@@ -63,7 +60,7 @@ class Grapher:
         #     import pdb; pdb.set_trace()
         unique_steps = set(step_indices) - {0}
         G.add_nodes_from(unique_steps)
-        print(G.edges)
+        # print(G.edges)
         return G
 
 def main():
