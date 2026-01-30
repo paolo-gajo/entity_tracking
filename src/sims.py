@@ -11,6 +11,7 @@ from utils_metrics import get_auc
 import networkx as nx
 import json
 import numpy as np
+from tqdm.auto import tqdm
 
 json_path_list = [
     './data/erfgc/bio/train.json',
@@ -42,18 +43,11 @@ dataset.tokenize()
 # dataset.add_bos_eos()
 collator = Collator(tokenizer)
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, collate_fn=collator.dag_collate)
-train_iter = iter(train_loader)
 optimizer = AdamW(params=model.parameters(), lr = 5e-5)
 
 num_steps = len(dataset)
 
-for step in range(num_steps):
-    try:
-        batch = next(train_iter)
-    except StopIteration:
-        train_iter = iter(train_loader)
-        batch = next(train_iter)
-
+for batch in tqdm(train_loader):
     batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
 
     model_output = model(**batch)
@@ -82,7 +76,7 @@ for step in range(num_steps):
         Hn = Hc / (Hc.norm(dim=1, keepdim=True) + 1e-8)
         S = Hn @ Hn.T  # (n_nodes, n_nodes)
 
-        auc = get_auc(S, A, verbose=True)
+        auc = get_auc(S, A, verbose=False)
         if not np.isnan(auc):
             auc_list.append(auc)
         H_steps_batched.append(H_steps)

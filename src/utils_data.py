@@ -4,7 +4,7 @@ from tqdm.auto import tqdm
 import numpy as np
 from tqdm.auto import tqdm
 import torch
-from utils_topology import Grapher
+import networkx as nx
 
 def simple_pad(t, pad_element, pad_length=0):
     return t + [pad_element] * max(0, (pad_length - len(t)))
@@ -109,19 +109,19 @@ class ListOfDictsDataset(Dataset):
 
         return head_tok
 
-
     def tokenize(self):
         for i in tqdm(range(len(self.data))):
-            self.data[i]['words'] = ['root'] + self.data[i]['words']
-            self.data[i]['step_indices'] = [0] + self.data[i]['step_indices'] # length N, values 0..N
+            self.data[i]['words'] = self.data[i]['words']
+            self.data[i]['step_indices'] = self.data[i]['step_indices'] # length N, values 0..N
             N = len(self.data[i]['words']) - 1
             assert max(self.data[i]['head_indices']) <= N, (max(self.data[i]['head_indices']), N)
-            self.data[i]['head_indices'] = [0] + self.data[i]['head_indices'] # length N
+            self.data[i]['head_indices'] = self.data[i]['head_indices'] # length N
             assert len(self.data[i]['step_indices']) == len(self.data[i]['head_indices'])
             self.data[i]['tokens'] = self.tokenizer(self.data[i]['words'], is_split_into_words = True)
             word_ids = self.data[i]['tokens'].word_ids()
             self.data[i]['step_indices_tokens'] = [0 if wid is None else self.data[i]['step_indices'][wid] for wid in word_ids]
             self.data[i]['head_indices_tokens'] = self.get_head_indices_tokens(word_ids, self.data[i]['head_indices'])
+            ...
     
     def add_bos_eos(self):
         for i in tqdm(range(len(self.data))):
@@ -133,7 +133,27 @@ class ListOfDictsDataset(Dataset):
     
     def __len__(self):
         return len(self.data)
-    
+
+class Grapher:
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+
+    def make_edge_list(self, head_indices, step_indices):
+        edges = []
+        for i, j in enumerate(head_indices):
+            src = step_indices[i]
+            tgt = step_indices[j]
+            if src != tgt and tgt != 0:
+                edges.append((src, tgt))
+        return edges
+
+    def graph_from_erfgc(self, head_indices, step_indices):
+        G = nx.DiGraph()
+        edges = self.make_edge_list(head_indices=head_indices, step_indices=step_indices)
+        G.add_edges_from(edges)
+        unique_steps = set(step_indices) - {0}
+        G.add_nodes_from(unique_steps)
+        return G
 
 def debug_heads(words, head_indices_1based, tokenizer):
     """
