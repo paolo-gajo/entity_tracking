@@ -25,22 +25,26 @@ for json_path in json_path_list:
 
 batch_size = 1
 
-model_name = 'openai-community/gpt2'
-# model_name = 'google-bert/bert-base-uncased'
+# model_name = 'openai-community/gpt2'
+model_name = 'google-bert/bert-base-uncased'
 
 model = AutoModel.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
-
-if not tokenizer.pad_token_id:
-    tokenizer.pad_token_id = tokenizer.eos_token_id
-if not tokenizer.bos_token_id:
-    tokenizer.bos_token_id = tokenizer.eos_token_id
+tokenizer = AutoTokenizer.from_pretrained(model_name,
+                                          add_prefix_space=True,
+                                          )
+if model_name == 'openai-community/gpt2':
+    if not tokenizer.pad_token_id:
+        tokenizer.pad_token_id = tokenizer.eos_token_id
+    if not tokenizer.bos_token_id:
+        tokenizer.bos_token_id = tokenizer.eos_token_id
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = model.to(device)
 dataset = ListOfDictsDataset(data, tokenizer)
 dataset.tokenize()
-# dataset.add_bos_eos()
+if model_name == 'openai-community/gpt2':
+    dataset.add_eos()
+    dataset.add_bos()
 collator = Collator(tokenizer)
 train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=False, collate_fn=collator.dag_collate)
 optimizer = AdamW(params=model.parameters(), lr = 5e-5)
@@ -49,8 +53,10 @@ num_steps = len(dataset)
 
 for batch in tqdm(train_loader):
     batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
-
-    model_output = model(**batch)
+    input_ids = batch['input_ids']
+    import pdb; pdb.set_trace()
+    attention_mask = batch['attention_mask']
+    model_output = model(input_ids = input_ids, attention_mask = attention_mask)
     lhs = model_output.last_hidden_state
 
     H_steps_batched = []
@@ -65,6 +71,7 @@ for batch in tqdm(train_loader):
         step_indices = batch['step_indices_tokens'][i]
         num_steps = int(step_indices.max().item()) + 1
         h_step_list = []
+        # NOTE: we of course ignore step 0 because that's where BOS/EOS/PAD go
         for j in range(1, num_steps):
             mask = step_indices == j
             h_step = lhs[i, :][mask].mean(dim = 0)
