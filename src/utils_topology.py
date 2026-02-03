@@ -1,12 +1,23 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
-from tqdm.auto import tqdm
-import json
-from itertools import permutations
-from collections import defaultdict
 import numpy as np
 from itertools import islice
+import torch
+
+def apply_step_order(t, step_order, step_indices):
+    valid_positions = torch.where(step_indices != 0)
+    t_shuffled = torch.zeros_like(t)
+    step_indices_valid = torch.zeros_like(step_indices[valid_positions])
+    i = 0
+    for j in step_order:
+        step_positions = torch.where(step_indices == j)[0]
+        selected_values = t[step_positions]
+        shift = len(selected_values)
+        step_indices_valid[i:i+shift] = selected_values
+        i += shift
+    t_shuffled[valid_positions] = step_indices_valid
+    return t_shuffled
 
 def batched_gen(iterable, n):
     iterator = iter(iterable)

@@ -13,7 +13,6 @@ def simple_pad(t, pad_element, pad_length=0):
 class Collator:
     def __init__(self, tokenizer):
         self.tokenizer = tokenizer
-        self.grapher = Grapher(tokenizer)
 
     def dag_collate(self, batch):
         assert len(batch) > 0
@@ -24,39 +23,24 @@ class Collator:
         step_indices_tokens_list = []
         head_indices_list = []
         head_indices_tokens_list = []
-        batch_edge_list = []
+        batch_edge_list_words = []
         batch_edge_list_tokens = []
         for el in batch:
             input_ids = el['encodings']['input_ids']
             input_ids_padded = simple_pad(input_ids, pad_element=self.tokenizer.pad_token_id, pad_length=max_len)
             input_ids_list.append(torch.tensor(input_ids_padded))
-            attention_mask = el['encodings']['attention_mask']
-            attention_mask_padded = simple_pad(attention_mask, pad_element=0, pad_length=max_len)
+            attention_mask_padded = simple_pad(el['encodings']['attention_mask'], pad_element=0, pad_length=max_len)
             attention_mask_list.append(torch.tensor(attention_mask_padded))
-            step_indices = el['step_indices_tokens']
-            step_indices_padded = simple_pad(step_indices, pad_element=0, pad_length=max_len)
+            step_indices_padded = simple_pad(el['step_indices_tokens'], pad_element=0, pad_length=max_len)
             step_indices_list.append(torch.tensor(step_indices_padded))
-            step_indices_tokens = el['step_indices_tokens']
-            step_indices_tokens_padded = simple_pad(step_indices_tokens, pad_element=0, pad_length=max_len)
+            step_indices_tokens_padded = simple_pad(el['step_indices_tokens'], pad_element=0, pad_length=max_len)
             step_indices_tokens_list.append(torch.tensor(step_indices_tokens_padded))
-            head_indices = el['head_indices_tokens']
-            head_indices_padded = simple_pad(head_indices, pad_element=0, pad_length=max_len)
+            head_indices_padded = simple_pad(el['head_indices_tokens'], pad_element=0, pad_length=max_len)
             head_indices_list.append(torch.tensor(head_indices_padded))
-            head_indices_tokens = el['head_indices_tokens']
-            head_indices_padded_tokens = simple_pad(head_indices_tokens, pad_element=0, pad_length=max_len)
+            head_indices_padded_tokens = simple_pad(el['head_indices_tokens'], pad_element=0, pad_length=max_len)
             head_indices_tokens_list.append(torch.tensor(head_indices_padded_tokens))
-            edges_words = self.grapher.graph_from_erfgc(
-                el['head_indices'],
-                el['step_indices'],
-                )
-            batch_edge_list.append(edges_words)
-            edges_tokens = self.grapher.graph_from_erfgc(
-                el['head_indices_tokens'],
-                el['step_indices_tokens'],
-                )
-            batch_edge_list_tokens.append(edges_tokens)
-            assert edges_words.edges == edges_tokens.edges, 'word- and token-wise edges are not identical'
-            print('-' * 100)
+            batch_edge_list_words.append(el['G_words'])
+            batch_edge_list_tokens.append(el['G_tokens'])
         input_ids_tensor = torch.stack(input_ids_list)
         attention_mask_tensor = torch.stack(attention_mask_list)
         step_indices_tensor = torch.stack(step_indices_list)
@@ -70,15 +54,48 @@ class Collator:
             'head_indices': head_indices_tensor,
             'step_indices_tokens': step_indices_tensor_tokens,
             'head_indices_tokens': head_indices_tensor_tokens,
-            'edges': batch_edge_list,
-            'edges_tokens': batch_edge_list_tokens,
+            'G_words': batch_edge_list_words,
+            'G_tokens': batch_edge_list_tokens,
         }
 
-class ListOfDictsDataset(Dataset):
-    def __init__(self, data: List[Dict], tokenizer):
+class ProcTextDataset(Dataset):
+    def __init__(self,
+                data: List[Dict],
+                tokenizer,
+                do_tokenize = True,
+                do_add_bos = False,
+                do_add_eos = False,
+                disable_tqdm = False,
+                ):
         super().__init__()
         self.data = data
         self.tokenizer = tokenizer
+        self.disable_tqdm = disable_tqdm
+        if do_tokenize:
+            self.tokenize()  
+        self.make_edges()
+        if do_add_bos:
+            self.add_bos()
+        if do_add_eos:
+            self.add_eos()
+    
+    def filter_non_dags(self):
+        filtered = []
+        for i in tqdm(range(len(self.data)), desc = 'filter_non_dags', disable=self.disable_tqdm):
+            if not nx.is_directed_acyclic_graph(self.data[i]['G_tokens']):
+                continue
+            else:
+                filtered.append(self.data[i])
+        self.data = filtered
+
+    def filter_short_dags(self, k = 2):
+        filtered = []
+        for i in tqdm(range(len(self.data)), desc = 'filter_short_dags', disable=self.disable_tqdm):
+            if nx.dag_longest_path_length(self.data[i]['G_tokens']) < k:
+                continue
+            else:
+                filtered.append(self.data[i])
+        self.data = filtered
     
     def get_head_indices_tokens(self, word_ids, word_edges):
         T = len(word_ids)
@@ -98,43 +115,54 @@ class ListOfDictsDataset(Dataset):
                 continue
             target_word_idx = word_edges[word_idx]
             token_edges[token_idx] = word_to_first_token_map.get(target_word_idx, 0)
-
-        return token_edges
+        return token_edges 
 
     def tokenize(self):
-        for i in tqdm(range(len(self.data))):
+        for i in tqdm(range(len(self.data)), desc = 'tokenize', disable=self.disable_tqdm):
             self.data[i]['encodings'] = self.tokenizer(self.data[i]['words'], is_split_into_words = True)
             word_ids = self.data[i]['encodings'].word_ids()
             self.data[i]['step_indices_tokens'] = [0 if word_idx is None else self.data[i]['step_indices'][word_idx] for word_idx in word_ids]
             self.data[i]['head_indices_tokens'] = self.get_head_indices_tokens(word_ids, self.data[i]['head_indices'])
     
     def add_eos(self):
-        for i in tqdm(range(len(self.data))):
+        for i in tqdm(range(len(self.data)), desc = 'add_eos', disable=self.disable_tqdm):
             self.data[i]['encodings']['input_ids'] = self.data[i]['encodings']['input_ids'] + [self.tokenizer.eos_token_id]
             self.data[i]['encodings']['attention_mask'] = self.data[i]['encodings']['attention_mask'] + [1]
             self.data[i]['step_indices_tokens'] = self.data[i]['step_indices_tokens'] + [0]
             self.data[i]['head_indices_tokens'] = self.data[i]['head_indices_tokens'] + [0]
 
     def add_bos(self):
-        for i in tqdm(range(len(self.data))):
+        for i in tqdm(range(len(self.data)), desc = 'add_bos', disable=self.disable_tqdm):
             self.data[i]['encodings']['input_ids'] = (
                 [self.tokenizer.bos_token_id] +
                 self.data[i]['encodings']['input_ids']
                 )
             self.data[i]['encodings']['attention_mask'] = [1] + self.data[i]['encodings']['attention_mask']
-            self.data[i]['step_indices_tokens'] = [1] + self.data[i]['step_indices_tokens']
+            self.data[i]['step_indices_tokens'] = [0] + self.data[i]['step_indices_tokens']
             shifted_head_indices_tokens = [0 if el == 0 else el + 1 for el in self.data[i]['head_indices_tokens']]
             self.data[i]['head_indices_tokens'] = [0] + shifted_head_indices_tokens
 
-    def __getitem__(self, index):
-        return self.data[index]
-    
-    def __len__(self):
-        return len(self.data)
+    def make_edges(self):
+        for i in tqdm(range(len(self.data)), desc = 'make_edges', disable=self.disable_tqdm):
+            G_words = self.graph_from_erfgc(
+                self.data[i]['head_indices'],
+                self.data[i]['step_indices'],
+                )
+            self.data[i]['G_words'] = G_words
+            G_tokens = self.graph_from_erfgc(
+                self.data[i]['head_indices_tokens'],
+                self.data[i]['step_indices_tokens'],
+                )
+            self.data[i]['G_tokens'] = G_tokens
+            assert G_words.edges == G_tokens.edges, 'word- and token-wise edges are not identical'       
 
-class Grapher:
-    def __init__(self, tokenizer):
-        self.tokenizer = tokenizer
+    def graph_from_erfgc(self, head_indices, step_indices):
+        G = nx.DiGraph()
+        edges = self.make_edge_list(head_indices=head_indices, step_indices=step_indices)
+        G.add_edges_from(edges)
+        unique_steps = set(step_indices) - {0}
+        G.add_nodes_from(unique_steps)
+        return G
 
     def make_edge_list(self, head_indices, step_indices):
         head_indices = [0] + head_indices
@@ -146,12 +174,9 @@ class Grapher:
             if src != tgt and tgt != 0:
                 edges.append((src, tgt))
         return edges
-
-    def graph_from_erfgc(self, head_indices, step_indices):
-        G = nx.DiGraph()
-        edges = self.make_edge_list(head_indices=head_indices, step_indices=step_indices)
-        G.add_edges_from(edges)
-        unique_steps = set(step_indices) - {0}
-        G.add_nodes_from(unique_steps)
-        print(G.edges)
-        return G
+    
+    def __getitem__(self, index):
+        return self.data[index]
+    
+    def __len__(self):
+        return len(self.data)
