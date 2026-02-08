@@ -4,3 +4,7 @@ notebooks/
 diagrams/
 .vscode/
 __pycache__
+.slurm/
+models/
+models_tested/
+results/

@@ -1,0 +1,95 @@
+[
+    {
+        "plan_idx": 0,
+        "original_file_row_no": 0,
+        "title": "pico de gallo chicken quesadillas",
+        "question_idx": 0,
+        "steps": [
+            "For the pico de gallo: In a small bowl, combine tomatoes, onion, lime juice, coriander, fresh chilli, salt and pepper.",
+            "Set aside.",
+            "In a large frying pan, heat 1 tablespoon olive oil.",
+            "Add chicken and saute until cooked through and juices run clear.",
+            "Remove chicken from pan and set aside.",
+            "Put the remaining 1 tablespoon of olive oil in the hot pan and saute the sliced onion and green pepper until tender.",
+            "Stir in the minced garlic and saute until the aroma is strong.",
+            "Mix in half of the pico de gallo and chicken breast meat.",
+            "Set aside; keep warm.",
+            "In a clean, heavy frying pan, heat one flour tortilla.",
+            "Spread 4 tablespoons of the grated cheese on the tortilla and top with 1/2 the chicken mixture.",
+            "Sprinkle another 4 tablespoons cheese over the chicken and top with another tortilla.",
+            "When bottom tortilla is lightly brown and cheese has started to melt, flip quesadilla and cook on the opposite side.",
+            "Remove the quesadilla from the frying pan and cut into quarters.",
+            "Repeat with the remaining ingredients.",
+            "Serve quesadillas with soured cream and remaining pico de gallo."
+        ],
+        "question_type": "dependent_real_after",
+        "step_pair_idx_asked_about": [
+            1,
+            9
+        ],
+        "binary_question": "Must Step 10 happen after Step 2?",
+        "why_question": "Why must Step 10 happen after Step 2?",
+        "label": 1,
+        "type": "real",
+        "direction": "after"
+    },
+    {
+        "plan_idx": 1,
+        "original_file_row_no": 1,
+        "title": "slow cooked chicken korma",
+        "question_idx": 1,
+        "steps": [
+            "Blend the onions, garlic, ginger and chilli in a blender or liquidiser, or chop very finely.",
+            "Cut each thigh into 4 pieces, heat the oil in a large frying pan and add the chicken.",
+            "Cook over a high heat until evenly browned.",
+            "Remove from pan and place in slow cooker.",
+            "Add the butter to the pan and when melted add the onion mixture.",
+            "Cook over moderate heat for 3 minutes.",
+            "Add all the spices and cook for a further minute.",
+            "Mix in chicken stock, sugar and salt.",
+            "Bring to the boil and then transfer to slow cooker pouring over chicken.",
+            "Cover and cook for 5 - 7 hours on Low (or 3 hours on high).",
+            "Add the cream and ground up nuts.",
+            "Serve with rice and naan bread."
+        ],
+        "question_type": "dependent_real_after",
+        "step_pair_idx_asked_about": [
+            0,
+            8
+        ],
+        "binary_question": "Must Step 9 happen after Step 1?",
+        "why_question": "Why must Step 9 happen after Step 1?",
+        "label": 1,
+        "type": "real",
+        "direction": "after"
+    },
+    {
+        "plan_idx": 2,
+        "original_file_row_no": 2,
+        "title": "vodka-penne",
+        "question_idx": 2,
+        "steps": [
+            "Heat the olive oil in a large saucepan over medium heat.",
+            "Stir in the onion and cook and stir until softened, about 5 minutes.",
+            "Add the garlic and crushed chilli and cook, stirring, for an additional minute.",
+            "Stir the vodka, passata and light cream into the onion mixture, turn heat to high and bring sauce to the boil.",
+            "Reduce heat to low, stir in the Pecorino Romano cheese and simmer for 2 hours, stirring occasionally.",
+            "Season finished sauce with salt and pepper.",
+            "Fill a large pot with lightly salted water and bring to the boil over high heat.",
+            "Once the water is boiling, stir in the penne and return to the boil.",
+            "Cook the pasta uncovered, stirring occasionally, until the pasta has cooked through but is still firm to the bite, about 10 minutes.",
+            "Drain well in a sieve set in the sink.",
+            "Transfer pasta to a large bowl and pour vodka sauce over, tossing to coat pasta with the sauce to serve."
+        ],
+        "question_type": "dependent_real_after",
+        "step_pair_idx_asked_about": [
+            0,
+            5
+        ],
+        "binary_question": "Must Step 6 happen after Step 1?",
+        "why_question": "Why must Step 6 happen after Step 1?",
+        "label": 1,
+        "type": "real",
+        "direction": "after"
+    }
+]
