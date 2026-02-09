@@ -1,15 +1,16 @@
-import torch
-
-def prep_inputs_for_causal_lm(labels, attention_mask, bos_token_id):
+def prep_inputs_for_causal_lm(input_ids, attention_mask):
     '''
-    Prepares right-shifted inputs for causal language modeling from labels.
+    Standard HF approach:
+    - Input and Labels are the same length.
+    - Padding in labels is masked with -100.
+    - Shifting is handled in the training loop or model.
     '''
-    input_ids = torch.zeros_like(labels)
-    input_ids[:, 1:] = labels[:, :-1]
-    input_ids[:, 0] = bos_token_id
+    labels = input_ids.clone()
+    # Mask padding tokens
     labels[attention_mask == 0] = -100
+    
     return {
         'input_ids': input_ids,
         'attention_mask': attention_mask,
-        'labels': labels,
+        'labels': labels
     }

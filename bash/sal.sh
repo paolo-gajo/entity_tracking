@@ -1,1 +1,1 @@
-salloc --account=def-hsajjad --gres=gpu:1 --cpus-per-task=8 --mem=64G --time=12:00:00
+salloc --account=def-hsajjad --gres=gpu:1 --cpus-per-task=8 --mem=128GB --time=12:00:00

@@ -11,19 +11,19 @@
 module load gcc arrow
 source .env/bin/activate
 
-data_path='./data/recipenlg/recipenlg_processed.json'
-# data_path='./data/recipenlg/recipenlg_samples_10.json'
+# data_path='./data/recipenlg/recipenlg_clean.json'
+data_path='./data/recipenlg/recipenlg_clean_100k.json'
 
 model_name="openai-community/gpt2"
 # model_name="Qwen/Qwen3-0.6B-Base"
 num_samples=0
 save_interval=1000
-batch_size=16
+batch_size=8
 lr=5e-5
-prompt_type='natlang'
-# prompt_type='minimal'
-# prompt_type='minimal_only_shuffled'
-# prompt_type='minimal_only_original'
+# prompt_type='natlang'
+prompt_type='minimal'
+# prompt_type='only_shuffled'
+# prompt_type='only_original'
 
 # loss_type='full_loss'
 loss_type='prompt_only_loss'

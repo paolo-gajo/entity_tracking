@@ -5,6 +5,49 @@ from tqdm.auto import tqdm
 from tqdm.auto import tqdm
 import networkx as nx
 import pandas as pd
+import random
+
+def make_pairs_from_recipenlg(data):
+    print(f"Dataset Size: {len(data)}")
+    step_list_orig = [x['directions'] for x in tqdm(data, desc='Filtering...') if len(set(x['directions'])) > 1]
+    
+    total_samples = len(step_list_orig)
+    halfway_point = total_samples // 2
+    
+    sample = random.sample
+    data_pairs = []
+
+    # 3. Regime A: Forced Negative (Indices 0 to N/2)
+    for i in tqdm(range(halfway_point), desc = 'Making negatives...'):
+        orig = step_list_orig[i]
+        n_steps = len(orig)
+        shuf = sample(orig, n_steps)
+        # Enforce inequality
+        while shuf == orig:
+            shuf = sample(orig, n_steps)
+            
+        data_pairs.append({
+            'orig': orig,
+            'shuf': shuf,
+            'binary_label': int(orig == shuf)
+        })
+
+    # 4. Regime B: Identity / Positive (Indices N/2 to N)
+    for i in tqdm(range(halfway_point, total_samples), desc = 'Copying neutrals...'):
+        orig = step_list_orig[i]
+        shuf = orig  # Identity assignment
+        
+        data_pairs.append({
+            'orig': orig,
+            'shuf': shuf,
+            'binary_label': int(orig == shuf)
+        })
+
+    binary_labels_positive = sum(d['binary_label'] for d in data_pairs)
+    pos_ratio = binary_labels_positive / len(data_pairs) if data_pairs else 0.0
+    
+    print(f'Positive/negative sample ratio: {pos_ratio:.6f}')
+    return data_pairs
 
 class ICLDataset(Dataset):
     def __init__(self,
@@ -48,7 +91,7 @@ class ICLDataset(Dataset):
         question = f" {line['binary_question']}"
         label_text = labels_nl[line['label']]
         answer = f" Answer: {label_text}"
-        prompt = steps_joined + ' |' + head + ' |' + tail + ' |' + question + ' |' + answer + ' #'
+        prompt = steps_joined + '\n\n' + head + '\n\n' + tail + '\n\n' + question + '\n\n' + answer + '\n\n'
         prompt_tokens = self.tokenizer(prompt)['input_ids']
         return prompt_tokens
     
@@ -57,7 +100,7 @@ class ICLDataset(Dataset):
         if sample_type:
             icl_dataset = icl_dataset[icl_dataset['type'] == sample_type]
         df_icl = icl_dataset.groupby(['label', 'type',
-                                    #   'direction',
+                                      'direction',
                                       ], group_keys=False).sample(n=self.n_icl, replace=False)
         df_icl = df_icl.sample(frac=1)
         icl_input_ids = df_icl.apply(lambda x: self.format_steps(x, append_labels = True), axis = 1)
@@ -322,11 +365,40 @@ class Seq2SeqDataset(Dataset):
             self.make_pair_samples_minimal()
         elif prompt_type == 'natlang':
             self.make_pair_samples_natlang()
-        elif prompt_type == 'minimal_only_shuffled':
-            self.make_pair_samples_minimal_one_side(side = 'shuf')
-        elif prompt_type == 'minimal_only_original':
-            self.make_pair_samples_minimal_one_side(side = 'orig')
+        elif prompt_type == 'only_shuffled':
+            self.make_one_sided_samples(side = 'shuf')
+        elif prompt_type == 'only_original':
+            self.make_one_sided_samples(side = 'orig')
         self.prune_longs()
+
+    def make_pair_samples_minimal(self, batch_size=1000):
+        total_len = len(self.data)
+        
+        for start_idx in tqdm(range(0, total_len, batch_size), desc='tokenizing...'):
+            end_idx = min(start_idx + batch_size, total_len)
+            batch_slice = self.data[start_idx:end_idx]
+            
+            shuf_batch = [' '.join(item['shuf']) + ' ' for item in batch_slice]
+            orig_batch = [' '.join(item['orig']) for item in batch_slice]
+            enc_shuf = self.tokenizer(shuf_batch, add_special_tokens=False)
+            enc_orig = self.tokenizer(orig_batch, add_special_tokens=False)
+            
+            for i, (shuf_ids, shuf_mask, orig_ids, orig_mask) in enumerate(zip(
+                enc_shuf['input_ids'], 
+                enc_shuf['attention_mask'], 
+                enc_orig['input_ids'], 
+                enc_orig['attention_mask']
+            )):
+                current_input_ids = shuf_ids + orig_ids + [self.tokenizer.eos_token_id]
+                if self.loss_type == 'prompt_only_loss':
+                    current_attention_mask = [0] * len(shuf_mask) + orig_mask + [1]
+                elif self.loss_type == 'full_loss':
+                    current_attention_mask = shuf_mask + orig_mask + [1]
+
+                # Assignment only occurs for valid lengths
+                self.data[start_idx + i]['text'] = shuf_batch[i] + orig_batch[i]
+                self.data[start_idx + i]['input_ids'] = current_input_ids
+                self.data[start_idx + i]['attention_mask'] = current_attention_mask
 
     def format_recipe_sample(self, batch_steps_scrambled, batch_steps_ordered):
         scrambled_text = "\n- ".join(batch_steps_scrambled)
@@ -365,10 +437,11 @@ class Seq2SeqDataset(Dataset):
                 elif self.loss_type == 'full_loss':
                     current_attention_mask = shuf_mask + orig_mask
 
+                self.data[start_idx + i]['text'] = training_sample[0] + training_sample[1]
                 self.data[start_idx + i]['input_ids'] = current_input_ids
                 self.data[start_idx + i]['attention_mask'] = current_attention_mask
 
-    def make_pair_samples_minimal_one_side(self, side = 'orig', batch_size=1000):
+    def make_one_sided_samples(self, side = 'orig', batch_size=1000):
         total_len = len(self.data)
         
         for start_idx in tqdm(range(0, total_len, batch_size), desc='tokenizing...'):
@@ -378,42 +451,13 @@ class Seq2SeqDataset(Dataset):
             enc = self.tokenizer(batch, add_special_tokens=False)
 
             for i, (ids, mask) in enumerate(zip(enc['input_ids'], enc['attention_mask'])):
+                self.data[start_idx + i]['text'] = batch[i]
                 self.data[start_idx + i]['input_ids'] = ids + [self.tokenizer.eos_token_id]
                 self.data[start_idx + i]['attention_mask'] = mask + [1]
 
-    def make_pair_samples_minimal(self, batch_size=1000):
-        total_len = len(self.data)
-        
-        for start_idx in tqdm(range(0, total_len, batch_size), desc='tokenizing...'):
-            end_idx = min(start_idx + batch_size, total_len)
-            batch_slice = self.data[start_idx:end_idx]
-            
-            shuf_batch = [' '.join(item['shuf']) for item in batch_slice]
-            orig_batch = [' '.join(item['orig']) for item in batch_slice]
-            
-            enc_shuf = self.tokenizer(shuf_batch, add_special_tokens=False)
-            enc_orig = self.tokenizer(orig_batch, add_special_tokens=False)
-            
-            for i, (shuf_ids, shuf_mask, orig_ids, orig_mask) in enumerate(zip(
-                enc_shuf['input_ids'], 
-                enc_shuf['attention_mask'], 
-                enc_orig['input_ids'], 
-                enc_orig['attention_mask']
-            )):
-                current_input_ids = shuf_ids + orig_ids + [self.tokenizer.eos_token_id]
-                
-                if self.loss_type == 'prompt_only_loss':
-                    current_attention_mask = [0] * len(shuf_mask) + orig_mask + [1]
-                elif self.loss_type == 'full_loss':
-                    current_attention_mask = shuf_mask + orig_mask + [1]
-
-                # Assignment only occurs for valid lengths
-                self.data[start_idx + i]['input_ids'] = current_input_ids
-                self.data[start_idx + i]['attention_mask'] = current_attention_mask
-
     def prune_longs(self):
         data_pruned = []
-        for i in tqdm(range(len(self.data)), desc = 'pruning long samples...'):
+        for i in tqdm(range(len(self.data)), desc = 'Pruning long samples...'):
             if len(self.data[i]['input_ids']) > self.max_length:
                 continue
             else:

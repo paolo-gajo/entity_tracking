@@ -16,7 +16,7 @@ import os
 from natsort import natsorted
 
 def main(args):
-    config_dict = args.__dict__
+    eval_config_dict = args.__dict__
     json_path_list = [
         './data/erfgc/bio/train.json',
         './data/erfgc/bio/val.json',
@@ -32,15 +32,31 @@ def main(args):
     if not os.path.exists(args.model_dir):
         model_list = [args.model_dir]
     else:
-        model_list = natsorted([os.path.join(os.path.abspath(args.model_dir), el) for el in os.listdir(args.model_dir)])
-
+        model_list = natsorted([os.path.join(args.model_dir, el) for el in os.listdir(args.model_dir)])
+    
     for model_name in model_list:
+        print('Model name:', model_name)
+        train_config_filename = os.path.join(model_name, 'train_config.json')
+        model_name_simple = model_name.split('/')[-1]
+        if os.path.exists(train_config_filename):
+            with open(train_config_filename, 'r', encoding='utf8') as f:
+                train_config_dict = json.load(f)
+            prompt_type = train_config_dict['prompt_type']
+            loss_type = train_config_dict['loss_type']
+            results_save_path = os.path.join("./results", model_name_simple, prompt_type, loss_type)
+        else:
+            train_config_dict = {}
+            results_save_path = os.path.join('./results', model_name_simple, "baseline")
+
+        
+        print('Will save results to: ', results_save_path)
+        os.makedirs(results_save_path, exist_ok=True)
         model = AutoModel.from_pretrained(model_name)
         tokenizer = AutoTokenizer.from_pretrained(model_name,
                                                 add_prefix_space=True,
                                                 )
         do_add_eos, do_add_bos = False, False
-        if model_name == 'openai-community/gpt2':
+        if 'gpt2' in model_name:
             if not tokenizer.pad_token_id:
                 tokenizer.pad_token_id = tokenizer.eos_token_id
             if not tokenizer.bos_token_id:
@@ -149,21 +165,20 @@ def main(args):
                 
             }
         print(results_dict)
-        prompt_type = model_name.split('/')[-3]
-        loss_type = model_name.split('/')[-2]
-        model_name_simple = model_name.split('/')[-1]
-        results_save_path = f"./results/{prompt_type}/{loss_type}"
-        os.makedirs(results_save_path, exist_ok=True)
-        results_dict_json_path = os.path.join(results_save_path, f"{model_name_simple}_results.json")
+
+        results_dict_json_path = os.path.join(results_save_path, "results.json")
+        print('Results saved to:', results_dict_json_path)
         
         out_dict = {
-            'config': config_dict,
+            'train_config': train_config_dict,
+            'eval_config': eval_config_dict,
             'results': results_dict,
         }
         with open(results_dict_json_path, 'w', encoding='utf8') as f:
             json.dump(out_dict, f, ensure_ascii = False, indent = 4)
-        os.makedirs(model_name.replace('models', 'models_tested'))
-        os.rename(model_name, model_name.replace('models', 'models_tested'))
+        if os.path.exists(model_name):
+            os.makedirs(model_name.replace('models', 'models_tested'))
+            os.rename(model_name, model_name.replace('models', 'models_tested'))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Calculate sims between step embeddings and compare them to ground truth step topology")
