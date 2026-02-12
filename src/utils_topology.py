@@ -5,24 +5,6 @@ import numpy as np
 from itertools import islice
 import torch
 
-def apply_step_order(t, step_order, step_indices):
-    valid_positions = torch.where(step_indices != 0)
-    t_shuffled = torch.zeros_like(t)
-    buffer_tokens = torch.zeros_like(step_indices[valid_positions])
-    buffer_indices = torch.zeros_like(step_indices[valid_positions])
-    step_indices_shuffled = torch.zeros_like(step_indices)
-    i = 0
-    for j in step_order:
-        step_positions = torch.where(step_indices == j)[0]
-        selected_values = t[step_positions]
-        shift = len(selected_values)
-        buffer_tokens[i:i+shift] = selected_values
-        buffer_indices[i:i+shift] = j
-        i += shift
-    t_shuffled[valid_positions] = buffer_tokens
-    step_indices_shuffled[valid_positions] = buffer_indices
-    return t_shuffled, step_indices_shuffled
-
 def batched_gen(iterable, n):
     iterator = iter(iterable)
     while True:

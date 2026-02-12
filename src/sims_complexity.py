@@ -1,7 +1,6 @@
 import torch
 from transformers import AutoModel, AutoTokenizer
 from utils_data import ProcTextDataset, Collator
-from utils_viz import plot_tensor_heatmap
 from torch.utils.data.dataloader import DataLoader
 import networkx as nx
 import json
@@ -13,6 +12,7 @@ from scipy import stats
 import os
 from natsort import natsorted
 from sklearn.metrics import roc_auc_score
+from collections import defaultdict
 
 # --- Metrics & Math ---
 
@@ -90,7 +90,7 @@ def apply_step_order(t, step_order, step_indices):
     step_indices_shuffled[valid_positions] = buffer_indices
     return t_shuffled, step_indices_shuffled
 
-def get_shuffled_order(G, current_step_indices, shuffle_type):
+def get_shuffled_order(G, current_step_indices, shuffle_type, precomputed_topo_orders=None):
     """Determine the order of steps based on the shuffle strategy."""
     num_steps = int(current_step_indices.max().item()) + 1
     step_order = list(range(1, num_steps)) # Ignore step 0 (BOS/EOS/PAD)
@@ -98,11 +98,20 @@ def get_shuffled_order(G, current_step_indices, shuffle_type):
     if shuffle_type == 'unshuffled':
         return step_order
 
-    topo_orders = list(nx.all_topological_sorts(G))
+    # Use precomputed list if available to save time
+    if precomputed_topo_orders is not None:
+        topo_orders = list(precomputed_topo_orders) # Make a copy to avoid mutation
+    else:
+        topo_orders = list(nx.all_topological_sorts(G))
     
     if shuffle_type == 'permutations':
         # Random permutation that is NOT a valid topological sort
         step_order_shuffled = step_order
+        
+        # Check if G has edges (if 0 edges, all perms are valid topo sorts, infinite loop risk)
+        if G.number_of_edges() == 0:
+             return step_order_shuffled
+
         # Sample until pi \in P(G) \ T(G)
         while step_order_shuffled in topo_orders and step_order_shuffled == step_order:
             step_order_shuffled = sorted(step_order, key=lambda k: random.random())
@@ -126,7 +135,6 @@ def setup_model(model_name, device):
     model = AutoModel.from_pretrained(model_name).to(device)
     tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
     
-    # GPT-2 specific fix
     if 'gpt2' in model_name:
         if not tokenizer.pad_token_id:
             tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -148,25 +156,23 @@ def get_step_embeddings(hidden_states, step_indices, step_order):
 def compute_scores(model, input_ids, attention_mask, step_indices, step_order):
     """Run model and compute directed and undirected similarity matrices."""
     
-    # 1. Forward Pass
     model_output = model(
         input_ids=input_ids.unsqueeze(0), 
         attention_mask=attention_mask.unsqueeze(0)
     )
-    lhs = model_output.last_hidden_state.squeeze(0) # Remove batch dim
+    lhs = model_output.last_hidden_state.squeeze(0)
 
-    # 2. Pooling
     H_steps = get_step_embeddings(lhs, step_indices, step_order)
 
-    # 3. Directed Score (Order Embedding / Asymmetric)
-    # diff[i, j] = H[j] - H[i] (Target - Source)
+    # Directed
     diff = H_steps.unsqueeze(0) - H_steps.unsqueeze(1)
     S_directed = -torch.norm(torch.relu(diff), dim=-1).pow(2)
 
-    # 4. Undirected Score (Cosine Similarity)
+    # Undirected
     Hc = H_steps - H_steps.mean(dim=0, keepdim=True)
     Hn = Hc / (Hc.norm(dim=1, keepdim=True) + 1e-8)
     S_undirected = Hn @ Hn.T
+
     return S_directed, S_undirected
 
 # --- Main Logic ---
@@ -175,7 +181,6 @@ def process_model(model_name, args, data):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     model, tokenizer = setup_model(model_name, device)
     
-    # Dataset Setup
     dataset = ProcTextDataset(
         data,
         tokenizer,
@@ -190,68 +195,94 @@ def process_model(model_name, args, data):
     collator = Collator(tokenizer)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, collate_fn=collator.dag_collate)
 
-    results = {'directed': {}, 'undirected': {}}
+    # Data Structure: run_data[n_topo][mode][shuffle_type] = [list of means per run]
+    run_data = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+    
+    # NEW: Count unique graphs per bucket
+    global_counts = defaultdict(int)
+    
     shuffle_types = ['unshuffled', 'topological', 'permutations']
 
     for shuffle_type in shuffle_types:
-        # Track means per run, not per batch
-        run_means = {'directed': [], 'undirected': []}
-        
         n_runs = args.n_runs if shuffle_type != 'unshuffled' else 1
         
         print(f"Processing {shuffle_type}...")
         for run_idx in tqdm(range(n_runs), desc="Runs"):
-            # Track scores for this specific run
-            current_run_scores = {'directed': [], 'undirected': []}
             
-            for batch_idx, batch in enumerate(dataloader):
+            # Temporary storage for this run
+            current_run_scores = defaultdict(lambda: {'directed': [], 'undirected': []})
+            
+            for batch in dataloader:
                 batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
                 
                 G = batch['G_tokens'][0]
                 orig_indices = batch['step_indices_tokens'][0]
                 orig_input_ids = batch['input_ids'][0]
                 
-                step_order = get_shuffled_order(G, orig_indices, shuffle_type)
+                # --- NEW: Calculate Complexity (Number of Topo Sorts) ---
+                try:
+                    topo_orders = list(nx.all_topological_sorts(G))
+                    n_topo = len(topo_orders)
+                except Exception:
+                    continue
+                # --------------------------------------------------------
+
+                # Track unique graph counts only during the first run of the first shuffle type
+                if shuffle_type == shuffle_types[0] and run_idx == 0:
+                    global_counts[n_topo] += 1
+
+                step_order = get_shuffled_order(G, orig_indices, shuffle_type, precomputed_topo_orders=topo_orders)
                 if step_order is None: continue 
 
                 input_ids, step_indices = apply_step_order(orig_input_ids, step_order, orig_indices)
                 
-                # Compute
                 S_dir, S_undir = compute_scores(model, input_ids, batch['attention_mask'][0], step_indices, step_order)
-                if run_idx == 0 and batch_idx == 0:
-                    if 'models' in model.config.name_or_path:
-                        model_dir = model.config.name_or_path
-                    else:
-                        model_dir = os.path.join('models', 'baseline', 'gpt2')
-                        os.makedirs(model_dir, exist_ok=True)
-                    S_directed_save_path = os.path.join(model_dir, f'S_directed_{shuffle_type}.pdf')
-                    S_undirected_save_path = os.path.join(model_dir, f'S_undirected_{shuffle_type}.pdf')
-                    plot_tensor_heatmap(S_dir, S_directed_save_path)
-                    plot_tensor_heatmap(S_undir, S_undirected_save_path)
                 
-                # Evaluate
                 A = nx.to_numpy_array(G, nodelist=step_order)
                 
                 auc_d = get_auc(S_dir, A)
                 auc_u = get_auc(S_undir, A)
                 
-                if not np.isnan(auc_d): current_run_scores['directed'].append(auc_d)
-                if not np.isnan(auc_u): current_run_scores['undirected'].append(auc_u)
+                if not np.isnan(auc_d): current_run_scores[n_topo]['directed'].append(auc_d)
+                if not np.isnan(auc_u): current_run_scores[n_topo]['undirected'].append(auc_u)
             
-            # Aggregate: Calculate the mean for this specific run and store it
-            if current_run_scores['directed']:
-                run_means['directed'].append(np.mean(current_run_scores['directed']))
-            if current_run_scores['undirected']:
-                run_means['undirected'].append(np.mean(current_run_scores['undirected']))
+            # Aggregate means for this run
+            for n_topo, modes in current_run_scores.items():
+                if modes['directed']:
+                    mean_val = np.mean(modes['directed'])
+                    run_data[n_topo]['directed'][shuffle_type].append(mean_val)
+                if modes['undirected']:
+                    mean_val = np.mean(modes['undirected'])
+                    run_data[n_topo]['undirected'][shuffle_type].append(mean_val)
 
-        # Aggregate Results across Runs
+    # Final Aggregation
+    results = {}
+    sorted_counts = sorted(run_data.keys())
+    total_graphs = sum(global_counts.values())
+
+    for n_topo in sorted_counts:
+        results[n_topo] = {
+            'meta': {
+                'count': global_counts[n_topo],
+                'percentage': f"{(global_counts[n_topo] / total_graphs * 100):.2f}%" if total_graphs > 0 else "0%"
+            },
+            'directed': {}, 
+            'undirected': {}
+        }
+        
         for mode in ['directed', 'undirected']:
-            mu, moe, _ = calculate_statistics(run_means[mode])
-            results[mode][shuffle_type] = {
-                'mu': mu,
-                'moe': moe,
-                'auc': f'{mu:.3f} $\pm {moe:.3f}$'
-            }
+            for shuffle_type in shuffle_types:
+                data_list = run_data[n_topo][mode].get(shuffle_type, [])
+                
+                if not data_list:
+                    continue
+                    
+                mu, moe, _ = calculate_statistics(data_list)
+                results[n_topo][mode][shuffle_type] = {
+                    'mu': mu,
+                    'moe': moe,
+                    'auc': f'{mu:.3f} $\pm {moe:.3f}$'
+                }
             
     return results
 
@@ -260,7 +291,6 @@ def get_model_info(model_path):
     Parses the model path and config to determine the results directory.
     Returns the save path and the loaded train_config (if available).
     """
-    # Robustly handle trailing slashes when getting the directory name
     model_simple = os.path.basename(os.path.normpath(model_path))
     
     train_conf_path = os.path.join(model_path, 'train_config.json')
@@ -268,14 +298,14 @@ def get_model_info(model_path):
         with open(train_conf_path, 'r') as f: 
             train_config = json.load(f)
         save_path = os.path.join(
-            "./results", 
+            "./results_by_topo", 
             train_config.get('prompt_type', 'unknown'), 
             train_config.get('loss_type', 'unknown'), 
             model_simple
         )
     else:
         train_config = {}
-        save_path = os.path.join('./results', "baseline", model_simple)
+        save_path = os.path.join('./results_by_topo', "baseline", model_simple)
         
     return save_path, train_config
 
@@ -314,19 +344,21 @@ def main(args):
         ])
 
     for model_name in model_list:
-        # --- Check if results exist before processing ---
         save_path, train_config = get_model_info(model_name)
         result_file = os.path.join(save_path, "results.json")
         
-        if os.path.exists(result_file) and not args.repeat:
+        if os.path.exists(result_file):
             print(f"Skipping {model_name}: Results already exist at {result_file}")
             continue
-        # ------------------------------------------------
         
         results = process_model(model_name, args, data)
         
         if args.verbose_results:
-            print(json.dumps(results, indent=4))
+            print(f"Processed {len(results)} complexity groups.")
+            # Print distribution summary
+            print("\nDistribution Summary:")
+            for k, v in results.items():
+                print(f"  Topo Orders: {k} | Count: {v['meta']['count']} ({v['meta']['percentage']})")
         
         if args.save_results:
             save_results_to_disk(results, save_path, train_config, args)
@@ -337,6 +369,5 @@ if __name__ == "__main__":
     parser.add_argument("--n_runs", default=10, type=int)
     parser.add_argument("--save_results", default=0, type=int)
     parser.add_argument("--verbose_results", default=1, type=int)
-    parser.add_argument("--repeat", default=0, type=int)
     args = parser.parse_args()
     main(args)

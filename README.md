@@ -13,6 +13,11 @@ We use two datasets, RecipeNLG and CaT-Bench. RecipeNLG consists of 2.2M samples
 
 I am pre-training a GPT2 model on prompts such as:
 
+Minimal prompt:
+```
+In a heavy 2-quart saucepan, mix brown sugar, nuts, evaporated milk and butter or margarine. Let stand until firm, about 30 minutes. Stir in vanilla and cereal; mix well. Stir over medium heat until mixture bubbles all over top. Using 2 teaspoons, drop and shape into 30 clusters on wax paper. Boil and stir 5 minutes more. Take off heat. In a heavy 2-quart saucepan, mix brown sugar, nuts, evaporated milk and butter or margarine. Stir over medium heat until mixture bubbles all over top. Boil and stir 5 minutes more. Take off heat. Stir in vanilla and cereal; mix well. Using 2 teaspoons, drop and shape into 30 clusters on wax paper. Let stand until firm, about 30 minutes.<|endoftext|>
+```
+Natural language prompt:
 ```
 Below is a jumbled list of recipe steps. Put them in the correct order.
 
@@ -33,43 +38,51 @@ Correct order:
 6. Let stand until firm, about 30 minutes.<|endoftext|>
 ```
 
-We want the model to learn to produce different representations for each step, based on the underlying graph. Using sims.py we calculate the similarity between the step representations and compare them to the adjacency matrix A by calculating the auc(S, A) between A and the step similarity matrix S. When we feed shuffled recipes the AUC is ~0.5, but with unshuffled recipes and recipes shuffled with valid topological orders the AUC is 0.65-0.67. This suggests that the model internally learns the step topology of the recipes.
+In the `full_loss` setting, all the prompt is used for loss calculation. In the `prompt_only_loss`, only the unshuffled (second) part is used.
 
-We want this skill to transfer to the CaT-Bench benchmark:
 
-```
-[
-    {
-        "plan_idx": 0,
-        "title": "spicy-tomato-anchovy-pasta",
-        "question_idx": 0,
-        "steps": [
-            "Heat 6 tablespoons olive oil in a large frying pan over medium heat, then stir in garlic, broccoli and mushrooms;",
-            "cook until lightly browned.",
-            "Add anchovies and water, cover and simmer for 4 to 5 minutes.",
-            "Stir in spring onions, tomatoes and parsley and cover again, simmering until vegetables are soft, about 3 to 4 minutes.",
-            "While the vegetables are cooking, bring a large pot of water and one teaspoon of olive oil to the boil.",
-            "Add linguine and cook until al dente, about 7 to 8 minutes;",
-            "drain.",
-            "Toss with anchovy mixture and chilli flakes.",
-            "If desired, season with black pepper.",
-            "Serve immediately."
-        ],
-        "question_type": "dependent_real_after",
-        "step_pair_idx_asked_about": [
-            7,
-            9
-        ],
-        "binary_question": "Must Step 10 happen after Step 8?",
-        "why_question": "Why must Step 10 happen after Step 8?",
-        "label": 1,
-        "type": "real",
-        "direction": "after"
-    }
-]
-```
+We want the model to learn to produce different representations for each step, based on the underlying graph. Using sims.py we calculate the similarity between the step representations and compare them to the adjacency matrix A by calculating the auc(S, A) between A and the step similarity matrix S.
 
-where recipes are assigned binary questions on the dependence of steps. Note that CaT-Bench uses data from English Flowgraph Recipe Corpus by Yamakata et al. 2020. RecipeNLG contains some of these, but we have already filtered matches so there is no overlap between pre-training and evaluation.
+
+Results:
+
+When we feed shuffled recipes the AUC is ~0.5, but with unshuffled recipes and recipes shuffled with valid topological orders the AUC is 0.65-0.67. This suggests that the model internally learns the step topology of the recipes.
+
+    We want this skill to transfer to the CaT-Bench benchmark:
+
+    ```
+    [
+        {
+            "plan_idx": 0,
+            "title": "spicy-tomato-anchovy-pasta",
+            "question_idx": 0,
+            "steps": [
+                "Heat 6 tablespoons olive oil in a large frying pan over medium heat, then stir in garlic, broccoli and mushrooms;",
+                "cook until lightly browned.",
+                "Add anchovies and water, cover and simmer for 4 to 5 minutes.",
+                "Stir in spring onions, tomatoes and parsley and cover again, simmering until vegetables are soft, about 3 to 4 minutes.",
+                "While the vegetables are cooking, bring a large pot of water and one teaspoon of olive oil to the boil.",
+                "Add linguine and cook until al dente, about 7 to 8 minutes;",
+                "drain.",
+                "Toss with anchovy mixture and chilli flakes.",
+                "If desired, season with black pepper.",
+                "Serve immediately."
+            ],
+            "question_type": "dependent_real_after",
+            "step_pair_idx_asked_about": [
+                7,
+                9
+            ],
+            "binary_question": "Must Step 10 happen after Step 8?",
+            "why_question": "Why must Step 10 happen after Step 8?",
+            "label": 1,
+            "type": "real",
+            "direction": "after"
+        }
+    ]
+    ```
+
+    where recipes are assigned binary questions on the dependence of steps. Note that CaT-Bench uses data from English Flowgraph Recipe Corpus by Yamakata et al. 2020. RecipeNLG contains some of these, but we have already filtered matches so there is no overlap between pre-training and evaluation.
 
 Currently, the evaluation is done with the script below, but the problem is that the mass for the softmax of the next-token model logits after pre-training is almost all on the eos token. How do we make the model pre-training be useful for the CaT-Bench benchmark?
 

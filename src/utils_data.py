@@ -163,23 +163,48 @@ class Collator:
         self.tokenizer = tokenizer
 
     def seq2seq_collate(self, batch):
+        # 1. Determine common length
         max_len = max([len(el['input_ids']) for el in batch])
+        
         input_ids_list = []
         attention_mask_list = []
+        step_indices_list = []
+        binary_labels_list = [] # Store separately to stack later if they exist
+
         for el in batch:
+            # Input IDs
             input_ids = el['input_ids']
             input_ids_padded = list_pad(input_ids, pad_element=self.tokenizer.pad_token_id, pad_length=max_len)
             input_ids_list.append(torch.tensor(input_ids_padded))
+            
+            # Attention Mask
             attention_mask = el['attention_mask']
             attention_mask_padded = list_pad(attention_mask, pad_element=0, pad_length=max_len)
             attention_mask_list.append(torch.tensor(attention_mask_padded))
-        input_ids_tensor = torch.stack(input_ids_list)
-        attention_mask_tensor = torch.stack(attention_mask_list)
-        return {
-            'input_ids': input_ids_tensor,
-            'attention_mask': attention_mask_tensor,
-            'binary_label': torch.tensor([el['binary_label'] for el in batch]),
+            
+            # Step Indices (New & Correct)
+            # We assume 'step_indices' exists because we updated the dataset code
+            step_indices = el['step_indices']
+            # Pad with 0 so the geometric loss ignores the padding
+            step_indices_padded = list_pad(step_indices, pad_element=0, pad_length=max_len)
+            step_indices_list.append(torch.tensor(step_indices_padded))
+
+            # Binary Label (Safety Check)
+            if 'binary_label' in el:
+                binary_labels_list.append(el['binary_label'])
+
+        # Stack logic
+        batch_dict = {
+            'input_ids': torch.stack(input_ids_list),
+            'attention_mask': torch.stack(attention_mask_list),
+            'step_indices': torch.stack(step_indices_list),
         }
+
+        # Only add binary_label if it actually existed in the data
+        if binary_labels_list:
+            batch_dict['binary_label'] = torch.tensor(binary_labels_list)
+
+        return batch_dict
 
     def dag_collate(self, batch):
         assert len(batch) > 0
@@ -361,108 +386,152 @@ class Seq2SeqDataset(Dataset):
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.loss_type = loss_type
+        
         if prompt_type == 'minimal':
             self.make_pair_samples_minimal()
         elif prompt_type == 'natlang':
             self.make_pair_samples_natlang()
         elif prompt_type == 'only_shuffled':
-            self.make_one_sided_samples(side = 'shuf')
+            self.make_one_sided_samples(side='shuf')
         elif prompt_type == 'only_original':
-            self.make_one_sided_samples(side = 'orig')
+            self.make_one_sided_samples(side='orig')
+            
         self.prune_longs()
 
     def make_pair_samples_minimal(self, batch_size=1000):
         total_len = len(self.data)
         
-        for start_idx in tqdm(range(0, total_len, batch_size), desc='tokenizing...'):
-            end_idx = min(start_idx + batch_size, total_len)
-            batch_slice = self.data[start_idx:end_idx]
-            
-            shuf_batch = [' '.join(item['shuf']) + ' ' for item in batch_slice]
-            orig_batch = [' '.join(item['orig']) for item in batch_slice]
-            enc_shuf = self.tokenizer(shuf_batch, add_special_tokens=False)
-            enc_orig = self.tokenizer(orig_batch, add_special_tokens=False)
-            
-            for i, (shuf_ids, shuf_mask, orig_ids, orig_mask) in enumerate(zip(
-                enc_shuf['input_ids'], 
-                enc_shuf['attention_mask'], 
-                enc_orig['input_ids'], 
-                enc_orig['attention_mask']
-            )):
-                current_input_ids = shuf_ids + orig_ids + [self.tokenizer.eos_token_id]
-                if self.loss_type == 'prompt_only_loss':
-                    current_attention_mask = [0] * len(shuf_mask) + orig_mask + [1]
-                elif self.loss_type == 'full_loss':
-                    current_attention_mask = shuf_mask + orig_mask + [1]
-
-                # Assignment only occurs for valid lengths
-                self.data[start_idx + i]['text'] = shuf_batch[i] + orig_batch[i]
-                self.data[start_idx + i]['input_ids'] = current_input_ids
-                self.data[start_idx + i]['attention_mask'] = current_attention_mask
-
-    def format_recipe_sample(self, batch_steps_scrambled, batch_steps_ordered):
-        scrambled_text = "\n- ".join(batch_steps_scrambled)
-        ordered_text = "\n".join(
-            [f"{i+1}. {step}" for i, step in enumerate(batch_steps_ordered)]
-        )
-        prompt = (
-            f"Below is a jumbled list of recipe steps. Put them in the correct order.\n\n"
-            f"Input:\n- {scrambled_text}\n\n"
-            f"Correct order:\n"
-        )
-        completion = (
-            f"{ordered_text}{self.tokenizer.eos_token}"
-        )
-        
-        return prompt, completion
-
-    def make_pair_samples_natlang(self, batch_size=1000):
-        total_len = len(self.data)
-        
-        for start_idx in tqdm(range(0, total_len, batch_size), desc='making samples...'):
+        for start_idx in tqdm(range(0, total_len, batch_size), desc='Tokenizing Minimal...'):
             end_idx = min(start_idx + batch_size, total_len)
             batch_slice = self.data[start_idx:end_idx]
             
             for i, item in enumerate(batch_slice):
-                training_sample = self.format_recipe_sample(item['shuf'], item['orig'])
-                encoding = self.tokenizer(training_sample, add_special_tokens=False)
-                shuf_ids = encoding['input_ids'][0]
-                shuf_mask = encoding['attention_mask'][0]
-                orig_ids = encoding['input_ids'][1]
-                orig_mask = encoding['attention_mask'][1]
+                # 1. Prompt (Index 0)
+                prompt_text = ' '.join(item['shuf']) + ' '
+                prompt_ids = self.tokenizer.encode(prompt_text, add_special_tokens=False)
+                prompt_step_indices = [0] * len(prompt_ids)
                 
-                current_input_ids = shuf_ids + orig_ids
-                if self.loss_type == 'prompt_only_loss':
-                    current_attention_mask = [0] * len(shuf_mask) + orig_mask
-                elif self.loss_type == 'full_loss':
-                    current_attention_mask = shuf_mask + orig_mask
+                # 2. Target (Index 1..N)
+                target_ids = []
+                target_step_indices = []
+                
+                for step_num, step_str in enumerate(item['orig']):
+                    if step_num > 0: step_str = ' ' + step_str
+                    step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
+                    target_ids.extend(step_tokens)
+                    target_step_indices.extend([step_num + 1] * len(step_tokens))
+                
+                # 3. Combine
+                full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
+                full_step_indices = prompt_step_indices + target_step_indices + [0]
+                
+                # 4. Mask
+                if 'prompt_only_loss' in self.loss_type:
+                    full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
+                elif 'full' in self.loss_type:
+                    full_attention_mask = [1] * len(full_input_ids)
+                else:
+                    raise ValueError(f"Unknown loss_type: {self.loss_type}")
 
-                self.data[start_idx + i]['text'] = training_sample[0] + training_sample[1]
-                self.data[start_idx + i]['input_ids'] = current_input_ids
-                self.data[start_idx + i]['attention_mask'] = current_attention_mask
+                idx = start_idx + i
+                self.data[idx]['input_ids'] = full_input_ids
+                self.data[idx]['attention_mask'] = full_attention_mask
+                self.data[idx]['step_indices'] = full_step_indices
 
-    def make_one_sided_samples(self, side = 'orig', batch_size=1000):
+    def make_pair_samples_natlang(self, batch_size=1000):
         total_len = len(self.data)
         
-        for start_idx in tqdm(range(0, total_len, batch_size), desc='tokenizing...'):
+        for start_idx in tqdm(range(0, total_len, batch_size), desc='Tokenizing NatLang...'):
             end_idx = min(start_idx + batch_size, total_len)
             batch_slice = self.data[start_idx:end_idx]
-            batch = [' '.join(item[side]) for item in batch_slice]            
-            enc = self.tokenizer(batch, add_special_tokens=False)
+            
+            for i, item in enumerate(batch_slice):
+                # 1. Construct Prompt (Index 0)
+                scrambled_text = "\n- ".join(item['shuf'])
+                prompt_str = (
+                    f"Below is a jumbled list of recipe steps. Put them in the correct order.\n\n"
+                    f"Input:\n- {scrambled_text}\n\n"
+                    f"Correct order:\n"
+                )
+                prompt_ids = self.tokenizer.encode(prompt_str, add_special_tokens=False)
+                prompt_step_indices = [0] * len(prompt_ids)
+                
+                # 2. Construct Target Step-by-Step (Index 1..N)
+                target_ids = []
+                target_step_indices = []
+                
+                for step_num, step_str in enumerate(item['orig']):
+                    # Format: "1. Step text"
+                    # We add a newline BEFORE steps 2..N to separate them
+                    prefix = ""
+                    if step_num > 0:
+                        prefix = "\n"
+                    
+                    current_step_text = f"{prefix}{step_num + 1}. {step_str}"
+                    step_tokens = self.tokenizer.encode(current_step_text, add_special_tokens=False)
+                    
+                    target_ids.extend(step_tokens)
+                    target_step_indices.extend([step_num + 1] * len(step_tokens))
+                
+                # 3. Combine
+                full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
+                full_step_indices = prompt_step_indices + target_step_indices + [0]
+                
+                # 4. Mask
+                if 'prompt_only_loss' in self.loss_type:
+                    full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
+                elif 'full' in self.loss_type:
+                    full_attention_mask = [1] * len(full_input_ids)
+                else:
+                    raise ValueError(f"Unknown loss_type: {self.loss_type}")
 
-            for i, (ids, mask) in enumerate(zip(enc['input_ids'], enc['attention_mask'])):
-                self.data[start_idx + i]['text'] = batch[i]
-                self.data[start_idx + i]['input_ids'] = ids + [self.tokenizer.eos_token_id]
-                self.data[start_idx + i]['attention_mask'] = mask + [1]
+                idx = start_idx + i
+                self.data[idx]['input_ids'] = full_input_ids
+                self.data[idx]['attention_mask'] = full_attention_mask
+                self.data[idx]['step_indices'] = full_step_indices
+
+    def make_one_sided_samples(self, side='orig', batch_size=1000):
+        total_len = len(self.data)
+        
+        for start_idx in tqdm(range(0, total_len, batch_size), desc=f'Tokenizing {side}...'):
+            end_idx = min(start_idx + batch_size, total_len)
+            batch_slice = self.data[start_idx:end_idx]
+            
+            for i, item in enumerate(batch_slice):
+                target_list = item[side]
+                
+                full_input_ids = []
+                full_step_indices = []
+                
+                for step_num, step_str in enumerate(target_list):
+                    if step_num > 0: step_str = ' ' + step_str
+                    
+                    step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
+                    full_input_ids.extend(step_tokens)
+                    # Assign Index 1..N based on generation order
+                    full_step_indices.extend([step_num + 1] * len(step_tokens))
+                
+                # Add EOS
+                full_input_ids.append(self.tokenizer.eos_token_id)
+                full_step_indices.append(0) # EOS is 0
+                
+                # Mask (One-sided is always full loss usually, but consistent with class logic)
+                full_attention_mask = [1] * len(full_input_ids)
+
+                idx = start_idx + i
+                self.data[idx]['input_ids'] = full_input_ids
+                self.data[idx]['attention_mask'] = full_attention_mask
+                self.data[idx]['step_indices'] = full_step_indices
 
     def prune_longs(self):
         data_pruned = []
-        for i in tqdm(range(len(self.data)), desc = 'Pruning long samples...'):
-            if len(self.data[i]['input_ids']) > self.max_length:
-                continue
-            else:
+        for i in tqdm(range(len(self.data)), desc='Pruning long samples...'):
+            if len(self.data[i]['input_ids']) <= self.max_length:
                 data_pruned.append(self.data[i])
-        print(f"Pruned {len(self.data) - len(data_pruned)} sequences exceeding {self.max_length} tokens.")
+        
+        removed = len(self.data) - len(data_pruned)
+        if removed > 0:
+            print(f"Pruned {removed} sequences exceeding {self.max_length} tokens.")
         self.data = data_pruned
 
     def __getitem__(self, index):

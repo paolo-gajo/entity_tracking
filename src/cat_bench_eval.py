@@ -22,10 +22,7 @@ def main(args):
     model_name = args.model_dir
 
     # model_name = "openai-community/gpt2"
-    # model_name = "models_tested_kl/recipenlg/natlang/prompt_only_loss/gpt2_5000_kl"
-    # model_name = "models_tested/recipenlg/natlang/full_loss/gpt2_117000"
-    # model_name = "models_tested/recipenlg/natlang/prompt_only_loss/gpt2_48000"
-    # model_name = "models_tested/recipenlg/minimal/prompt_only_loss/gpt2_91000"
+    model_name = "models/recipenlg/minimal/prompt_only_loss_with_order_loss/gpt2/1000"
     # model_name = "Qwen/Qwen3-14B-Base"
     # model_name = "Qwen/Qwen3-0.6B"
     # model_name = "Qwen/Qwen3-0.6B-Base"
