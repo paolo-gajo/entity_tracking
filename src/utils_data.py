@@ -4,10 +4,339 @@ from typing import List, Dict
 from tqdm.auto import tqdm
 from tqdm.auto import tqdm
 import networkx as nx
-import pandas as pd
 import random
+import math
+from itertools import permutations
+from tqdm import tqdm
 
-def make_pairs_from_recipenlg(data):
+class Seq2SeqDataset(Dataset):
+    def __init__(self,
+                 data,
+                 tokenizer,
+                 max_length=1024,
+                 prompt_type='minimal',
+                 attention_mask_type='full',
+                 batch_mode = 'random_samples',
+                 min_recipe_steps = 0,
+                 ):
+        super().__init__()
+        self.data = data
+        self.tokenizer = tokenizer
+        self.max_length = max_length
+        self.attention_mask_type = attention_mask_type
+        self.min_recipe_steps = min_recipe_steps
+        self.prompt_type = prompt_type
+        self.batch_mode = batch_mode
+        
+        if self.prompt_type == 'minimal_pairs':
+            self.make_fn = self.make_minimal_pair_samples
+        elif self.prompt_type == 'natlang_pairs':
+            self.make_fn = self.make_natlang_pair_samples
+        elif self.prompt_type == 'only_shuffled':
+            self.make_fn = lambda x: self.make_one_sided_samples(x, side='shuf')
+        elif self.prompt_type == 'only_original':
+            self.make_fn = lambda x: self.make_one_sided_samples(x, side='orig')
+        elif self.prompt_type == 'minimal_mono':
+            self.make_fn = self.make_mono_samples
+        
+        if self.batch_mode == 'pos_neg':
+            self.make_pos_neg_dataset()
+        elif self.batch_mode == 'random_samples':
+            self.make_random_samples_dataset()
+        
+        self.prune_longs()
+        self.prune_shorts()
+
+    def prune_longs(self):
+        data_pruned = []
+        for i in tqdm(range(len(self.data)), desc='Pruning long samples...'):
+            if isinstance(self.data[i], list):
+                # Batched case: check the first element's input_ids length as representative
+                if all(len(self.data[i][j]['input_ids']) <= self.max_length for j in range(len(self.data[i]))):
+                    data_pruned.append(self.data[i])
+            else:
+                if len(self.data[i]['input_ids']) <= self.max_length:
+                    data_pruned.append(self.data[i])
+        
+        removed = len(self.data) - len(data_pruned)
+        if removed > 0:
+            print(f"Pruned {removed} sequences exceeding {self.max_length} tokens.")
+        self.data = data_pruned
+
+    # prune short recipes
+    def prune_shorts(self):
+        data_pruned = []
+        for i in tqdm(range(len(self.data)), desc='Pruning short samples...'):
+            if isinstance(self.data[i], list):
+                if max(self.data[i][0]['step_indices']) >= self.min_recipe_steps:
+                    data_pruned.append(self.data[i])
+            else:
+                if max(self.data[i]['step_indices']) >= self.min_recipe_steps:
+                    data_pruned.append(self.data[i])
+        
+        removed = len(self.data) - len(data_pruned)
+        if removed > 0:
+            print(f"Pruned {removed} sequences with fewer than {self.min_recipe_steps} steps.")
+        self.data = data_pruned
+
+    def __getitem__(self, index):
+        return self.data[index]
+    
+    def __len__(self):
+        return len(self.data)
+
+    def make_random_samples_dataset(self):
+        formatted_data = []
+        for item in tqdm(self.data, desc=f'Formatting random-samples dataset (prompt_type = {self.prompt_type})...'):
+            formatted_data.append(self.make_fn([item])[0])
+        self.data = formatted_data
+
+    def make_pos_neg_dataset(self):
+        formatted_data = []
+        for batch in tqdm(self.data, desc=f'Formatting pos-neg dataset (prompt_type = {self.prompt_type})...'):
+            formatted_batch = self.make_fn(batch)
+            formatted_data.append(formatted_batch)
+        self.data = formatted_data
+
+    def make_mono_samples(self, batch):
+        formatted_batch = []
+        for i, item in enumerate(batch):
+            target_list = item['orig' if item['binary_label'] else 'shuf']
+            
+            full_input_ids = []
+            full_step_indices = []
+            
+            for step_num, step_str in enumerate(target_list):
+                if step_num > 0: step_str = ' ' + step_str
+                
+                # step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
+                step_tokens = self._tok_step(step_str)
+
+                full_input_ids.extend(step_tokens)
+                # Assign Index 1..N based on generation order
+                full_step_indices.extend([step_num + 1] * len(step_tokens))
+            
+            # Add EOS
+            full_input_ids.append(self.tokenizer.eos_token_id)
+            full_step_indices.append(0) # EOS is 0
+            
+            # Mask (One-sided is always full loss usually, but consistent with class logic)
+            full_attention_mask = [1] * len(full_input_ids)
+
+            formatted_batch.append({
+                'input_ids': full_input_ids,
+                'attention_mask': full_attention_mask,
+                'step_indices': full_step_indices,
+                'binary_label': batch[i]['binary_label'],
+            })
+        return formatted_batch
+
+    def _tok_step(self, step: str) -> List[int]:
+        # return self.tokenizer.encode(step.strip(), add_special_tokens=False)
+        return self.tokenizer.encode(" " + step.strip(), add_special_tokens=False)
+
+    def _tok_steps(self, steps: List[str]) -> List[List[int]]:
+        return [self._tok_step(s) for s in steps]
+
+    @staticmethod
+    def _concat(chunks: List[List[int]]) -> List[int]:
+        out: List[int] = []
+        for ids in chunks:
+            out.extend(ids)
+        return out
+
+    def make_minimal_pair_samples(self, batch):
+        formatted_batch = []
+        for i, item in enumerate(batch):
+            shuf_chunks = self._tok_steps(item['shuf'])
+            orig_chunks = self._tok_steps(item['orig'])
+
+            # Prompt = concatenation of shuffled step chunks
+            sep_ids = self.tokenizer.encode("\n\n", add_special_tokens=False)
+            prompt_ids = self._concat(shuf_chunks) + sep_ids
+            prompt_step_indices = [0] * len(prompt_ids)
+
+            # Target = concatenation of original step chunks
+            target_ids = self._concat(orig_chunks)
+
+            # Step indices align with the ORIGINAL order (1..N over orig)
+            target_step_indices = []
+            for step_num, chunk in enumerate(orig_chunks):
+                target_step_indices.extend([step_num + 1] * len(chunk))
+
+            # Combine (+ EOS)
+            full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
+            full_step_indices = prompt_step_indices + target_step_indices + [0]
+
+            # Mask
+            if 'completion_only' in self.attention_mask_type:
+                full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
+            elif 'full' in self.attention_mask_type:
+                full_attention_mask = [1] * len(full_input_ids)
+            else:
+                raise ValueError(f"Unknown attention_mask_type: {self.attention_mask_type}")
+
+            formatted_batch.append({
+                'input_ids': full_input_ids,
+                'attention_mask': full_attention_mask,
+                'step_indices': full_step_indices,
+                'binary_label': batch[i]['binary_label'],
+            })
+        return formatted_batch
+
+    def make_natlang_pair_samples(self, batch):    
+        formatted_batch = []
+        for i, item in enumerate(batch):
+            # 1. Construct Prompt (Index 0)
+            scrambled_text = "\n- ".join(item['shuf'])
+            prompt_str = (
+                f"Below is a jumbled list of recipe steps. Put them in the correct order.\n\n"
+                f"Input:\n- {scrambled_text}\n\n"
+                f"Correct order:\n"
+            )
+            prompt_ids = self.tokenizer.encode(prompt_str, add_special_tokens=False)
+            prompt_step_indices = [0] * len(prompt_ids)
+            
+            # 2. Construct Target Step-by-Step (Index 1..N)
+            target_ids = []
+            target_step_indices = []
+            
+            for step_num, step_str in enumerate(item['orig']):
+                # Format: "1. Step text"
+                # We add a newline BEFORE steps 2..N to separate them
+                prefix = ""
+                if step_num > 0:
+                    prefix = "\n"
+                
+                current_step_text = f"{prefix}{step_num + 1}. {step_str}"
+                step_tokens = self.tokenizer.encode(current_step_text, add_special_tokens=False)
+                
+                target_ids.extend(step_tokens)
+                target_step_indices.extend([step_num + 1] * len(step_tokens))
+            
+            # 3. Combine
+            full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
+            full_step_indices = prompt_step_indices + target_step_indices + [0]
+            
+            # 4. Mask
+            if 'completion_only' in self.attention_mask_type:
+                full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
+            elif 'full' in self.attention_mask_type:
+                full_attention_mask = [1] * len(full_input_ids)
+            else:
+                raise ValueError(f"Unknown attention_mask_type: {self.attention_mask_type}")
+            
+            formatted_batch.append({
+                'input_ids': full_input_ids,
+                'attention_mask': full_attention_mask,
+                'step_indices': full_step_indices,
+                'binary_label': batch[i]['binary_label'],
+            })
+        return formatted_batch
+
+    def make_one_sided_samples(self, batch, side='orig'):
+        formatted_batch = []
+        for i, item in enumerate(batch):
+            target_list = item[side]
+            
+            full_input_ids = []
+            full_step_indices = []
+            
+            for step_num, step_str in enumerate(target_list):
+                if step_num > 0: step_str = ' ' + step_str
+                
+                step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
+                full_input_ids.extend(step_tokens)
+                # Assign Index 1..N based on generation order
+                full_step_indices.extend([step_num + 1] * len(step_tokens))
+            
+            # Add EOS
+            full_input_ids.append(self.tokenizer.eos_token_id)
+            full_step_indices.append(0) # EOS is 0
+            
+            # Mask (One-sided is always full loss usually, but consistent with class logic)
+            full_attention_mask = [1] * len(full_input_ids)
+
+            formatted_batch.append({
+                'input_ids': full_input_ids,
+                'attention_mask': full_attention_mask,
+                'step_indices': full_step_indices,
+                'binary_label': batch[i]['binary_label'],
+            })
+        return formatted_batch
+
+def make_pos_neg_samples_dataset(data, k=1):
+    """
+    Creates batches of size k containing:
+    - 1 Positive pair (Original, Original, Label=1)
+    - k-1 Negative pairs (Original, Shuffled, Label=0)
+    
+    Handles small-sequence constraints to avoid infinite loops.
+    """
+
+    # Filter for valid sequences with at least 2 steps (cannot shuffle length 0 or 1)
+    step_list_orig = [x['directions'] for x in data if len(set(x['directions'])) > 1]
+    
+    print(f"Filtered Dataset Size: {len(step_list_orig)}")
+    dataset = []
+    
+    for orig in tqdm(step_list_orig, desc='Generating batches...'):
+        n_steps = len(orig)
+        batch = []
+        
+        # --- 1. Add Positive Sample ---
+        # The model needs to see the correct ordering with a label of 1
+        batch.append({
+            'orig': orig,
+            'shuf': orig,
+            'binary_label': 1
+        })
+        
+        # --- 2. determine Negative Count ---
+        # We need k-1 negatives, but we cannot ask for more unique shuffles than exist.
+        # Max unique shuffles = n! - 1 (the original)
+        max_possible_negatives = math.factorial(n_steps) - 1
+        target_negatives = k - 1
+        num_negatives = min(target_negatives, max_possible_negatives)
+        
+        selected_shuffles = []
+
+        # --- 3. Generate Negatives (Hybrid Strategy) ---
+        
+        # Strategy A: Deterministic (for small N)
+        # Prevents infinite loops when N is small (e.g., N=3 has only 5 wrong perms)
+        if n_steps <= 8:
+            # Generate all permutations, remove the original
+            all_perms = [list(p) for p in permutations(orig) if list(p) != orig]
+            # Sample without replacement
+            selected_shuffles = random.sample(all_perms, num_negatives)
+            
+        # Strategy B: Rejection Sampling (for large N)
+        # Faster for long recipes where collision probability is near zero
+        else:
+            seen_hashes = set()
+            while len(selected_shuffles) < num_negatives:
+                shuf = random.sample(orig, n_steps)
+                shuf_tuple = tuple(shuf)
+                
+                # Check 1: Is it unique in our current batch?
+                # Check 2: Is it accidentally the original?
+                if shuf_tuple not in seen_hashes and shuf != orig:
+                    seen_hashes.add(shuf_tuple)
+                    selected_shuffles.append(shuf)
+
+        # --- 4. Append Negatives to Batch ---
+        for shuf in selected_shuffles:
+            batch.append({
+                'orig': orig,
+                'shuf': shuf,
+                'binary_label': 0
+            })
+        dataset.append(batch)
+        
+    return dataset
+
+def make_random_samples_dataset(data):
     print(f"Dataset Size: {len(data)}")
     step_list_orig = [x['directions'] for x in tqdm(data, desc='Filtering...') if len(set(x['directions'])) > 1]
     
@@ -48,6 +377,173 @@ def make_pairs_from_recipenlg(data):
     
     print(f'Positive/negative sample ratio: {pos_ratio:.6f}')
     return data_pairs
+
+def pad_collate(batch, tokenizer, side = 'right'):
+    max_len = max([len(el['input_ids']) for el in batch])
+    input_ids_padded_list = []
+    attention_mask_padded_list = []
+    for el in batch:
+        input_ids_padded = tensor_pad(el['input_ids'], tokenizer.pad_token_id, max_len, side = side)
+        input_ids_padded_list.append(torch.tensor(input_ids_padded))
+        attention_mask_padded = tensor_pad(el['attention_mask'], 0, max_len, side = side)
+        attention_mask_padded_list.append(torch.tensor(attention_mask_padded))
+    input_ids_padded_tensor = torch.stack(input_ids_padded_list)
+    attention_mask_padded_tensor = torch.stack(attention_mask_padded_list)
+    return {
+        'input_ids': input_ids_padded_tensor,
+        'attention_mask': attention_mask_padded_tensor,
+    }
+
+def list_pad(t, pad_element, pad_length=0):
+    padded_t = t + [pad_element] * max(0, (pad_length - len(t)))
+    return padded_t
+
+def tensor_pad(t, pad_element, pad_length=0, side = 'right'):
+    def apply_padding(t, t_pad, dim, side=side):
+        if side == 'right':
+            return torch.cat([t, t_pad], dim = dim)
+        else:
+            return torch.cat([t_pad, t], dim = dim)
+        
+    assert t.dim() > 0
+    if t.dim() == 1:
+        t_pad = torch.tensor([pad_element] * (pad_length - t.size(0)))
+        t_pad = t_pad.to(dtype = t.dtype)
+        return apply_padding(t, t_pad, dim = 0)
+    elif t.dim() == 2:
+        B, _ = t.shape
+        t_pad = torch.tensor([pad_element] * (pad_length - t.size(1)))
+        t_pad = t_pad.to(dtype = t.dtype)
+        t_pad = t_pad.expand(B, pad_length)
+        return apply_padding(t, t_pad, dim = 1)
+    elif t.dim() == 3:
+        B, _, D = t.shape
+        t_pad = torch.tensor([pad_element] * (pad_length - t.size(1)))
+        t_pad = t_pad.to(dtype = t.dtype)
+        t_pad = t_pad.expand(B, pad_length, D)
+        return apply_padding(t, t_pad, dim = 1)
+
+class Collator:
+    def __init__(self, tokenizer):
+        self.tokenizer = tokenizer
+
+    def seq2seq_collate(self, batch):
+        """
+        Handles both:
+        1. Standard Datasets: batch = [dict, dict, ...]
+        2. Grouped/Batched Datasets: batch = [[dict, dict], [dict, dict], ...]
+        """
+        
+        # --- 1. FLATTENING LOGIC ---
+        # Check if the first element is a list. If so, we have a batch of batches.
+        if isinstance(batch[0], list):
+            # Flatten the list of lists into a single list of dicts
+            flat_batch = []
+            for group in batch:
+                flat_batch.extend(group)
+            batch = flat_batch
+            
+        # --- 2. Standard Padding Logic ---
+        
+        # Helper to safely get length of list or tensor
+        def get_len(seq):
+            return seq.size(0) if isinstance(seq, torch.Tensor) else len(seq)
+
+        # Determine max length in this specific batch
+        max_len = max([get_len(el['input_ids']) for el in batch])
+        
+        input_ids_list = []
+        attention_mask_list = []
+        step_indices_list = []
+        binary_labels_list = []
+
+        for el in batch:
+            # -- Input IDs --
+            # We use the global list_pad function you defined in your script
+            # Ensure input is a list before padding
+            ids = el['input_ids']
+            if isinstance(ids, torch.Tensor): ids = ids.tolist()
+                
+            input_ids_padded = list_pad(ids, pad_element=self.tokenizer.pad_token_id, pad_length=max_len)
+            input_ids_list.append(torch.tensor(input_ids_padded, dtype=torch.long))
+            
+            # -- Attention Mask --
+            mask = el['attention_mask']
+            if isinstance(mask, torch.Tensor): mask = mask.tolist()
+                
+            attention_mask_padded = list_pad(mask, pad_element=0, pad_length=max_len)
+            attention_mask_list.append(torch.tensor(attention_mask_padded, dtype=torch.long))
+            
+            # -- Step Indices --
+            if 'step_indices' in el:
+                steps = el['step_indices']
+                if isinstance(steps, torch.Tensor): steps = steps.tolist()
+                    
+                step_indices_padded = list_pad(steps, pad_element=0, pad_length=max_len)
+                step_indices_list.append(torch.tensor(step_indices_padded, dtype=torch.long))
+
+            # -- Binary Labels --
+            if 'binary_label' in el:
+                binary_labels_list.append(el['binary_label'])
+
+        # --- 3. Stack and Return ---
+        batch_dict = {
+            'input_ids': torch.stack(input_ids_list),
+            'attention_mask': torch.stack(attention_mask_list),
+        }
+        
+        if step_indices_list:
+            batch_dict['step_indices'] = torch.stack(step_indices_list)
+
+        if binary_labels_list:
+            # Float is usually better for labels if you plan to use BCEWithLogitsLoss later
+            batch_dict['binary_label'] = torch.tensor(binary_labels_list, dtype=torch.float)
+
+        return batch_dict
+
+    def dag_collate(self, batch):
+        assert len(batch) > 0
+        max_len = max([len(el['encodings']['input_ids']) for el in batch])
+        input_ids_list = []
+        attention_mask_list = []
+        step_indices_list = []
+        step_indices_tokens_list = []
+        head_indices_list = []
+        head_indices_tokens_list = []
+        batch_edge_list_words = []
+        batch_edge_list_tokens = []
+        for el in batch:
+            input_ids = el['encodings']['input_ids']
+            input_ids_padded = list_pad(input_ids, pad_element=self.tokenizer.pad_token_id, pad_length=max_len)
+            input_ids_list.append(torch.tensor(input_ids_padded))
+            attention_mask_padded = list_pad(el['encodings']['attention_mask'], pad_element=0, pad_length=max_len)
+            attention_mask_list.append(torch.tensor(attention_mask_padded))
+            step_indices_padded = list_pad(el['step_indices_tokens'], pad_element=0, pad_length=max_len)
+            step_indices_list.append(torch.tensor(step_indices_padded))
+            step_indices_tokens_padded = list_pad(el['step_indices_tokens'], pad_element=0, pad_length=max_len)
+            step_indices_tokens_list.append(torch.tensor(step_indices_tokens_padded))
+            head_indices_padded = list_pad(el['head_indices_tokens'], pad_element=0, pad_length=max_len)
+            head_indices_list.append(torch.tensor(head_indices_padded))
+            head_indices_padded_tokens = list_pad(el['head_indices_tokens'], pad_element=0, pad_length=max_len)
+            head_indices_tokens_list.append(torch.tensor(head_indices_padded_tokens))
+            batch_edge_list_words.append(el['G_words'])
+            batch_edge_list_tokens.append(el['G_tokens'])
+        input_ids_tensor = torch.stack(input_ids_list)
+        attention_mask_tensor = torch.stack(attention_mask_list)
+        step_indices_tensor = torch.stack(step_indices_list)
+        head_indices_tensor = torch.stack(head_indices_list)
+        step_indices_tensor_tokens = torch.stack(step_indices_tokens_list)
+        head_indices_tensor_tokens = torch.stack(head_indices_tokens_list)
+        return {
+            'input_ids': input_ids_tensor,
+            'attention_mask': attention_mask_tensor,
+            'step_indices': step_indices_tensor,
+            'head_indices': head_indices_tensor,
+            'step_indices_tokens': step_indices_tensor_tokens,
+            'head_indices_tokens': head_indices_tensor_tokens,
+            'G_words': batch_edge_list_words,
+            'G_tokens': batch_edge_list_tokens,
+        }
 
 class ICLDataset(Dataset):
     def __init__(self,
@@ -112,143 +608,6 @@ class ICLDataset(Dataset):
             'input_ids': input_ids,
             'attention_mask': torch.ones_like(input_ids, dtype = input_ids.dtype),
             }
-
-def pad_collate(batch, tokenizer, side = 'right'):
-    max_len = max([len(el['input_ids']) for el in batch])
-    input_ids_padded_list = []
-    attention_mask_padded_list = []
-    for el in batch:
-        input_ids_padded = tensor_pad(el['input_ids'], tokenizer.pad_token_id, max_len, side = side)
-        input_ids_padded_list.append(torch.tensor(input_ids_padded))
-        attention_mask_padded = tensor_pad(el['attention_mask'], 0, max_len, side = side)
-        attention_mask_padded_list.append(torch.tensor(attention_mask_padded))
-    input_ids_padded_tensor = torch.stack(input_ids_padded_list)
-    attention_mask_padded_tensor = torch.stack(attention_mask_padded_list)
-    return {
-        'input_ids': input_ids_padded_tensor,
-        'attention_mask': attention_mask_padded_tensor,
-    }
-
-def list_pad(t, pad_element, pad_length=0):
-    padded_t = t + [pad_element] * max(0, (pad_length - len(t)))
-    return padded_t
-
-def tensor_pad(t, pad_element, pad_length=0, side = 'right'):
-    def apply_padding(t, t_pad, dim, side=side):
-        if side == 'right':
-            return torch.cat([t, t_pad], dim = dim)
-        else:
-            return torch.cat([t_pad, t], dim = dim)
-        
-    assert t.dim() > 0
-    if t.dim() == 1:
-        t_pad = torch.tensor([pad_element] * (pad_length - t.size(0)))
-        t_pad = t_pad.to(dtype = t.dtype)
-        return apply_padding(t, t_pad, dim = 0)
-    elif t.dim() == 2:
-        B, _ = t.shape
-        t_pad = torch.tensor([pad_element] * (pad_length - t.size(1)))
-        t_pad = t_pad.to(dtype = t.dtype)
-        t_pad = t_pad.expand(B, pad_length)
-        return apply_padding(t, t_pad, dim = 1)
-    elif t.dim() == 3:
-        B, _, D = t.shape
-        t_pad = torch.tensor([pad_element] * (pad_length - t.size(1)))
-        t_pad = t_pad.to(dtype = t.dtype)
-        t_pad = t_pad.expand(B, pad_length, D)
-        return apply_padding(t, t_pad, dim = 1)
-
-class Collator:
-    def __init__(self, tokenizer):
-        self.tokenizer = tokenizer
-
-    def seq2seq_collate(self, batch):
-        # 1. Determine common length
-        max_len = max([len(el['input_ids']) for el in batch])
-        
-        input_ids_list = []
-        attention_mask_list = []
-        step_indices_list = []
-        binary_labels_list = [] # Store separately to stack later if they exist
-
-        for el in batch:
-            # Input IDs
-            input_ids = el['input_ids']
-            input_ids_padded = list_pad(input_ids, pad_element=self.tokenizer.pad_token_id, pad_length=max_len)
-            input_ids_list.append(torch.tensor(input_ids_padded))
-            
-            # Attention Mask
-            attention_mask = el['attention_mask']
-            attention_mask_padded = list_pad(attention_mask, pad_element=0, pad_length=max_len)
-            attention_mask_list.append(torch.tensor(attention_mask_padded))
-            
-            # Step Indices (New & Correct)
-            # We assume 'step_indices' exists because we updated the dataset code
-            step_indices = el['step_indices']
-            # Pad with 0 so the geometric loss ignores the padding
-            step_indices_padded = list_pad(step_indices, pad_element=0, pad_length=max_len)
-            step_indices_list.append(torch.tensor(step_indices_padded))
-
-            # Binary Label (Safety Check)
-            if 'binary_label' in el:
-                binary_labels_list.append(el['binary_label'])
-
-        # Stack logic
-        batch_dict = {
-            'input_ids': torch.stack(input_ids_list),
-            'attention_mask': torch.stack(attention_mask_list),
-            'step_indices': torch.stack(step_indices_list),
-        }
-
-        # Only add binary_label if it actually existed in the data
-        if binary_labels_list:
-            batch_dict['binary_label'] = torch.tensor(binary_labels_list)
-
-        return batch_dict
-
-    def dag_collate(self, batch):
-        assert len(batch) > 0
-        max_len = max([len(el['encodings']['input_ids']) for el in batch])
-        input_ids_list = []
-        attention_mask_list = []
-        step_indices_list = []
-        step_indices_tokens_list = []
-        head_indices_list = []
-        head_indices_tokens_list = []
-        batch_edge_list_words = []
-        batch_edge_list_tokens = []
-        for el in batch:
-            input_ids = el['encodings']['input_ids']
-            input_ids_padded = list_pad(input_ids, pad_element=self.tokenizer.pad_token_id, pad_length=max_len)
-            input_ids_list.append(torch.tensor(input_ids_padded))
-            attention_mask_padded = list_pad(el['encodings']['attention_mask'], pad_element=0, pad_length=max_len)
-            attention_mask_list.append(torch.tensor(attention_mask_padded))
-            step_indices_padded = list_pad(el['step_indices_tokens'], pad_element=0, pad_length=max_len)
-            step_indices_list.append(torch.tensor(step_indices_padded))
-            step_indices_tokens_padded = list_pad(el['step_indices_tokens'], pad_element=0, pad_length=max_len)
-            step_indices_tokens_list.append(torch.tensor(step_indices_tokens_padded))
-            head_indices_padded = list_pad(el['head_indices_tokens'], pad_element=0, pad_length=max_len)
-            head_indices_list.append(torch.tensor(head_indices_padded))
-            head_indices_padded_tokens = list_pad(el['head_indices_tokens'], pad_element=0, pad_length=max_len)
-            head_indices_tokens_list.append(torch.tensor(head_indices_padded_tokens))
-            batch_edge_list_words.append(el['G_words'])
-            batch_edge_list_tokens.append(el['G_tokens'])
-        input_ids_tensor = torch.stack(input_ids_list)
-        attention_mask_tensor = torch.stack(attention_mask_list)
-        step_indices_tensor = torch.stack(step_indices_list)
-        head_indices_tensor = torch.stack(head_indices_list)
-        step_indices_tensor_tokens = torch.stack(step_indices_tokens_list)
-        head_indices_tensor_tokens = torch.stack(head_indices_tokens_list)
-        return {
-            'input_ids': input_ids_tensor,
-            'attention_mask': attention_mask_tensor,
-            'step_indices': step_indices_tensor,
-            'head_indices': head_indices_tensor,
-            'step_indices_tokens': step_indices_tensor_tokens,
-            'head_indices_tokens': head_indices_tensor_tokens,
-            'G_words': batch_edge_list_words,
-            'G_tokens': batch_edge_list_tokens,
-        }
 
 class ProcTextDataset(Dataset):
     def __init__(self,
@@ -373,183 +732,12 @@ class ProcTextDataset(Dataset):
     def __len__(self):
         return len(self.data)
 
-class Seq2SeqDataset(Dataset):
-    def __init__(self,
-                 data,
-                 tokenizer,
-                 max_length=1024,
-                 prompt_type='minimal',
-                 loss_type='full',
-                 ):
-        super().__init__()
-        self.data = data
-        self.tokenizer = tokenizer
-        self.max_length = max_length
-        self.loss_type = loss_type
-        
-        if prompt_type == 'minimal':
-            self.make_pair_samples_minimal()
-        elif prompt_type == 'natlang':
-            self.make_pair_samples_natlang()
-        elif prompt_type == 'only_shuffled':
-            self.make_one_sided_samples(side='shuf')
-        elif prompt_type == 'only_original':
-            self.make_one_sided_samples(side='orig')
-            
-        self.prune_longs()
-
-    def make_pair_samples_minimal(self, batch_size=1000):
-        total_len = len(self.data)
-        
-        for start_idx in tqdm(range(0, total_len, batch_size), desc='Tokenizing Minimal...'):
-            end_idx = min(start_idx + batch_size, total_len)
-            batch_slice = self.data[start_idx:end_idx]
-            
-            for i, item in enumerate(batch_slice):
-                # 1. Prompt (Index 0)
-                prompt_text = ' '.join(item['shuf']) + ' '
-                prompt_ids = self.tokenizer.encode(prompt_text, add_special_tokens=False)
-                prompt_step_indices = [0] * len(prompt_ids)
-                
-                # 2. Target (Index 1..N)
-                target_ids = []
-                target_step_indices = []
-                
-                for step_num, step_str in enumerate(item['orig']):
-                    if step_num > 0: step_str = ' ' + step_str
-                    step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
-                    target_ids.extend(step_tokens)
-                    target_step_indices.extend([step_num + 1] * len(step_tokens))
-                
-                # 3. Combine
-                full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
-                full_step_indices = prompt_step_indices + target_step_indices + [0]
-                
-                # 4. Mask
-                if 'prompt_only_loss' in self.loss_type:
-                    full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
-                elif 'full' in self.loss_type:
-                    full_attention_mask = [1] * len(full_input_ids)
-                else:
-                    raise ValueError(f"Unknown loss_type: {self.loss_type}")
-
-                idx = start_idx + i
-                self.data[idx]['input_ids'] = full_input_ids
-                self.data[idx]['attention_mask'] = full_attention_mask
-                self.data[idx]['step_indices'] = full_step_indices
-
-    def make_pair_samples_natlang(self, batch_size=1000):
-        total_len = len(self.data)
-        
-        for start_idx in tqdm(range(0, total_len, batch_size), desc='Tokenizing NatLang...'):
-            end_idx = min(start_idx + batch_size, total_len)
-            batch_slice = self.data[start_idx:end_idx]
-            
-            for i, item in enumerate(batch_slice):
-                # 1. Construct Prompt (Index 0)
-                scrambled_text = "\n- ".join(item['shuf'])
-                prompt_str = (
-                    f"Below is a jumbled list of recipe steps. Put them in the correct order.\n\n"
-                    f"Input:\n- {scrambled_text}\n\n"
-                    f"Correct order:\n"
-                )
-                prompt_ids = self.tokenizer.encode(prompt_str, add_special_tokens=False)
-                prompt_step_indices = [0] * len(prompt_ids)
-                
-                # 2. Construct Target Step-by-Step (Index 1..N)
-                target_ids = []
-                target_step_indices = []
-                
-                for step_num, step_str in enumerate(item['orig']):
-                    # Format: "1. Step text"
-                    # We add a newline BEFORE steps 2..N to separate them
-                    prefix = ""
-                    if step_num > 0:
-                        prefix = "\n"
-                    
-                    current_step_text = f"{prefix}{step_num + 1}. {step_str}"
-                    step_tokens = self.tokenizer.encode(current_step_text, add_special_tokens=False)
-                    
-                    target_ids.extend(step_tokens)
-                    target_step_indices.extend([step_num + 1] * len(step_tokens))
-                
-                # 3. Combine
-                full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
-                full_step_indices = prompt_step_indices + target_step_indices + [0]
-                
-                # 4. Mask
-                if 'prompt_only_loss' in self.loss_type:
-                    full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
-                elif 'full' in self.loss_type:
-                    full_attention_mask = [1] * len(full_input_ids)
-                else:
-                    raise ValueError(f"Unknown loss_type: {self.loss_type}")
-
-                idx = start_idx + i
-                self.data[idx]['input_ids'] = full_input_ids
-                self.data[idx]['attention_mask'] = full_attention_mask
-                self.data[idx]['step_indices'] = full_step_indices
-
-    def make_one_sided_samples(self, side='orig', batch_size=1000):
-        total_len = len(self.data)
-        
-        for start_idx in tqdm(range(0, total_len, batch_size), desc=f'Tokenizing {side}...'):
-            end_idx = min(start_idx + batch_size, total_len)
-            batch_slice = self.data[start_idx:end_idx]
-            
-            for i, item in enumerate(batch_slice):
-                target_list = item[side]
-                
-                full_input_ids = []
-                full_step_indices = []
-                
-                for step_num, step_str in enumerate(target_list):
-                    if step_num > 0: step_str = ' ' + step_str
-                    
-                    step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
-                    full_input_ids.extend(step_tokens)
-                    # Assign Index 1..N based on generation order
-                    full_step_indices.extend([step_num + 1] * len(step_tokens))
-                
-                # Add EOS
-                full_input_ids.append(self.tokenizer.eos_token_id)
-                full_step_indices.append(0) # EOS is 0
-                
-                # Mask (One-sided is always full loss usually, but consistent with class logic)
-                full_attention_mask = [1] * len(full_input_ids)
-
-                idx = start_idx + i
-                self.data[idx]['input_ids'] = full_input_ids
-                self.data[idx]['attention_mask'] = full_attention_mask
-                self.data[idx]['step_indices'] = full_step_indices
-
-    def prune_longs(self):
-        data_pruned = []
-        for i in tqdm(range(len(self.data)), desc='Pruning long samples...'):
-            if len(self.data[i]['input_ids']) <= self.max_length:
-                data_pruned.append(self.data[i])
-        
-        removed = len(self.data) - len(data_pruned)
-        if removed > 0:
-            print(f"Pruned {removed} sequences exceeding {self.max_length} tokens.")
-        self.data = data_pruned
-
-    def __getitem__(self, index):
-        return self.data[index]
-    
-    def __len__(self):
-        return len(self.data)
-
-def read_csv_chunks(filepath, num_samples):
-    if num_samples == 0:
-        chunk_size = 100000
-        chunks = []
-        # Iterate over the file in chunks
-        with pd.read_csv(filepath, chunksize=chunk_size) as reader:
-            for chunk in reader:
-                chunks.append(chunk)
-        df = pd.concat(chunks, axis=0, ignore_index=True)
-    else:
-        # Load specific number of rows
-        df = pd.read_csv(filepath, nrows=num_samples)
-    return df
+def prepare_text_batch_prompt(batch, tokenizer):
+    prompt = ''
+    for i in range(batch['input_ids'].shape[0]):
+        decoded_all = tokenizer.decode(batch['input_ids'][i])
+        mask = batch['attention_mask'][i] == 1
+        valid_inputs = batch['input_ids'][i][mask]
+        decoded_valid = tokenizer.decode(valid_inputs)
+        prompt += (decoded_all + '\n\n' + ('-' * 100) + '\n\n' + decoded_valid + '\n\n' + f"Binary label: {batch['binary_label'][i]}" + '\n\n' + ('#' * 100) + '\n\n' )
+    return prompt

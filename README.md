@@ -1,3 +1,29 @@
+
+
+2026-02-16
+
+Evaluation idea:
+[s_1, s_2, ..., s_N] + [s_i] + [s_j] --> calculate loss on [s_i] + [s_j]
+[s_1, s_2, ..., s_N] + [s_i] + [s_j] --> calculate loss on [s_j] + [s_i]
+
+and check whether they are contained in the same cone (how?)
+
+2026-02-13
+new losses:
+- gated topo loss
+$$\mathcal{L}_{geo} = \sum_{i < j} \alpha_{j \to i} \cdot || \text{ReLU}(H_j - H_i) ||^2$$
+Where $\alpha_{j \to i}$ is the average attention weight from tokens in Step $j$ to tokens in Step $i$.
+- contrastive order loss
+$$\mathcal{L} = \max(0, E(H_i, H_j) - E(H_j, H_i) + \lambda)$$
+
+tried losses:
+- causal LM
+- kl
+- cone topological loss (order loss)
+
+new training:
+- batched k, 1 positive, k-1 negatives, causal LM
+
 Pre-training:
 - ablation: pre-train on just the unshuffled recipes
 - ablation: pre-train on just the shuffled recipes
@@ -38,7 +64,7 @@ Correct order:
 6. Let stand until firm, about 30 minutes.<|endoftext|>
 ```
 
-In the `full_loss` setting, all the prompt is used for loss calculation. In the `prompt_only_loss`, only the unshuffled (second) part is used.
+In the `full_input` setting, all the prompt is used for loss calculation. In the `completion_only`, only the unshuffled (second) part is used.
 
 
 We want the model to learn to produce different representations for each step, based on the underlying graph. Using sims.py we calculate the similarity between the step representations and compare them to the adjacency matrix A by calculating the auc(S, A) between A and the step similarity matrix S.
@@ -106,9 +132,9 @@ data_path_test = './data/cat_bench/catplan-data-release/generated_questions/test
 df_test = pd.read_json(data_path_test)
 
 # model_name = "openai-community/gpt2"
-# model_name = "models_tested/recipenlg/natlang/full_loss/gpt2_117000"
-model_name = "models_tested/recipenlg/natlang/prompt_only_loss/gpt2_48000"
-# model_name = "models_tested/recipenlg/minimal/prompt_only_loss/gpt2_91000"
+# model_name = "models_tested/recipenlg/natlang/full_input/gpt2_117000"
+model_name = "models_tested/recipenlg/natlang/completion_only/gpt2_48000"
+# model_name = "models_tested/recipenlg/minimal/completion_only/gpt2_91000"
 # model_name = "Qwen/Qwen3-14B-Base"
 # model_name = "Qwen/Qwen3-0.6B"
 # model_name = "Qwen/Qwen3-0.6B-Base"

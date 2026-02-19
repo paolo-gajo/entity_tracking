@@ -1,93 +1,55 @@
 import torch
-import torch.nn.functional as F
-from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from torch.utils.data.dataloader import DataLoader
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from utils_data import Seq2SeqDataset, Collator, make_pairs_from_recipenlg
-from utils_sys import save_model_tokenizer
+from utils_data import Seq2SeqDataset, Collator, make_random_samples_dataset, make_pos_neg_samples_dataset, prepare_text_batch_prompt
+from utils_sys import save_run, get_current_time_string, setup_config
+from utils_viz import save_heatmaps
+from sims import compute_scores
+from loss_functions import KLDivergenceLoss, CausalLMLoss, MaxMarginLoss, gather_losses
 from tqdm.auto import tqdm
 import argparse
 import json
-
-def compute_linear_refinement_loss(hidden_states, step_ids):
-    """
-    Enforces H_{t+1} <= H_{t} (Refinement) for the linear sequence 1->2->3...
-    This assumes the input 'hidden_states' corresponds to the SORTED recipe.
-    """
-    # hidden_states: (Batch, Seq_Len, Dim)
-    # step_ids: (Batch, Seq_Len) - 0=Pad, 1=Step1, 2=Step2...
-    
-    loss = torch.tensor(0.0, device=hidden_states.device)
-    valid_samples = 0
-
-    for b in range(hidden_states.size(0)):
-        # Get the unique steps in order (e.g., [1, 2, 3, 4, 5])
-        # We assume the target is the sorted recipe, so steps are monotonic
-        steps = step_ids[b].unique()
-        steps = steps[steps != 0] # Remove padding
-        steps = sorted(steps.tolist())
-        
-        if len(steps) < 2: continue
-            
-        # Pool embeddings for each step
-        h_list = []
-        for s in steps:
-            mask = (step_ids[b] == s)
-            # Mean pool the tokens for this step
-            h_list.append(hidden_states[b][mask].mean(dim=0))
-            
-        # Stack: (Num_Steps, Dim)
-        H = torch.stack(h_list)
-        
-        # We want H[t+1] inside H[t].
-        # Violation = H[t+1] - H[t] > 0
-        # Calculate diff between adjacent steps: H[1:] - H[:-1]
-        # i.e., Step2 - Step1, Step3 - Step2...
-        diff = H[1:] - H[:-1] 
-        
-        # Penalty: || ReLU(Next - Prev) ||^2
-        penalty = torch.norm(torch.relu(diff), dim=-1).pow(2).mean()
-        
-        loss += penalty
-        valid_samples += 1
-        
-    return loss / max(valid_samples, 1)
+import random
+import os
 
 def main(args):
-    train_config = args.__dict__
-
-    print('Train config:\n')
-    print(train_config)
-    with open(train_config['data_path'], 'r', encoding='utf8') as f:
+    train_config = setup_config(args.__dict__)
+    print(f'Train config:\n{json.dumps(train_config, indent = 4)}')
+    
+    with open(args.data_path, 'r', encoding='utf8') as f:
         data = json.load(f)
+        data = sorted(data, key = lambda x: random.random())
 
-    if train_config['num_samples'] > 0:
-        data = data[:train_config['num_samples']]
-
-    data_pairs = make_pairs_from_recipenlg(data)
+    if args.num_samples > 0:
+        data = data[:args.num_samples]
+    
+    if args.batch_mode == 'pos_neg':
+        data_pairs = make_pos_neg_samples_dataset(data, k = args.k)
+    elif args.batch_mode == 'random_samples':
+        data_pairs = make_random_samples_dataset(data)
+        data_pairs = sorted(data_pairs, key = lambda x: random.random())
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    print(f"Loading Active Model: {train_config['model_name']}")
-    model = AutoModelForCausalLM.from_pretrained(train_config['model_name'],
+    print(f"Loading Active Model: {args.model_name}")
+    model = AutoModelForCausalLM.from_pretrained(args.model_name,
                                                  output_hidden_states = True
                                                  ).to(device)
     model.train()
 
-    if train_config['use_kl']:
-        print(f"Loading Reference Model (Frozen): {train_config['model_name']}")
-        ref_model = AutoModelForCausalLM.from_pretrained(train_config['model_name']).to(device)
+    if args.use_kl:
+        print(f"Loading Reference Model (Frozen): {args.model_name}")
+        ref_model = AutoModelForCausalLM.from_pretrained(args.model_name).to(device)
         ref_model.eval()
         for param in ref_model.parameters(): # ref model needs to be frozen
             param.requires_grad = False
 
-    tokenizer = AutoTokenizer.from_pretrained(train_config['model_name'])
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name, add_prefix_space=True)
 
     max_length = 2048
-    if 'gpt2' in train_config['model_name']:
+    if 'gpt2' in args.model_name:
         max_length = 1024
-        tokenizer.add_prefix_space = True
         if not tokenizer.pad_token_id:
             tokenizer.pad_token_id = tokenizer.eos_token_id
         if not tokenizer.bos_token_id:
@@ -96,103 +58,102 @@ def main(args):
     dataset = Seq2SeqDataset(data_pairs,
                             tokenizer,
                             max_length,
-                            prompt_type = train_config['prompt_type'],
-                            loss_type = train_config['loss_type'],
+                            prompt_type = args.prompt_type,
+                            attention_mask_type = args.attention_mask_type,
+                            batch_mode = args.batch_mode,
+                            min_recipe_steps = args.min_recipe_steps,
                             ) 
     
     collator = Collator(tokenizer=tokenizer)
-    dataloader = DataLoader(dataset, batch_size=train_config['batch_size'], collate_fn=collator.seq2seq_collate, shuffle=True)
+    dataloader = DataLoader(dataset,
+                            batch_size=args.batch_size,
+                            collate_fn=collator.seq2seq_collate,
+                            shuffle=True,
+                            )
     
-    loss_fn = CrossEntropyLoss()
-    optimizer = AdamW(params=model.parameters(), lr=train_config['lr'])
+    causal_lm_loss_fn = CausalLMLoss()
+    max_margin_loss_fn = MaxMarginLoss(alpha=args.margin_alpha, activations=args.activations)
+    kl_loss_fn = KLDivergenceLoss(ref_model) if args.use_kl else None
+    
+    optimizer = AdamW(params=model.parameters(), lr=args.lr)
     tbar = tqdm(dataloader)
 
-    steps = 0
-
+    num_steps = 0
+    losses = []
+    prompt = None
     for batch in tbar:
-        batch['labels'] = batch['input_ids'].clone()
-        batch['labels'][batch['attention_mask'] == 0] = -100
         batch = {k: v.to(device) for k, v in batch.items()}
 
         outputs = model(input_ids=batch['input_ids'], attention_mask=batch['attention_mask'])
         logits = outputs.logits
         lhs = outputs.hidden_states[-1]
-        shift_logits = logits[..., :-1, :].contiguous()
+
+        if args.save_heatmaps:
+            S_directed, S_undirected = compute_scores(lhs[0], batch['step_indices'][0])
+            save_heatmaps(S_directed, S_undirected, suffix=f'_{num_steps}')
         
-        shift_labels = batch['labels'][..., 1:].contiguous()
-        shift_attention_mask = batch['attention_mask'][..., 1:].contiguous()
-
-        task_loss = loss_fn(shift_logits.view(-1, model.config.vocab_size), shift_labels.view(-1))
-
-        if train_config['use_kl']:
-            with torch.no_grad():
-                ref_outputs = ref_model(input_ids=batch['input_ids'], attention_mask=batch['attention_mask'])
-                ref_logits = ref_outputs.logits
-    
-            shift_ref_logits = ref_logits[..., :-1, :].contiguous()
-    
-            log_probs_model = F.log_softmax(shift_logits, dim=-1)
-            probs_ref = F.softmax(shift_ref_logits, dim=-1)
-        
-            kl_per_token = F.kl_div(log_probs_model, probs_ref, reduction='none').sum(dim=-1)
-            valid_mask = shift_attention_mask.float()
-            
-            num_valid_tokens = valid_mask.sum()
-            if num_valid_tokens > 0:
-                kl_loss = (kl_per_token * valid_mask).sum() / num_valid_tokens
-            else:
-                kl_loss = torch.tensor(0.0, device=device)
-        else:
-            kl_loss = torch.tensor(0.0, device=device)
-
-        if args.use_order_loss:
-            # Pass lhs (Last Hidden State) and indices
-            raw_geo_loss = compute_linear_refinement_loss(lhs, batch['step_indices'])
-            # Scale it!
-            order_loss = args.geo_lambda * raw_geo_loss
-        else:
-            order_loss = torch.tensor(0.0, device=device)
-
-        total_loss = task_loss + (args.kl_beta * kl_loss) + order_loss
-
+        loss = gather_losses(args, causal_lm_loss_fn, kl_loss_fn, max_margin_loss_fn, logits, batch, device, lhs)
         optimizer.zero_grad()
-        total_loss.backward()
+        loss['total_loss'].backward()
         optimizer.step()
-        
-        tbar.set_description(f'Task: {task_loss.item():.3f} | KL: {kl_loss.item():.3f} | Order: {order_loss.item():.3f}')
+        tbar.set_description(f"| Causal: {loss['causal_lm_loss'].item():.3f} "
+                             f"| KL: {loss['kl_loss'].item():.3f} "
+                             f"| MML: {loss['max_margin_loss'].item():.3f} "
+                             )
 
-        if steps == 0:
-            i = 0
-            decoded_all = tokenizer.decode(batch['input_ids'][i])
-            print(decoded_all)
-            print('#' * 100)
-            mask = batch['attention_mask'][i] == 1
-            valid_inputs = batch['input_ids'][i][mask]
-            decoded_valid = tokenizer.decode(valid_inputs)
-            print(decoded_valid)
-            print('#' * 100)
-        steps += 1
-        
-        if steps % train_config['save_interval'] == 0:
+        losses.append({
+            "step": num_steps,
+            "total": float(loss["total_loss"].detach().cpu()),
+            "causal": float(loss["causal_lm_loss"].detach().cpu()),
+            "kl": float(loss["kl_loss"].detach().cpu()),
+            "mml": float(loss["max_margin_loss"].detach().cpu()),
+        })
+
+        if num_steps == 0:
+            prompt = prepare_text_batch_prompt(batch, tokenizer)
+            print(prompt, file = open('./misc/last_prompt.txt', 'w'))
+
+        num_steps += 1
+        if num_steps % args.save_interval == 0:
             save_config = train_config.copy()
-            if args.use_order_loss:
-                save_config['loss_type'] = save_config['loss_type'] + '_with_order_loss'
-            save_config['steps'] = steps
-            save_model_tokenizer(model, tokenizer, save_config)
+            save_config['num_steps'] = num_steps
+            model_save_dir = os.path.join(train_config['model_save_dir'],
+                                str(num_steps),
+                                get_current_time_string(),
+                                )
+            save_run(save_config, model_save_dir, model, tokenizer, prompt)
+    json_path = os.path.join(train_config['model_save_dir'], 'losses.json')
+    if os.path.exists(train_config['model_save_dir']):
+        with open(json_path, 'w', encoding='utf8') as f:
+            json.dump(losses, f, ensure_ascii = False, indent = 4) 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Pre-train a causal LM on RecipeNLG to learn to unshuffle recipes")
     parser.add_argument("--model_name", help="model path or name", default = "openai-community/gpt2")
-    parser.add_argument("--data_path", help="dataset path", default = "./data/recipenlg/recipenlg_processed.json")
-    parser.add_argument("--prompt_type", help="type of prompt to use while training", default = "minimal")
-    parser.add_argument("--loss_type", help="type of prompt to use while training", default = "full")
+    parser.add_argument("--data_path", help="dataset path", default = "./data/recipenlg/recipenlg_clean_100k.json")
+    parser.add_argument("--prompt_type", help="type of prompt to use while training", default = "minimal_pairs")
+    parser.add_argument("--attention_mask_type", help="type of prompt to use while training", default = "completion_only")
     parser.add_argument("--num_samples", help="number of samples to draw from the dataset", default = 10_000, type = int)
-    parser.add_argument("--batch_size", help="batch size", default = 16, type = int)
+    parser.add_argument("--batch_size", help="batch size", default = 8, type = int)
+    parser.add_argument("--lr", help="learning rate", default = 5e-5, type = float)
+    parser.add_argument("--save_interval", help="number of steps after which the model is saved", default = 1000, type = int)
+    parser.add_argument("--use_causal_lm_loss", default=1, type=int, help="Enable causal lm loss")
     parser.add_argument("--use_kl", help="whether to include KL normalization in the loss", default = 0, type = int)
     parser.add_argument("--kl_beta", help="KL beta term", default = 0.1, type = float)
-    parser.add_argument("--save_interval", help="number of steps after which the model is saved", default = 1000, type = int)
-    parser.add_argument("--lr", help="learning rate", default = 5e-5, type = float)
     parser.add_argument("--use_order_loss", default=0, type=int, help="Enable geometric refinement loss")
     parser.add_argument("--geo_lambda", default=0.1, type=float, help="Weight for the geometric loss")
+    parser.add_argument("--use_max_margin_loss", default=0, type=int, help="Enable geometric refinement loss")
+    parser.add_argument("--margin_alpha", help="max margin loss alpha", default = 0.05, type = float)
+    parser.add_argument("--batch_mode", default='random_samples', type=str, help="Type of batch to use for training") # `random_samples`, `pos_neg`
+    parser.add_argument("--k", default=8, type=int, help="Number of pairs per batch when using batched pair generation")
+    parser.add_argument("--min_recipe_steps", default=0, type=int, help="Minimum number of steps for a recipe")
+    parser.add_argument("--save_heatmaps", default=0, type=int, help="whether to save heatmaps at each step for debugging")
+    parser.add_argument("--activations", default='real', type=str, help="whether to force activations to be `non-negative` or just `real`")
     args = parser.parse_args()
+
+    if args.prompt_type in ['minimal_mono', 'only_shuffled', 'only_original']:
+        assert args.attention_mask_type == 'full_input', f'Only `args.attention_mask_type` == `full_input` makes sense with `prompt_type` == `{args.prompt_type}`'
+    
+    assert any([args.use_causal_lm_loss, args.use_order_loss, args.use_max_margin_loss]), 'at least one loss has to be used!'
+
     main(args)

@@ -1,8 +1,9 @@
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
-def plot_tensor_heatmap(tensor, filename = 'tensor.pdf', title="Tensor Heatmap", cmap="viridis", text_color="white"):
+def plot_tensor_heatmap(tensor, filename = 'tensor.pdf', title="Tensor Heatmap", cmap="viridis", text_color="white", dpi = 100):
     """
     Plots an NxN PyTorch tensor as a heatmap.
     
@@ -40,16 +41,23 @@ def plot_tensor_heatmap(tensor, filename = 'tensor.pdf', title="Tensor Heatmap",
 
     # 5. Add Text Annotations (Loop through cells)
     # Only do this if the tensor is reasonably small to prevent clutter
-    if data.shape[0] <= 20 and data.shape[1] <= 20:
-        for i in range(data.shape[0]):
-            for j in range(data.shape[1]):
-                # Formatting float to 2 decimal places
-                text = ax.text(j, i, f"{data[i, j]:.2f}",
-                               ha="center", va="center", color=text_color, fontweight='bold')
+    # if data.shape[0] <= 20 and data.shape[1] <= 20:
+    #     for i in range(data.shape[0]):
+    #         for j in range(data.shape[1]):
+    #             # Formatting float to 2 decimal places
+    #             text = ax.text(j, i, f"{data[i, j]:.2f}",
+    #                            ha="center", va="center", color=text_color, fontweight='bold')
 
     ax.set_title(title)
     fig.tight_layout()
-    plt.savefig(filename, format = 'pdf')
+    plt.savefig(filename, dpi = dpi)
+
+
+def save_heatmaps(S_directed, S_undirected, suffix = ''):
+    S_directed_save_path = os.path.join('./heatmaps', f'S_directed{suffix}.png')
+    S_undirected_save_path = os.path.join('./heatmaps', f'S_undirected{suffix}.png')
+    plot_tensor_heatmap(S_directed, S_directed_save_path, dpi = 100)
+    plot_tensor_heatmap(S_undirected, S_undirected_save_path, dpi = 10)
 
 def main():
 

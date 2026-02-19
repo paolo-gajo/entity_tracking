@@ -19,34 +19,27 @@ def main(args):
     data_path_test = './data/cat_bench/catplan-data-release/generated_questions/test_must_why/test_must_why.json'
     df_test = pd.read_json(data_path_test)
 
-    model_name = args.model_dir
-
-    # model_name = "openai-community/gpt2"
-    model_name = "models/recipenlg/minimal/prompt_only_loss_with_order_loss/gpt2/1000"
-    # model_name = "Qwen/Qwen3-14B-Base"
-    # model_name = "Qwen/Qwen3-0.6B"
-    # model_name = "Qwen/Qwen3-0.6B-Base"
-    # model_name = "meta-llama/Llama-3.1-8B"
-
-    add_prefix_space = True if 'gpt2' in model_name else False
+    add_prefix_space = True if 'gpt2' in args.model_dir else False
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-    tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=add_prefix_space)
+    model = AutoModelForCausalLM.from_pretrained(args.model_dir).to(device)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_dir, add_prefix_space=add_prefix_space)
 
     max_length = 2048
 
-    if 'gpt2' in model_name:
+    if 'gpt2' in args.model_dir:
         if not tokenizer.pad_token_id:
             tokenizer.pad_token_id = tokenizer.eos_token_id
         if not tokenizer.bos_token_id:
             tokenizer.bos_token_id = tokenizer.eos_token_id
         max_length = 1024
-    if model_name in ["meta-llama/Llama-3.1-8B"]:
+    if "meta-llama/Llama-3.1-8B" in args.model_dir:
         if not tokenizer.pad_token_id:
             tokenizer.pad_token_id = tokenizer.eos_token_id
 
     n_icl = 1
+    df_train = df_train[df_train['type'] == 'real']
+    df_train = df_train.sample(frac=1)
     df_test = df_test[df_test['type'] == 'real']
     df_test = df_test.sample(frac=1)
     num_samples = 0
@@ -143,11 +136,11 @@ def main(args):
     # Calculate F1
     f1 = f1_score(golds, preds, average='macro') # Use macro or binary as needed
     report = classification_report(golds, preds)
-    print(model_name)
+    print(args.model_dir)
     print(report)
     print(f"F1 Score: {f1}")
 
-    report_json_path = os.path.join(model_save_dir, f"results_{model_name.split('/')[-1]}.json")
+    report_json_path = os.path.join(model_save_dir, f"results_{args.model_dir.split('/')[-1]}.json")
     # Ensure directory exists
     os.makedirs(os.path.dirname(report_json_path), exist_ok=True)
 
@@ -156,6 +149,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Eval an LLM on CaT-Bench through ICL")
-    parser.add_argument("--model_dir", help="model dir")
+    parser.add_argument("--model_dir", help="model dir", default='openai-community/gpt2')
     args = parser.parse_args()
     main(args)

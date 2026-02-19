@@ -300,7 +300,7 @@ def get_model_info(model_path):
         save_path = os.path.join(
             "./results_by_topo", 
             train_config.get('prompt_type', 'unknown'), 
-            train_config.get('loss_type', 'unknown'), 
+            train_config.get('attention_mask_type', 'unknown'), 
             model_simple
         )
     else:

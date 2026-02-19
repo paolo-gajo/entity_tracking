@@ -13,8 +13,7 @@ from scipy import stats
 import os
 from natsort import natsorted
 from sklearn.metrics import roc_auc_score
-
-# --- Metrics & Math ---
+from utils_sys import setup_config
 
 def get_auc(S: torch.Tensor, A: np.ndarray, verbose=False) -> float:
     """
@@ -60,8 +59,6 @@ def calculate_statistics(auc_list, q=0.975):
     moe = moe if not np.isnan(moe) else 0
     return mu, moe, sem_r
 
-# --- Data & Topology ---
-
 def load_data(json_path_list):
     data = []
     for json_path in json_path_list:
@@ -104,7 +101,7 @@ def get_shuffled_order(G, current_step_indices, shuffle_type):
         # Random permutation that is NOT a valid topological sort
         step_order_shuffled = step_order
         # Sample until pi \in P(G) \ T(G)
-        while step_order_shuffled in topo_orders and step_order_shuffled == step_order:
+        while (step_order_shuffled in topo_orders) or (step_order_shuffled == step_order):
             step_order_shuffled = sorted(step_order, key=lambda k: random.random())
         return step_order_shuffled
 
@@ -119,11 +116,10 @@ def get_shuffled_order(G, current_step_indices, shuffle_type):
     
     return step_order
 
-# --- Model & Inference ---
-
 def setup_model(model_name, device):
     print(f'Loading model: {model_name}')
     model = AutoModel.from_pretrained(model_name).to(device)
+    model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
     
     # GPT-2 specific fix
@@ -145,29 +141,37 @@ def get_step_embeddings(hidden_states, step_indices, step_order):
         h_step_list.append(h_step_pooled)
     return torch.stack(h_step_list)
 
-def compute_scores(model, input_ids, attention_mask, step_indices, step_order):
-    """Run model and compute directed and undirected similarity matrices."""
-    
-    # 1. Forward Pass
+def run_model(model, input_ids, attention_mask, activations = 'real'):
     model_output = model(
         input_ids=input_ids.unsqueeze(0), 
         attention_mask=attention_mask.unsqueeze(0)
     )
     lhs = model_output.last_hidden_state.squeeze(0) # Remove batch dim
+    if activations == 'non-negative':
+        lhs = torch.abs(lhs)
+    return lhs
 
-    # 2. Pooling
-    H_steps = get_step_embeddings(lhs, step_indices, step_order)
+def compute_scores(hidden_states, step_indices, step_order):
+    # """Run model and compute directed and undirected similarity matrices."""
+    
+    # Pooling
+    H_steps = get_step_embeddings(hidden_states, step_indices, step_order)
+    # H_steps shape: [N_steps, Dim]
 
-    # 3. Directed Score (Order Embedding / Asymmetric)
-    # diff[i, j] = H[j] - H[i] (Target - Source)
+    # Broadcast: [N, 1, D] - [1, N, D] = Row - Col
     diff = H_steps.unsqueeze(0) - H_steps.unsqueeze(1)
-    S_directed = -torch.norm(torch.relu(diff), dim=-1).pow(2)
+    
+    # Penalty = relu(Row - Col) 
+    # If Row (Past) > Col (Future), this is positive -> High Penalty.
+    penalty = torch.relu(diff).pow(2).sum(dim=-1)
+    # Score is negative energy
+    S_directed = -penalty
 
-    # 4. Undirected Score (Cosine Similarity)
+    # Undirected Score (Cosine Similarity)
     Hc = H_steps - H_steps.mean(dim=0, keepdim=True)
     Hn = Hc / (Hc.norm(dim=1, keepdim=True) + 1e-8)
     S_undirected = Hn @ Hn.T
-    return S_directed, S_undirected
+    return S_directed, S_undirected, H_steps
 
 # --- Main Logic ---
 
@@ -213,11 +217,30 @@ def process_model(model_name, args, data):
                 
                 step_order = get_shuffled_order(G, orig_indices, shuffle_type)
                 if step_order is None: continue 
+                
+                nodes = set(G.nodes()) - {0}
+                so = set(step_order)
+
+                assert so == nodes, f"node mismatch: |step_order|={len(so)} |G.nodes|={len(nodes)} " \
+                                    f"missing={sorted(nodes - so)[:10]} extra={sorted(so - nodes)[:10]}"
+                
+                steps_in_seq = set(orig_indices.unique().tolist()) - {0}
+                assert set(step_order) == steps_in_seq, \
+                    f"step indices / step_order mismatch: steps_in_seq={sorted(steps_in_seq)} step_order={step_order}"
 
                 input_ids, step_indices = apply_step_order(orig_input_ids, step_order, orig_indices)
-                
+
+                assert set(step_indices.unique().tolist()) - {0} == steps_in_seq
+                assert (step_indices != 0).sum().item() == (orig_indices != 0).sum().item()
+
+                for j in step_order:
+                    old_pos = torch.where(orig_indices == j)[0]
+                    new_pos = torch.where(step_indices == j)[0]
+                    assert torch.all(orig_input_ids[old_pos] == input_ids[new_pos]), f"Token order changed within step {j}"
+
                 # Compute
-                S_dir, S_undir = compute_scores(model, input_ids, batch['attention_mask'][0], step_indices, step_order)
+                lhs = run_model(model, input_ids, batch['attention_mask'][0], args.activations)
+                S_dir, S_undir, H_steps = compute_scores(lhs, step_indices, step_order)
                 if run_idx == 0 and batch_idx == 0:
                     if 'models' in model.config.name_or_path:
                         model_dir = model.config.name_or_path
@@ -230,14 +253,19 @@ def process_model(model_name, args, data):
                     plot_tensor_heatmap(S_undir, S_undirected_save_path)
                 
                 # Evaluate
+                if args.use_transitive_closure:
+                    G = nx.transitive_closure(G)
                 A = nx.to_numpy_array(G, nodelist=step_order)
+                
+                assert A.shape == (len(step_order), len(step_order))
+                assert np.all(np.diag(A) == 0), "Unexpected self-loops (diag != 0)"
                 
                 auc_d = get_auc(S_dir, A)
                 auc_u = get_auc(S_undir, A)
                 
                 if not np.isnan(auc_d): current_run_scores['directed'].append(auc_d)
                 if not np.isnan(auc_u): current_run_scores['undirected'].append(auc_u)
-            
+                
             # Aggregate: Calculate the mean for this specific run and store it
             if current_run_scores['directed']:
                 run_means['directed'].append(np.mean(current_run_scores['directed']))
@@ -255,28 +283,30 @@ def process_model(model_name, args, data):
             
     return results
 
-def get_model_info(model_path):
-    """
-    Parses the model path and config to determine the results directory.
-    Returns the save path and the loaded train_config (if available).
-    """
-    # Robustly handle trailing slashes when getting the directory name
-    model_simple = os.path.basename(os.path.normpath(model_path))
-    
-    train_conf_path = os.path.join(model_path, 'train_config.json')
+def get_model_info(model_path, args, task_name="sims_erfgc"):
+    train_conf_path = os.path.join(model_path, "train_config.json")
+
     if os.path.exists(train_conf_path):
-        with open(train_conf_path, 'r') as f: 
-            train_config = json.load(f)
-        save_path = os.path.join(
-            "./results", 
-            train_config.get('prompt_type', 'unknown'), 
-            train_config.get('loss_type', 'unknown'), 
-            model_simple
-        )
-    else:
-        train_config = {}
-        save_path = os.path.join('./results', "baseline", model_simple)
-        
+        with open(train_conf_path, "r", encoding="utf8") as f:
+            train_config_raw = json.load(f)
+
+        # Recompute canonical model_save_dir using the same function as training
+        train_config = setup_config(train_config_raw)
+
+        model_save_dir = os.path.normpath(train_config["model_save_dir"])
+        num_steps = str(train_config.get("num_steps", 0))
+
+        # Mirror ./models/... -> ./results/<task_name>/...
+        rel = os.path.relpath(model_save_dir, start=os.path.normpath("./models"))
+        save_path = os.path.join("./results", task_name, rel, num_steps)
+        return save_path, train_config
+
+    # Baseline / no train_config.json
+    train_config = {"num_steps": 0}
+    model_leaf = os.path.basename(os.path.normpath(model_path))
+    save_path = os.path.join(
+        "./results", task_name, "baseline", model_leaf, f"activations={args.activations}", "0"
+    )
     return save_path, train_config
 
 def save_results_to_disk(results, save_path, train_config, args):
@@ -305,19 +335,25 @@ def main(args):
     # Determine Model List
     if not os.path.exists(args.model_dir):
         # Treat as a single model reference (e.g. "openai-community/gpt2")
-        model_list = [args.model_dir]
+        model_list = [{'path': args.model_dir, 'num_steps': 0}]
     else:
         # Treat as a directory containing multiple model subdirectories
-        model_list = natsorted([
-            os.path.join(args.model_dir, el) for el in os.listdir(args.model_dir) 
-            if os.path.isdir(os.path.join(args.model_dir, el))
-        ])
-
-    for model_name in model_list:
+        model_list = []
+        for root, dirs, files in os.walk(args.model_dir):
+            for F in files:
+                if F == 'train_config.json':
+                    train_config_path = os.path.join(root, F)
+                    with open(train_config_path, 'r', encoding='utf8') as f:
+                        num_steps = json.load(f)['num_steps']
+                    model_list.append({'path': root, 'num_steps': num_steps})
+        model_list = sorted(model_list, key = lambda x: x['num_steps'])
+        assert len(model_list) == len(set([el['num_steps'] for el in model_list])), 'num_steps are not unique!'
+    for model in model_list:
         # --- Check if results exist before processing ---
-        save_path, train_config = get_model_info(model_name)
+        model_name = model['path']
+        save_path, train_config = get_model_info(model_name, args)
+
         result_file = os.path.join(save_path, "results.json")
-        
         if os.path.exists(result_file) and not args.repeat:
             print(f"Skipping {model_name}: Results already exist at {result_file}")
             continue
@@ -334,9 +370,11 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_dir", default="openai-community/gpt2")
-    parser.add_argument("--n_runs", default=10, type=int)
-    parser.add_argument("--save_results", default=0, type=int)
+    parser.add_argument("--n_runs", default=1, type=int)
+    parser.add_argument("--save_results", default=1, type=int)
     parser.add_argument("--verbose_results", default=1, type=int)
-    parser.add_argument("--repeat", default=0, type=int)
+    parser.add_argument("--use_transitive_closure", default=0, type=int) # we do not want to use transitive closure, because what we are evaluating the model for is being able to retrieve the ground-truth edges, not reachability pairs
+    parser.add_argument("--repeat", default=1, type=int)
+    parser.add_argument("--activations", default='real', type=str, help="whether to force activations to be `non-negative` or `real`")
     args = parser.parse_args()
     main(args)
