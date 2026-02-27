@@ -1,3 +1,4 @@
+# eval_zeroshot.py
 import torch
 import pandas as pd
 import numpy as np
@@ -9,101 +10,133 @@ import json
 import argparse
 from sims import get_model_info
 
-def get_geometric_scores(batch_df, tokenizer, model, device, bigger_objective = 'future', activations = 'real'):
-    inputs = []
-    step_spans_batch = []
-    
-    # Reset index to ensure safe enumeration
-    batch_df = batch_df.reset_index(drop=True)
-    
-    # 1. Tokenization & Spans
-    for _, row in batch_df.iterrows():
-        steps = row['steps']
-        ids_list = []
-        step_ranges = [] 
-        current_len = 0
-        
-        # Consistent with your training which used space delimiters
-        for step in steps:
-            step_text = " " + step.strip()          # always
-            step_ids  = tokenizer.encode(step_text, add_special_tokens=False)
+def build_concat_inputs_from_steps(steps, tokenizer, device):
+    """
+    Mimic sims.py: concatenate all step token ids into one sequence and
+    produce a step_indices vector with the same length.
+    Step indices are 1..N (0 is reserved).
+    """
+    ids_list = []
+    idx_list = []
+    cur = 0
 
-            start = current_len
-            end   = current_len + len(step_ids)
-            step_ranges.append((start, end))
+    for j, step in enumerate(steps, start=1):
+        step_text = " " + step.strip()   # keep your training delimiter behavior
+        step_ids = tokenizer.encode(step_text, add_special_tokens=False)
 
-            ids_list.extend(step_ids)
-            current_len = end
-            
-        inputs.append(torch.tensor(ids_list))
-        step_spans_batch.append(step_ranges)
+        ids_list.extend(step_ids)
+        idx_list.extend([j] * len(step_ids))
+        cur += len(step_ids)
 
-    # 2. Pad & Batch
-    if not inputs: return np.array([])
-        
-    max_len = max(len(x) for x in inputs)
-    # Cap at model max length (usually 1024 for GPT-2)
-    max_len = min(max_len, getattr(model.config, 'n_positions', 1024))
-    
-    input_ids = torch.zeros((len(inputs), max_len), dtype=torch.long).to(device)
-    # Use 0 if pad token is missing (common in base GPT-2)
-    pad_id = tokenizer.pad_token_id if tokenizer.pad_token_id is not None else 0
-    input_ids.fill_(pad_id)
-    
-    attention_mask = torch.zeros((len(inputs), max_len), dtype=torch.long).to(device)
-    
-    for i, seq in enumerate(inputs):
-        l = min(len(seq), max_len)
-        input_ids[i, :l] = seq[:l]
-        attention_mask[i, :l] = 1
+    if len(ids_list) == 0:
+        # empty sample; return empty tensors
+        return (
+            torch.zeros((0,), dtype=torch.long, device=device),
+            torch.zeros((0,), dtype=torch.long, device=device),
+            torch.zeros((0,), dtype=torch.long, device=device),
+        )
 
-    # 3. Forward Pass
-    with torch.no_grad():
-        outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
-    
-    hidden_states = outputs.last_hidden_state
-    if activations == 'non-negative':
-        hidden_states = torch.abs(hidden_states)
-    
-    scores = []
-    
-    for i in range(len(batch_df)):
-        row_data = batch_df.iloc[i]
-        # CatBench: [u, v] means "Must v happen after u?"
-        # u = Past (General), v = Future (Specific)
-        ranges = step_spans_batch[i]
-        idx_a, idx_b = row_data['step_pair_idx_asked_about']
-        start_a, end_a = ranges[idx_a]
-        start_b, end_b = ranges[idx_b]
-        if end_a > max_len or end_b > max_len:
-            scores.append(np.nan)  # or skip
-            continue
-        def get_pooling(step_idx, h_state, ranges):
-            if step_idx >= len(ranges): return torch.zeros(h_state.shape[-1]).to(device)
-            start, end = ranges[step_idx]
-            if start >= h_state.shape[0]: return torch.zeros(h_state.shape[-1]).to(device)
-            end = min(end, h_state.shape[0])
-            if start >= end: return torch.zeros(h_state.shape[-1]).to(device)
-            return h_state[start:end].mean(dim=0)
+    input_ids = torch.tensor(ids_list, dtype=torch.long, device=device)
+    step_indices = torch.tensor(idx_list, dtype=torch.long, device=device)
+    attention_mask = torch.ones_like(input_ids, dtype=torch.long, device=device)
+    return input_ids, step_indices, attention_mask
 
-        direction = row_data.get('direction', 'after')  # or derive from question_type
 
-        emb_a = get_pooling(idx_a, hidden_states[i], ranges)
-        emb_b = get_pooling(idx_b, hidden_states[i], ranges)
-
-        if direction == 'after':
-            # “must b happen after a?”
-            diff = emb_a - emb_b
-        elif direction == 'before':
-            # “must b happen before a?”  <=> “must a happen after b?”
-            diff = emb_b - emb_a
+def pool_steps_last_hidden_state(lhs, step_indices, n_steps):
+    """
+    Pool per-step embeddings exactly like sims.get_step_embeddings:
+    mean over token hidden states belonging to each step id.
+    """
+    h_steps = []
+    for j in range(1, n_steps + 1):
+        pos = torch.where(step_indices == j)[0]
+        if pos.numel() == 0:
+            # should not happen unless tokenization produced empty steps
+            h = torch.zeros((lhs.shape[-1],), device=lhs.device, dtype=lhs.dtype)
         else:
-            raise ValueError(direction)
+            h = lhs[pos].mean(dim=0)
+        h_steps.append(h)
+    return torch.stack(h_steps, dim=0)  # [N, D]
 
-        energy = torch.relu(diff).pow(2).sum().item()
-        scores.append(-energy) # Higher score (0) = Better Fit
-        
-    return np.array(scores)
+
+def directed_score_matrix(H_steps):
+    """
+    Same as sims.compute_scores directed part:
+    S[i,j] = -||ReLU(H[i] - H[j])||^2
+    """
+    diff = H_steps.unsqueeze(0) - H_steps.unsqueeze(1)  # [N, N, D]
+    penalty = torch.relu(diff).pow(2).sum(dim=-1)       # [N, N]
+    return -penalty
+
+
+@torch.no_grad()
+def get_geometric_scores(batch_df, tokenizer, model, device, activations="real"):
+    """
+    For each row: build full S_directed using sims.py-style encoding,
+    then select the entry for the asked pair (with direction handling).
+    """
+    scores = []
+
+    for _, row in batch_df.reset_index(drop=True).iterrows():
+        steps = row["steps"]
+        idx_a, idx_b = row["step_pair_idx_asked_about"]
+        direction = row.get("direction", "after")
+
+        # Build concatenated sequence + step indices
+        input_ids, step_indices, attention_mask = build_concat_inputs_from_steps(
+            steps, tokenizer, device
+        )
+
+        # Guard
+        n_steps = len(steps)
+        if n_steps == 0:
+            scores.append(np.nan)
+            continue
+        if not (0 <= idx_a < n_steps and 0 <= idx_b < n_steps):
+            scores.append(np.nan)
+            continue
+
+        # Cap to model max length to match your previous code behavior
+        max_len = getattr(model.config, "n_positions", 1024)
+        if input_ids.numel() > max_len:
+            input_ids = input_ids[:max_len]
+            step_indices = step_indices[:max_len]
+            attention_mask = attention_mask[:max_len]
+
+        # Forward pass (AutoModel like sims.py)
+        out = model(
+            input_ids=input_ids.unsqueeze(0),
+            attention_mask=attention_mask.unsqueeze(0),
+        )
+        lhs = out.last_hidden_state.squeeze(0)  # [T, D]
+        if activations == "non-negative":
+            lhs = torch.abs(lhs)
+
+        # Pool per step
+        H_steps = pool_steps_last_hidden_state(lhs, step_indices, n_steps)  # [N, D]
+
+        # Full directed matrix
+        S = directed_score_matrix(H_steps)  # [N, N]
+
+        # Map CaT indices (0-based) -> our pooled rows (also 0-based)
+        a = idx_a
+        b = idx_b
+
+        # Semantics:
+        # - "after": must b happen after a?  -> look at S[a,b]
+        # - "before": must b happen before a? -> look at S[b,a]
+        if direction == "after":
+            score = S[a, b].item()
+        elif direction == "before":
+            score = S[b, a].item()
+        else:
+            scores.append(np.nan)
+            continue
+
+        scores.append(score)
+
+    return np.array(scores, dtype=float)
+
 
 def main(args):
     # Path to Test Data
@@ -132,11 +165,11 @@ def main(args):
         with open(data_path, 'r') as f:
             data = json.load(f)
         df = pd.DataFrame(data)
-        print('direction', df['direction'].value_counts(dropna=False))
+        # print('direction', df['direction'].value_counts(dropna=False))
         bad = set(df['direction'].dropna().unique()) - {'after','before'}
         assert not bad, bad
-        print('question_type', df['question_type'].value_counts().head(20))
-        print(f"Types of sample: {df['type'].unique()}")
+        # print('question_type', df['question_type'].value_counts().head(20))
+        # print(f"Types of sample: {df['type'].unique()}")
         # Optional: Filter for specific types if you want to inspect subsets
         # print(f'Only using {args.type} samples!')
         # df = df[df['type'] == args.type]    
@@ -146,14 +179,14 @@ def main(args):
         
         batch_size = 16
         df['score'] = 0.0
-        df['objective'] = args.bigger_objective
+        # df['objective'] = args.bigger_objective
         for i in tqdm(range(0, len(df), batch_size)):
             batch = df.iloc[i : i+batch_size]
             scores = get_geometric_scores(batch,
                                         tokenizer,
                                         model,
                                         device,
-                                        bigger_objective = args.bigger_objective,
+                                        # bigger_objective = args.bigger_objective,
                                         activations = args.activations,
                                         )
             df.loc[i : i+batch_size-1, 'score'] = scores
@@ -165,14 +198,14 @@ def main(args):
             return
         
         df_real = df[df['type']=='real'].copy()
-        print(df_real.groupby('label')['score'].describe()[['mean','std','count']])
+        # print(df_real.groupby('label')['score'].describe()[['mean','std','count']])
         for d in ['after','before']:
             sub = df_real[df_real['direction']==d]
             if sub['label'].nunique()==2:
                 print(d, roc_auc_score(sub['label'], sub['score']), len(sub))
 
-        print("NaN scores:", df['score'].isna().mean(), df['score'].isna().sum())
-        print(df[df['score'].isna()].groupby(['type','direction','label']).size().head(20))
+        # print("NaN scores:", df['score'].isna().mean(), df['score'].isna().sum())
+        # print(df[df['score'].isna()].groupby(['type','direction','label']).size().head(20))
 
         all_scores_np = np.concatenate(all_scores, axis=0)
         
@@ -210,17 +243,17 @@ def main(args):
         print(f"Model: {model_name}")
         print("="*40)
         # print(f"ACC: {acc:.4f}")
-        print(f"ROC AUC: {roc_auc:.4f}")
-        print(f"PR AUC:  {pr_auc:.4f}")
-        print("="*40)
+        # print(f"ROC AUC: {roc_auc:.4f}")
+        # print(f"PR AUC:  {pr_auc:.4f}")
+        # print("="*40)
         # print(f"ACC REAL: {acc_real:.4f}")
         print(f"ROC AUC REAL: {roc_auc_real:.4f}")
         print(f"PR AUC REAL:  {pr_auc_real:.4f}")
         print("="*40)
         # print(f"ACC SWITCHED: {acc_switched:.4f}")
-        print(f"ROC AUC SWITCHED: {roc_auc_switched:.4f}")
-        print(f"PR AUC SWITCHED:  {pr_auc_switched:.4f}")
-        print("="*40)
+        # print(f"ROC AUC SWITCHED: {roc_auc_switched:.4f}")
+        # print(f"PR AUC SWITCHED:  {pr_auc_switched:.4f}")
+        # print("="*40)
 
         # Save Results
         save_path, train_config = get_model_info(model_name, args, task_name='cat_bench_zeroshot')
@@ -252,7 +285,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_dir", help="Path to model or HuggingFace name", default = 'openai-community/gpt2')
-    parser.add_argument("--bigger_objective", help="whether past or future embeddings should be bigger in norm", default = 'future')
+    # parser.add_argument("--bigger_objective", help="whether past or future embeddings should be bigger in norm", default = 'future')
     parser.add_argument("--activations", default='real', type=str, help="`real` or `non-negative`")
     # parser.add_argument("--type", help="type of sample to use", default = 'real')
     args = parser.parse_args()

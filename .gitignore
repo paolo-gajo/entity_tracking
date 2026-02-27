@@ -5,10 +5,6 @@ diagrams/
 .vscode/
 __pycache__
 .slurm/
-models/
-models_tested/
-models_kl/
-models_tested_kl/
-models_old
+models*
 misc/
-results/
+results*

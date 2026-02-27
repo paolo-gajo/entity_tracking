@@ -5,14 +5,16 @@ import os
 def setup_config(train_config):
     train_config['model_save_dir'] = os.path.join('./models',
                                 'recipenlg',
-                                f"batch_size={train_config['batch_size']}",
                                 train_config['batch_mode'],
+                                f"batch_size={train_config['batch_size']}",
                                 train_config['prompt_type'],
-                                train_config['attention_mask_type'],
-                                (f"clm={train_config['use_causal_lm_loss']}"
+                                f"attn_mask_type={train_config['attn_mask_type']}",
+                                f"loss_mask_type={train_config['loss_mask_type']}",
+                                (f"clm={train_config['use_clm']}"
                                 f"-kl={train_config['use_kl']}"
                                 # f"-ol={train_config['use_order_loss']}"
-                                f"-mml={train_config['use_max_margin_loss']}"),
+                                f"-mml={train_config['use_mml']}"),
+                                f"use_pos_adv={train_config['use_pos_adv']}",
                                 train_config['model_name'].split('/')[-1],
                                 f"activations={train_config['activations']}",
     )

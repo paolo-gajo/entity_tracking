@@ -11,55 +11,66 @@
 module load arrow
 source .env/bin/activate
 
+save_interval=1000
+lr=5e-5
+
+min_recipe_steps=1
+neg_ratio=0.5
+
 data_path='./data/recipenlg/recipenlg_clean.json'
+num_samples=10000
+batch_mode="random_samples"
+batch_size=8
+
 # data_path='./data/recipenlg/recipenlg_clean_100k.json'
+# num_samples=0
+# batch_mode="pos_neg"
+# batch_size=1
 
 model_name="openai-community/gpt2"
 # model_name="Qwen/Qwen3-0.6B-Base"
 
-num_samples=0
-save_interval=1000
+attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+# attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
-lr=5e-5
-
+# loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 prompt_type=minimal_pairs
 # prompt_type=natlang_pairs
+
+# attn_mask_type='full_input'
 # prompt_type=only_shuffled
 # prompt_type=only_original
 # prompt_type=minimal_mono
 
-# attention_mask_type='full_input'
-attention_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
-
-batch_mode="random_samples"
-batch_size=32
-
-# batch_mode="pos_neg"
-# batch_size=1
-
-use_causal_lm_loss=1
+use_clm=0
 use_kl=0
-use_order_loss=0
-use_max_margin_loss=0
+use_mml=1
+mml_lambda=1
+use_pos_adv=1
 
-# activations=real
-activations=non-negative
+activations=real
+# activations=non-negative
 
 cmd="python src/pretrain.py
 --data_path $data_path
 --model_name $model_name
 --prompt_type $prompt_type
---attention_mask_type $attention_mask_type
+--attn_mask_type $attn_mask_type
+--loss_mask_type $loss_mask_type
 --num_samples $num_samples
 --save_interval $save_interval
 --batch_size $batch_size
 --lr $lr
 --batch_mode $batch_mode
---use_causal_lm_loss $use_causal_lm_loss
+--use_clm $use_clm
 --use_kl $use_kl
---use_order_loss $use_order_loss
---use_max_margin_loss $use_max_margin_loss
+--use_mml $use_mml
+--mml_lambda $mml_lambda
 --activations $activations
+--min_recipe_steps $min_recipe_steps
+--neg_ratio $neg_ratio
+--use_pos_adv $use_pos_adv
 "
 
 $cmd
