@@ -1,26 +1,110 @@
-<|endoftext|> Preheat oven to 350°.<|endoftext|> Blot sausage dry with paper towels and combine with cheeses, salad dressing, olives and red pepper. Lightly grease a muffin tin and press one wrapper in each cup. Brush with oil.<|endoftext|> Bake for 5 minutes until golden.<|endoftext|> Remove from tins.<|endoftext|> Place on baking sheet.<|endoftext|> Fill with sausage mixture.<|endoftext|> Bake 5 minutes until bubbly. 
+ Cornbread will start to rise. Move up in oven and bake until golden brown.<step_0> Preheat oven to 450°.<step_1> Bake 5 minutes on lower rack of oven.<step_2> Let it set for a few minutes and then rework the batter, adding about 1/2 cup water or a little more.<step_3> Best baked in an iron skillet (8-wedge skillet).<step_4> Grease 8-wedges skillet with Crisco and put in preheated oven until Crisco melts and skillet is hot. Pour batter in skillet.<step_5> Mix all ingredients except water.<step_6> If the batter starts to sizzle, then the pan is just right.<step_7> Makes 2 pans of bread.<step_8> Makes a good crust on cornbread.<step_9> 
 
-<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+<step_6><step_3><step_1><step_4><step_5><step_7><step_9><step_2><step_0><step_8><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
 
 ----------------------------------------------------------------------------------------------------
 
-<|endoftext|> Preheat oven to 350°.<|endoftext|> Blot sausage dry with paper towels and combine with cheeses, salad dressing, olives and red pepper. Lightly grease a muffin tin and press one wrapper in each cup. Brush with oil.<|endoftext|> Bake for 5 minutes until golden.<|endoftext|> Remove from tins.<|endoftext|> Place on baking sheet.<|endoftext|> Fill with sausage mixture.<|endoftext|> Bake 5 minutes until bubbly. 
+ Cornbread will start to rise. Move up in oven and bake until golden brown.<step_0> Preheat oven to 450°.<step_1> Bake 5 minutes on lower rack of oven.<step_2> Let it set for a few minutes and then rework the batter, adding about 1/2 cup water or a little more.<step_3> Best baked in an iron skillet (8-wedge skillet).<step_4> Grease 8-wedges skillet with Crisco and put in preheated oven until Crisco melts and skillet is hot. Pour batter in skillet.<step_5> Mix all ingredients except water.<step_6> If the batter starts to sizzle, then the pan is just right.<step_7> Makes 2 pans of bread.<step_8> Makes a good crust on cornbread.<step_9> 
 
-<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+<step_6><step_3><step_1><step_4><step_5><step_7><step_9><step_2><step_0><step_8><|endoftext|>
+
+Binary label: 0.0
+
+####################################################################################################
+
+ Bring wine, brandy, apple cider, star anise, cloves, and 2 cinnamon sticks to a boil in a medium saucepan. Reduce heat to low and simmer until flavors are infused, about 15 minutes.<step_0> Divide among mugs, garnish with 6 cinnamon sticks, if using, and serve.<step_1> Mulled wine can be made 2 hours ahead; cover and store at room temperature, or chill up to 3 days. Rewarm over medium-low heat before serving.<step_2> 
+
+<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+
+----------------------------------------------------------------------------------------------------
+
+ Bring wine, brandy, apple cider, star anise, cloves, and 2 cinnamon sticks to a boil in a medium saucepan. Reduce heat to low and simmer until flavors are infused, about 15 minutes.<step_0> Divide among mugs, garnish with 6 cinnamon sticks, if using, and serve.<step_1> Mulled wine can be made 2 hours ahead; cover and store at room temperature, or chill up to 3 days. Rewarm over medium-low heat before serving.<step_2> 
+
+<step_0><step_1><step_2><|endoftext|>
 
 Binary label: 1.0
 
 ####################################################################################################
 
-<|endoftext|> Mix all ingredients except pecans.<|endoftext|> Make small marble sized pieces and put each piece in small muffin tins (ungreased).<|endoftext|> Press pecan half into top of each piece.<|endoftext|> Bake at 350° for 10 to 15 minutes.<|endoftext|> Can also roll into log, chill and cut to cook on cookie sheet. 
+ Mix with cheese and Bisquick and form into balls and place on cookie sheet.<step_0> Cook and crumble sausage.<step_1> Bake at 350° for about 10 minutes.<step_2> Drain.<step_3> 
 
-<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+<step_1><step_3><step_0><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
 
 ----------------------------------------------------------------------------------------------------
 
-<|endoftext|> Mix all ingredients except pecans.<|endoftext|> Make small marble sized pieces and put each piece in small muffin tins (ungreased).<|endoftext|> Press pecan half into top of each piece.<|endoftext|> Bake at 350° for 10 to 15 minutes.<|endoftext|> Can also roll into log, chill and cut to cook on cookie sheet. 
+ Mix with cheese and Bisquick and form into balls and place on cookie sheet.<step_0> Cook and crumble sausage.<step_1> Bake at 350° for about 10 minutes.<step_2> Drain.<step_3> 
 
-<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+<step_1><step_3><step_0><step_2><|endoftext|>
+
+Binary label: 0.0
+
+####################################################################################################
+
+ Beat black pepper into cookie dough at medium speed. Stir in straw-berries and pistachios. Drop dough by tablespoonfuls 2 inches apart on parchment paper-lined baking sheets. Bake 10 to 12 minutes or until lightly browned.<step_0> Preheat oven to 350°. Combine granulated sugar, brown sugar, butter, and vanilla in a large bowl; beat with a mixer at medium speed until fluffy. Add egg; beat just until blended. Beat in flour, baking soda, and salt.<step_1> 
+
+<step_1><step_0><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+
+----------------------------------------------------------------------------------------------------
+
+ Beat black pepper into cookie dough at medium speed. Stir in straw-berries and pistachios. Drop dough by tablespoonfuls 2 inches apart on parchment paper-lined baking sheets. Bake 10 to 12 minutes or until lightly browned.<step_0> Preheat oven to 350°. Combine granulated sugar, brown sugar, butter, and vanilla in a large bowl; beat with a mixer at medium speed until fluffy. Add egg; beat just until blended. Beat in flour, baking soda, and salt.<step_1> 
+
+<step_1><step_0><|endoftext|>
+
+Binary label: 0.0
+
+####################################################################################################
+
+ Heat oven to 350F.<step_0> Beat eggs in small bowl.<step_1> Stir in cereal; let stand 5 min.<step_2> Combine flour, baking powder and pumpkin pie spice.<step_3> Beat butter and brown sugar in large bowl with mixer until light and fluffy.<step_4> Add cereal mixture and pumpkin; mix well.<step_5> Stir in flour mixture and raisins until blended.<step_6> Pour into 9-inch square pan sprayed with cooking spray.<step_7> Bake 25 to 30 min.<step_8> or until toothpick inserted in center comes out clean.<step_9> Cool completely.<step_10> Sprinkle with powdered sugar just before serving.<step_11> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+
+----------------------------------------------------------------------------------------------------
+
+ Heat oven to 350F.<step_0> Beat eggs in small bowl.<step_1> Stir in cereal; let stand 5 min.<step_2> Combine flour, baking powder and pumpkin pie spice.<step_3> Beat butter and brown sugar in large bowl with mixer until light and fluffy.<step_4> Add cereal mixture and pumpkin; mix well.<step_5> Stir in flour mixture and raisins until blended.<step_6> Pour into 9-inch square pan sprayed with cooking spray.<step_7> Bake 25 to 30 min.<step_8> or until toothpick inserted in center comes out clean.<step_9> Cool completely.<step_10> Sprinkle with powdered sugar just before serving.<step_11> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><|endoftext|>
+
+Binary label: 1.0
+
+####################################################################################################
+
+ Preheat oven to 350°.<step_0> Melt margarine in 2-quart baking dish. Mix together Bisquick, sugar and milk.<step_1> Pour mixture over melted margarine.<step_2> Do not mix.<step_3> Pour peaches (or which other fruit) over batter.<step_4> Do not mix.<step_5> Bake at 350° for approximately 45 minutes or until golden brown.<step_6> Serve warm.<step_7> 
+
+<step_0><step_1><step_2><step_3><step_4><step_3><step_6><step_7><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+
+----------------------------------------------------------------------------------------------------
+
+ Preheat oven to 350°.<step_0> Melt margarine in 2-quart baking dish. Mix together Bisquick, sugar and milk.<step_1> Pour mixture over melted margarine.<step_2> Do not mix.<step_3> Pour peaches (or which other fruit) over batter.<step_4> Do not mix.<step_5> Bake at 350° for approximately 45 minutes or until golden brown.<step_6> Serve warm.<step_7> 
+
+<step_0><step_1><step_2><step_3><step_4><step_3><step_6><step_7><|endoftext|>
+
+Binary label: 1.0
+
+####################################################################################################
+
+ Smooth in the flour and cook over low heat, stirring until it thickens.<step_0> Add bacon fat.<step_1> Fry the bacon lightly, remove from fat and crumble.<step_2> Blend and cool.<step_3> Mix beaten eggs, sugar and vinegar.<step_4> 
+
+<step_2><step_4><step_0><step_1><step_3><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>
+
+----------------------------------------------------------------------------------------------------
+
+ Smooth in the flour and cook over low heat, stirring until it thickens.<step_0> Add bacon fat.<step_1> Fry the bacon lightly, remove from fat and crumble.<step_2> Blend and cool.<step_3> Mix beaten eggs, sugar and vinegar.<step_4> 
+
+<step_2><step_4><step_0><step_1><step_3><|endoftext|>
+
+Binary label: 0.0
+
+####################################################################################################
+
+ Preheat broiler.<step_0> Remove zest from lemon & cut into thin strips.<step_1> Squeeze juice into a small bowl.<step_2> Put chicken in a large bowl with salt, pepper, 1 1/2 t lemon juice; & 3 T broth. Toss to coat.<step_3> Transfer chicken to rack of broiler pan & broil 3-4" from heat, turning over every 5 minutes, 15 minutes total. Remove broiler pan from oven, transfer chicken to a plate.<step_4> Remove rack from broiler pan & add zest, rosemary, garlic, remaining lemon juice, and any remaining broth mixture to juices in bottom of broiler pan.<step_5> Transfer chicken to pan juices; toss to coat. Arrange chicken on pan & return to oven.<step_6> Broil chicken until cooked through, 3 to 5 minutes more. Transfer chicken to a platter, pour any juices from broiler pan over it, & serve.<step_7> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><|endoftext|>
+
+----------------------------------------------------------------------------------------------------
+
+ Preheat broiler.<step_0> Remove zest from lemon & cut into thin strips.<step_1> Squeeze juice into a small bowl.<step_2> Put chicken in a large bowl with salt, pepper, 1 1/2 t lemon juice; & 3 T broth. Toss to coat.<step_3> Transfer chicken to rack of broiler pan & broil 3-4" from heat, turning over every 5 minutes, 15 minutes total. Remove broiler pan from oven, transfer chicken to a plate.<step_4> Remove rack from broiler pan & add zest, rosemary, garlic, remaining lemon juice, and any remaining broth mixture to juices in bottom of broiler pan.<step_5> Transfer chicken to pan juices; toss to coat. Arrange chicken on pan & return to oven.<step_6> Broil chicken until cooked through, 3 to 5 minutes more. Transfer chicken to a platter, pour any juices from broiler pan over it, & serve.<step_7> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><|endoftext|>
 
 Binary label: 1.0
 

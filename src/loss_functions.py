@@ -37,7 +37,8 @@ def gather_losses(args,
         assert logits is not None
     if args.use_kl:
         assert logits is not None
-
+    use_pooled_clm = (args.use_clm and args.pool_clm)
+    assert not (use_pooled_clm and args.use_mml), "can't use both pooled clm and mml right now because only one step_indices route exists for both"
     if args.use_clm:
         if args.pool_clm:
             # Pooled CLM requires step indices from the completion side
@@ -154,7 +155,6 @@ class PooledCausalLMLoss(nn.Module):
         # --- pool by step, sum over steps, average over batch ------------------
         batch_loss = torch.tensor(0.0, device=logits.device)
         n_samples = 0
-
         for b in range(B):
             active = shift_mask[b].bool()
             if not active.any():
@@ -188,43 +188,44 @@ class PooledCausalLMLoss(nn.Module):
 # ---------------------------------------------------------------------------
 # 3.  Step Token Prediction Loss  (Section 3.2 of the paper)
 #
-#     At each completion position, predict which learned step-token embedding
-#     comes next via classification over M pre-instantiated embeddings.
+#     The completion consists of real step-token vocabulary entries in the
+#     correct topological order.  The loss is standard causal LM
+#     cross-entropy evaluated only at the step-token positions (controlled
+#     by loss_mask).
 # ---------------------------------------------------------------------------
 
 class StepTokenLoss(nn.Module):
     """
-    Cross-entropy over M step-token classes.
+    CLM loss restricted to step-token positions.
 
-    Operates on the raw hidden states and a lightweight classification head
-    (StepTokenHead).  Positions where stp_labels == -100 are ignored.
+    This is functionally identical to ``CausalLMLoss`` but kept as a
+    separate class so the training loop can weight it independently via
+    ``stp_lambda``.
     """
 
-    def __init__(self, step_token_head):
+    def __init__(self, ignore_index=-100):
         super().__init__()
-        self.head = step_token_head
+        self.ignore_index = ignore_index
+        self.loss_fn = nn.CrossEntropyLoss(ignore_index=ignore_index)
 
-    def forward(self, hidden_states, stp_labels):
+    def forward(self, logits, input_ids, loss_mask):
         """
         Args:
-            hidden_states: [B, T, D]  — last hidden states from the transformer
-            stp_labels:    [B, T]     — target step-token class (0 … M-1)
-                                        at each position;  -100 = ignore.
+            logits:    [B, T, V]  — full model logits
+            input_ids: [B, T]    — input token ids (including step tokens)
+            loss_mask: [B, T]    — 1 at step-token completion positions
         Returns:
             Scalar CE loss (averaged over valid positions).
         """
-        logits = self.head(hidden_states)                       # [B, T, M]
-        B, T, M = logits.shape
+        labels = input_ids.clone()
+        labels[loss_mask == 0] = self.ignore_index
 
-        # Clamp step labels to valid range [0, M-1] (ignoring -100 which we restore)
-        valid_mask = stp_labels != -100
-        clamped_labels = stp_labels.clone()
-        clamped_labels[valid_mask] = clamped_labels[valid_mask].clamp(min=0, max=M - 1)
+        shift_logits = logits[..., :-1, :].contiguous()
+        shift_labels = labels[..., 1:].contiguous()
 
-        return F.cross_entropy(
-            logits.view(-1, M),
-            clamped_labels.view(-1),
-            ignore_index=-100,
+        return self.loss_fn(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            shift_labels.view(-1),
         )
 
 

@@ -102,7 +102,9 @@ def transitive_closure_adj(A):
 # -------------------------
 
 @torch.no_grad()
-def eval_catbench(model, tokenizer, df, device, activations, max_len, edge_mode, k, tau):
+def eval_catbench(model, tokenizer, df, device, activations, max_len, edge_mode,
+                #   k,
+                  tau):
     y_true, y_pred, y_score = [], [], []
 
     for _, row in tqdm(df.iterrows(), total=len(df)):
@@ -207,7 +209,7 @@ def main():
         activations=args.activations,
         max_len=args.max_len,
         edge_mode=args.edge_mode,
-        k=args.k,
+        # k=args.k,
         tau=args.tau,
     )
 

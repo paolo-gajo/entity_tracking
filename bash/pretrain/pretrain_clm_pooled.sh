@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-clm
+#SBATCH -J pt-clm-pooled
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=1000000
+num_samples=10000
 batch_mode="random_samples"
 batch_size=8
 
@@ -35,7 +35,8 @@ attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 
 # loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
-prompt_type=minimal_pairs
+prompt_type=pooled_pairs
+# prompt_type=minimal_pairs
 # prompt_type=natlang_pairs
 
 # attn_mask_type='full_input'
@@ -44,7 +45,7 @@ prompt_type=minimal_pairs
 # prompt_type=minimal_mono
 
 use_clm=1
-pool_clm=0
+pool_clm=1
 use_kl=0
 use_mml=0
 use_stp=0
@@ -66,7 +67,6 @@ cmd="python src/pretrain.py
 --pool_clm $pool_clm
 --use_kl $use_kl
 --use_mml $use_mml
---mml_lambda $mml_lambda
 --activations $activations
 --min_recipe_steps $min_recipe_steps
 --neg_ratio $neg_ratio

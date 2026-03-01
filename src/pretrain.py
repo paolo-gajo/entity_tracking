@@ -8,7 +8,7 @@ from utils_data import (
 )
 from utils_sys import save_run, setup_config
 from utils_viz import save_heatmaps
-from utils_model import PositionHead, StepTokenEmbedding, StepTokenHead
+from utils_model import PositionHead
 from train.forward import compute_forward_bundle
 from train.pos_adv import compute_pos_adv_loss
 from train.logging import log_probe_stats
@@ -71,6 +71,21 @@ def main(args):
         if not tokenizer.bos_token_id:
             tokenizer.bos_token_id = tokenizer.eos_token_id
 
+    # ---- Add step tokens to the tokenizer ---------------------------------
+    step_token_id_map = None
+    if args.use_stp:
+        step_tokens = [f"<step_{i}>" for i in range(args.stp_max_steps)]
+        num_added = tokenizer.add_tokens(step_tokens, special_tokens=True)
+        print(f"Added {num_added} step tokens to tokenizer (vocab size: {len(tokenizer)})")
+        model.resize_token_embeddings(len(tokenizer))
+        if ref_model is not None:
+            ref_model.resize_token_embeddings(len(tokenizer))
+        step_token_id_map = {
+            i: tokenizer.convert_tokens_to_ids(f"<step_{i}>")
+            for i in range(args.stp_max_steps)
+        }
+        print(f"Step token ID map (first 5): {dict(list(step_token_id_map.items())[:5])}")
+
     dataset = Seq2SeqDataset(
         data_pairs,
         tokenizer,
@@ -81,6 +96,7 @@ def main(args):
         batch_mode=args.batch_mode,
         min_recipe_steps=args.min_recipe_steps,
         max_recipe_steps=args.stp_max_steps,
+        step_token_id_map=step_token_id_map,
     )
 
     collator = Collator(tokenizer=tokenizer)
@@ -102,27 +118,10 @@ def main(args):
     max_margin_loss_fn = MaxMarginLoss(alpha=args.margin_alpha, activations=args.activations)
     kl_loss_fn = KLDivergenceLoss(ref_model) if args.use_kl else None
 
-    # ---- Step Token Prediction components ---------------------------------
-    step_token_emb = None
+    # ---- Step Token Prediction loss ----------------------------------------
     stp_loss_fn = None
-
     if args.use_stp:
-        d_model = model.config.n_embd
-        step_token_emb = StepTokenEmbedding(
-            n_step_tokens=args.stp_max_steps,
-            d_model=d_model,
-        ).to(device)
-        step_token_emb.train()
-
-        stp_head = StepTokenHead(
-            d_model=d_model,
-            n_step_tokens=args.stp_max_steps,
-            mode=args.stp_head_mode,
-            step_token_emb=step_token_emb if args.stp_head_mode == 'bilinear' else None,
-        ).to(device)
-        stp_head.train()
-
-        stp_loss_fn = StepTokenLoss(stp_head).to(device)
+        stp_loss_fn = StepTokenLoss().to(device)
 
     # ---- Position adversary head ------------------------------------------
     pos_head = None
@@ -135,11 +134,6 @@ def main(args):
     params = list(model.parameters())
     if pos_head is not None:
         params += list(pos_head.parameters())
-    if step_token_emb is not None:
-        params += list(step_token_emb.parameters())
-    if stp_loss_fn is not None:
-        # Include the head parameters (linear proj or scale)
-        params += list(stp_loss_fn.parameters())
     optimizer = AdamW(params=params, lr=args.lr)
 
     tbar = tqdm(dataloader)
@@ -151,13 +145,13 @@ def main(args):
         batch = {k: v.to(device) for k, v in batch.items()}
 
         logits, lhs, lhs_mml = compute_forward_bundle(
-            args, model, batch, step_token_emb=step_token_emb,
+            args, model, batch,
         )
 
         # ---- STP loss ---------------------------------------------------
         stp_loss = torch.tensor(0.0, device=device)
-        if args.use_stp and stp_loss_fn is not None and 'stp_labels' in batch:
-            stp_loss = stp_loss_fn(lhs, batch['stp_labels'])
+        if args.use_stp and stp_loss_fn is not None:
+            stp_loss = stp_loss_fn(logits, batch['input_ids'], batch['loss_mask'])
 
         # ---- Pos-adv loss -----------------------------------------------
         pos_loss, pos_acc = (torch.tensor(0.0, device=device), None)
@@ -260,7 +254,7 @@ if __name__ == "__main__":
     parser.add_argument("--attn_mask_type", default="full")
     parser.add_argument("--loss_mask_type", default="completion_only")
     parser.add_argument("--num_samples", default=10_000, type=int)
-    parser.add_argument("--neg_ratio", default=0.1, type=float)
+    parser.add_argument("--neg_ratio", default=0.5, type=float)
     parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
@@ -283,8 +277,7 @@ if __name__ == "__main__":
     # Step Token Prediction (Section 3.2)
     parser.add_argument("--use_stp", default=0, type=int, help="Enable step token prediction loss")
     parser.add_argument("--stp_lambda", default=1.0, type=float, help="Weight for step token prediction loss")
-    parser.add_argument("--stp_max_steps", default=32, type=int, help="M: number of pre-instantiated step token embeddings")
-    parser.add_argument("--stp_head_mode", default="linear", type=str, help="'linear' (projection D→M) or 'bilinear' (dot-product with emb table)")
+    parser.add_argument("--stp_max_steps", default=32, type=int, help="M: number of step tokens added to the vocabulary")
 
     parser.add_argument("--k", default=8, type=int)
     parser.add_argument("--min_recipe_steps", default=0, type=int)

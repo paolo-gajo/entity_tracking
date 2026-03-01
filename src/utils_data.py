@@ -20,6 +20,7 @@ class Seq2SeqDataset(Dataset):
                  batch_mode='random_samples',
                  min_recipe_steps=0,
                  max_recipe_steps=32,
+                 step_token_id_map=None,
                  ):
         super().__init__()
         self.data = data
@@ -31,6 +32,7 @@ class Seq2SeqDataset(Dataset):
         self.max_recipe_steps = max_recipe_steps
         self.prompt_type = prompt_type
         self.batch_mode = batch_mode
+        self.step_token_id_map = step_token_id_map  # {0: id_for_<step_0>, 1: id_for_<step_1>, ...}
 
         if self.prompt_type == 'minimal_pairs':
             self.make_fn = self.make_minimal_pair_samples
@@ -371,38 +373,31 @@ class Seq2SeqDataset(Dataset):
         return formatted_batch
 
     # ==================================================================
-    #  NEW: Step Token Prediction pairs  (Section 3.2)
+    #  Step Token Prediction pairs  (Section 3.2)
     #
     #  Format:
-    #    prefix  =  [c_σ(1)] S_σ(1) [c_σ(2)] S_σ(2) … sep
-    #    completion =  [c_1] [c_2] … [c_N] eos
+    #    prefix  =  <step_σ(1)> S_σ(1) <step_σ(2)> S_σ(2) … sep
+    #    completion =  <step_1> <step_2> … <step_N> eos
     #
-    #  Step-token positions use a placeholder token id (pad_token_id).
-    #  At forward time, their wte embeddings are replaced by the learned
-    #  StepTokenEmbedding before being passed to the transformer.
+    #  Step tokens are real tokens in the vocabulary.  The model predicts
+    #  them via its standard LM head (no separate classifier).
     # ==================================================================
 
     def make_step_token_pair_samples(self, batch):
         """
-        Constructs sequences with learned step-token identifiers.
+        Constructs sequences with real step-token vocabulary entries.
 
-        Each step in the shuffled prefix is prepended with a placeholder
-        token whose embedding will be replaced at forward time by the
-        corresponding learned step-token embedding from StepTokenEmbedding.
+        Each step in the shuffled prefix is prepended with its step token
+        (e.g. <step_2>).  The completion consists of the step tokens in
+        the correct topological order.  The training signal is the standard
+        causal LM cross-entropy on the completion positions.
 
-        The completion consists *only* of the step-token placeholders in the
-        correct topological order.  The training signal is a classification
-        loss (StepTokenLoss) that predicts the next step-token id at each
-        completion position.
-
-        New tensor fields added to each sample:
-            step_token_ids   [T]   1-indexed step-token id at each placeholder
-                                   position; 0 for regular tokens.
-            step_token_mask  [T]   1 at placeholder positions, 0 elsewhere.
-            stp_labels       [T]   Next-token classification target (0-indexed
-                                   step-token class) at each loss position;
-                                   -100 elsewhere.
+        Requires ``self.step_token_id_map`` to be set — a dict mapping
+        0-indexed step index → token id in the tokenizer.
         """
+        assert self.step_token_id_map is not None, (
+            "step_token_pairs requires step_token_id_map to be passed to Seq2SeqDataset"
+        )
         formatted_batch = []
 
         # Batch-tokenize all step strings
@@ -412,7 +407,6 @@ class Seq2SeqDataset(Dataset):
         step_encs = self.tokenizer(flat_steps, add_special_tokens=False)['input_ids']
 
         sep_ids = self.tokenizer.encode("\n\n", add_special_tokens=False)
-        placeholder_id = self.tokenizer.pad_token_id
 
         enc_idx = 0
         for i, item in enumerate(batch):
@@ -420,83 +414,80 @@ class Seq2SeqDataset(Dataset):
             chunks = step_encs[enc_idx: enc_idx + n_steps]
             enc_idx += n_steps
 
+            # Skip recipes with more steps than available step tokens
+            if n_steps > len(self.step_token_id_map):
+                continue
+
             # ---- build prefix ------------------------------------------------
+            # Step tokens are assigned by shuffled order (0, 1, 2, …),
+            # NOT by original position.  This forces the model to read
+            # the content to figure out what each step token represents,
+            # rather than relying on positional cues.
             prefix_ids = []
-            prefix_stp_ids = []
-            prefix_stp_mask = []
             prefix_step_indices_mml = []
 
             for j, shuf_step in enumerate(item['shuf']):
-                # The original 1-indexed position of this step
-                orig_pos = item['orig'].index(shuf_step) + 1
-
-                # Step-token placeholder
-                prefix_ids.append(placeholder_id)
-                prefix_stp_ids.append(orig_pos)        # which step-token embedding to inject
-                prefix_stp_mask.append(1)
-                prefix_step_indices_mml.append(orig_pos)
+                # 0-indexed original position (for MML step indices)
+                orig_idx = item['orig'].index(shuf_step)
 
                 # Regular content tokens
                 prefix_ids.extend(chunks[j])
-                prefix_stp_ids.extend([0] * len(chunks[j]))
-                prefix_stp_mask.extend([0] * len(chunks[j]))
-                prefix_step_indices_mml.extend([orig_pos] * len(chunks[j]))
+                prefix_step_indices_mml.extend([orig_idx + 1] * len(chunks[j]))
+
+                # Step token assigned by shuffled order (j-th step in prefix
+                # gets <step_j>), appended after the step content
+                prefix_ids.append(self.step_token_id_map[j])
+                prefix_step_indices_mml.append(orig_idx + 1)  # 1-indexed for MML
 
             # Separator
             prefix_ids.extend(sep_ids)
-            prefix_stp_ids.extend([0] * len(sep_ids))
-            prefix_stp_mask.extend([0] * len(sep_ids))
             prefix_step_indices_mml.extend([0] * len(sep_ids))
 
             n_prefix = len(prefix_ids)
 
-            # ---- build completion: c_1, c_2, …, c_N -------------------------
-            comp_ids = [placeholder_id] * n_steps
-            comp_stp_ids = list(range(1, n_steps + 1))     # 1-indexed
-            comp_stp_mask = [1] * n_steps
+            # ---- build completion --------------------------------------------
+            # The completion lists step tokens in the ORIGINAL order.
+            # Since step token j was attached to shuf[j], we need to emit
+            # them in the order that reconstructs orig.
+            #
+            # Example: shuf = [S3, S1, S2] → step tokens <step_0>=S3,
+            #          <step_1>=S1, <step_2>=S2
+            #          orig order is S1, S2, S3 → completion = <step_1> <step_2> <step_0>
+            comp_ids = []
+            comp_step_indices_mml = []
+            for orig_pos in range(n_steps):
+                # Which shuffled index holds orig step orig_pos?
+                orig_step = item['orig'][orig_pos]
+                shuf_j = item['shuf'].index(orig_step)
+                comp_ids.append(self.step_token_id_map[shuf_j])
+                comp_step_indices_mml.append(orig_pos + 1)  # 1-indexed
 
             # ---- assemble full sequence + EOS --------------------------------
             input_ids = prefix_ids + comp_ids + [self.tokenizer.eos_token_id]
-            step_token_ids = prefix_stp_ids + comp_stp_ids + [0]
-            step_token_mask = prefix_stp_mask + comp_stp_mask + [0]
             attn_mask = [1] * len(input_ids)
 
-            # MML step indices (prefix only — completion step tokens get 0)
-            step_indices_mml = prefix_step_indices_mml + [0] * (n_steps + 1)
+            # MML step indices: prefix gets step ids, completion step tokens
+            # also get their step ids (useful for geometry evaluation),
+            # EOS gets 0.
+            step_indices_mml = (
+                prefix_step_indices_mml
+                + comp_step_indices_mml
+                + [0]
+            )
 
-            # CLM loss mask:  no CLM loss for step-token prediction mode,
-            # but we keep the field for compatibility.  If you want to combine
-            # CLM on regular tokens AND STP on step-token positions, set
-            # loss_mask = 1 on the regular completion tokens only.
+            # CLM loss mask: 1 at completion step-token positions only.
+            # The last separator token also gets 1 so the model learns to
+            # predict the first step token.
             loss_mask = [0] * len(input_ids)
-
-            # ---- STP classification labels -----------------------------------
-            # Next-token prediction: at position t, predict the step-token id
-            # at position t+1.  Labels are 0-indexed (step_token_id - 1).
-            #
-            # Loss positions:
-            #   - last separator token  → predicts c_1  (label = 0)
-            #   - c_1                   → predicts c_2  (label = 1)
-            #   - c_{N-1}              → predicts c_N  (label = N-1)
-            #   - c_N                  → predicts EOS   (not a step token; skip)
-            stp_labels = [-100] * len(input_ids)
-
-            comp_start = n_prefix      # index of c_1 in the full sequence
-
-            # Last token before completion predicts c_1
-            stp_labels[comp_start - 1] = 0                      # c_1 is class 0
-
-            # Each c_j predicts c_{j+1}
-            for j in range(n_steps - 1):
-                stp_labels[comp_start + j] = j + 1              # c_{j+2} is class j+1
+            for k in range(n_steps):
+                loss_mask[n_prefix + k] = 1
+            # Also include last separator so shifted CLM covers predicting c_1
+            loss_mask[n_prefix - 1] = 1
 
             formatted_batch.append({
                 'input_ids': input_ids,
                 'attn_mask': attn_mask,
                 'loss_mask': loss_mask,
-                'step_token_ids': step_token_ids,
-                'step_token_mask': step_token_mask,
-                'stp_labels': stp_labels,
                 'step_indices_mml': step_indices_mml,
                 'binary_label': item['binary_label'],
             })

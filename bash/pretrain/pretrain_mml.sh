@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pretrain
+#SBATCH -J pt-mml
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
