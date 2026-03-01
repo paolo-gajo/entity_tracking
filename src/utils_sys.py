@@ -3,20 +3,51 @@ import json
 import os
 
 def setup_config(train_config):
-    train_config['model_save_dir'] = os.path.join('./models',
-                                'recipenlg',
-                                train_config['batch_mode'],
-                                f"batch_size={train_config['batch_size']}",
-                                train_config['prompt_type'],
-                                f"attn_mask_type={train_config['attn_mask_type']}",
-                                f"loss_mask_type={train_config['loss_mask_type']}",
-                                (f"clm={train_config['use_clm']}"
-                                f"-kl={train_config['use_kl']}"
-                                # f"-ol={train_config['use_order_loss']}"
-                                f"-mml={train_config['use_mml']}"),
-                                f"use_pos_adv={train_config['use_pos_adv']}",
-                                train_config['model_name'].split('/')[-1],
-                                f"activations={train_config['activations']}",
+    # Dictionary mapping config keys to short abbreviations for folder names
+    abbr = {
+        'batch_mode': 'mode',
+        'batch_size': 'bs',
+        'prompt_type': 'prompt',
+        'attn_mask_type': 'attn',
+        'loss_mask_type': 'loss',
+        'use_clm': 'clm',
+        'use_kl': 'kl',
+        'use_mml': 'mml',
+        'use_pos_adv': 'pos',
+        'use_stp': 'stp',
+        'activations': 'act'
+    }
+
+    # Keys to include in the directory path (in this specific order)
+    grouping_keys = [
+        'batch_mode',
+        'batch_size',
+        'prompt_type',
+        'attn_mask_type',
+        'loss_mask_type',
+        'use_clm',
+        'use_kl',
+        'use_mml',
+        'use_pos_adv',
+        'use_stp',
+        'activations'
+    ]
+
+    model_leaf = train_config['model_name'].split('/')[-1]
+    
+    # Build dynamic string: e.g. "bs=8/prompt=minimal_pairs/..."
+    dynamic_subdirs = []
+    for k in grouping_keys:
+        if k in train_config:
+            # Use abbreviation if it exists, otherwise fallback to the full key
+            key_name = abbr.get(k, k)
+            dynamic_subdirs.append(f"{key_name}={train_config[k]}")
+
+    train_config['model_save_dir'] = os.path.join(
+        './models',
+        'recipenlg',
+        *dynamic_subdirs,
+        model_leaf
     )
     return train_config
 

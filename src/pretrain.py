@@ -1,19 +1,22 @@
-# src/pretrain.py
 import torch
 from torch.optim import AdamW
 from torch.utils.data.dataloader import DataLoader
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from utils_data import (
-    Seq2SeqDataset, Collator, make_random_samples_dataset, make_pos_neg_samples_dataset, prepare_text_batch_prompt
+    Seq2SeqDataset, Collator, make_random_samples_dataset,
+    make_pos_neg_samples_dataset, prepare_text_batch_prompt,
 )
 from utils_sys import save_run, setup_config
 from utils_viz import save_heatmaps
-from utils_model import PositionHead
+from utils_model import PositionHead, StepTokenEmbedding, StepTokenHead
 from train.forward import compute_forward_bundle
 from train.pos_adv import compute_pos_adv_loss
 from train.logging import log_probe_stats
 from sims import compute_scores
-from loss_functions import KLDivergenceLoss, CausalLMLoss, MaxMarginLoss, gather_losses
+from loss_functions import (
+    KLDivergenceLoss, CausalLMLoss, PooledCausalLMLoss,
+    MaxMarginLoss, StepTokenLoss, gather_losses,
+)
 from tqdm.auto import tqdm
 import argparse
 import json
@@ -77,6 +80,7 @@ def main(args):
         loss_mask_type=args.loss_mask_type,
         batch_mode=args.batch_mode,
         min_recipe_steps=args.min_recipe_steps,
+        max_recipe_steps=args.stp_max_steps,
     )
 
     collator = Collator(tokenizer=tokenizer)
@@ -87,24 +91,58 @@ def main(args):
         shuffle=True,
     )
 
-    causal_lm_loss_fn = CausalLMLoss()
+    # ---- Loss functions ---------------------------------------------------
+
+    # CLM: standard or pooled
+    if args.pool_clm:
+        causal_lm_loss_fn = PooledCausalLMLoss()
+    else:
+        causal_lm_loss_fn = CausalLMLoss()
+
     max_margin_loss_fn = MaxMarginLoss(alpha=args.margin_alpha, activations=args.activations)
     kl_loss_fn = KLDivergenceLoss(ref_model) if args.use_kl else None
 
-    # Optional position adversary head
+    # ---- Step Token Prediction components ---------------------------------
+    step_token_emb = None
+    stp_loss_fn = None
+
+    if args.use_stp:
+        d_model = model.config.n_embd
+        step_token_emb = StepTokenEmbedding(
+            n_step_tokens=args.stp_max_steps,
+            d_model=d_model,
+        ).to(device)
+        step_token_emb.train()
+
+        stp_head = StepTokenHead(
+            d_model=d_model,
+            n_step_tokens=args.stp_max_steps,
+            mode=args.stp_head_mode,
+            step_token_emb=step_token_emb if args.stp_head_mode == 'bilinear' else None,
+        ).to(device)
+        stp_head.train()
+
+        stp_loss_fn = StepTokenLoss(stp_head).to(device)
+
+    # ---- Position adversary head ------------------------------------------
     pos_head = None
     if args.use_pos_adv:
         d_model = model.config.n_embd
         pos_head = PositionHead(d_model=d_model, n_bins=args.pos_bins, hidden=args.pos_head_hidden).to(device)
         pos_head.train()
 
+    # ---- Optimizer --------------------------------------------------------
     params = list(model.parameters())
     if pos_head is not None:
         params += list(pos_head.parameters())
+    if step_token_emb is not None:
+        params += list(step_token_emb.parameters())
+    if stp_loss_fn is not None:
+        # Include the head parameters (linear proj or scale)
+        params += list(stp_loss_fn.parameters())
     optimizer = AdamW(params=params, lr=args.lr)
 
     tbar = tqdm(dataloader)
-
     num_steps = 0
     losses = []
     prompt = None
@@ -112,9 +150,16 @@ def main(args):
     for batch in tbar:
         batch = {k: v.to(device) for k, v in batch.items()}
 
-        logits, lhs, lhs_mml = compute_forward_bundle(args, model, batch)
+        logits, lhs, lhs_mml = compute_forward_bundle(
+            args, model, batch, step_token_emb=step_token_emb,
+        )
 
-        # pos-adv uses normal lhs
+        # ---- STP loss ---------------------------------------------------
+        stp_loss = torch.tensor(0.0, device=device)
+        if args.use_stp and stp_loss_fn is not None and 'stp_labels' in batch:
+            stp_loss = stp_loss_fn(lhs, batch['stp_labels'])
+
+        # ---- Pos-adv loss -----------------------------------------------
         pos_loss, pos_acc = (torch.tensor(0.0, device=device), None)
         if args.use_pos_adv:
             if lhs is None:
@@ -126,6 +171,15 @@ def main(args):
             S_directed, S_undirected = compute_scores(hs[0], batch["step_indices_mml"][0])
             save_heatmaps(S_directed, S_undirected, suffix=f"_{num_steps}")
 
+        # ---- Pooled CLM: pass completion_step_indices if available -------
+        # For the pooled variant, gather_losses needs step_indices_mml to
+        # actually contain the *completion-side* step indices.  When using
+        # prompt_type='pooled_pairs', the collator produces a separate
+        # 'completion_step_indices' tensor.  We temporarily swap it in.
+        if args.pool_clm and 'completion_step_indices' in batch:
+            original_mml = batch.get('step_indices_mml')
+            batch['step_indices_mml'] = batch['completion_step_indices']
+
         loss = gather_losses(
             args,
             causal_lm_loss_fn,
@@ -134,9 +188,14 @@ def main(args):
             logits,
             batch,
             device,
-            lhs_mml if args.use_mml else lhs,  # safe fallback
+            lhs_mml if args.use_mml else lhs,
             pos_loss,
+            stp_loss,
         )
+
+        # Restore original MML indices if swapped
+        if args.pool_clm and 'completion_step_indices' in batch:
+            batch['step_indices_mml'] = original_mml
 
         optimizer.zero_grad()
         loss["total_loss"].backward()
@@ -150,11 +209,14 @@ def main(args):
             pos_acc.detach().cpu() if pos_acc is not None else None,
         )
 
+        stp_val = float(loss['stp_loss'].detach().cpu()) if 'stp_loss' in loss else 0.0
+
         tbar.set_description(
-            f"| Causal: {loss['causal_lm_loss'].item():.3f} "
+            f"| CLM: {loss['causal_lm_loss'].item():.3f} "
             f"| KL: {loss['kl_loss'].item():.3f} "
             f"| MML: {loss['max_margin_loss'].item():.3f} "
             f"| POS: {loss['pos_loss'].item():.3f} "
+            f"| STP: {stp_val:.3f} "
         )
 
         losses.append(
@@ -165,6 +227,7 @@ def main(args):
                 "kl": float(loss["kl_loss"].detach().cpu()),
                 "mml": float(loss["max_margin_loss"].detach().cpu()),
                 "pos": float(loss["pos_loss"].detach().cpu()),
+                "stp": stp_val,
             }
         )
 
@@ -185,13 +248,16 @@ def main(args):
         with open(json_path, "w", encoding="utf8") as f:
             json.dump(losses, f, ensure_ascii=False, indent=4)
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Pre-train a causal LM on RecipeNLG to learn to unshuffle recipes")
+    parser = argparse.ArgumentParser(
+        description="Pre-train a causal LM on RecipeNLG to learn to unshuffle recipes"
+    )
     parser.add_argument("--model_name", default="openai-community/gpt2")
     parser.add_argument("--data_path", default="./data/recipenlg/recipenlg_clean_100k.json")
-    parser.add_argument("--batch_mode", default="random_samples", type=str)  # random_samples | pos_neg
+    parser.add_argument("--batch_mode", default="random_samples", type=str)
     parser.add_argument("--prompt_type", default="minimal_pairs")
-    parser.add_argument("--attn_mask_type", default="completion_only")
+    parser.add_argument("--attn_mask_type", default="full")
     parser.add_argument("--loss_mask_type", default="completion_only")
     parser.add_argument("--num_samples", default=10_000, type=int)
     parser.add_argument("--neg_ratio", default=0.1, type=float)
@@ -199,16 +265,26 @@ if __name__ == "__main__":
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
 
-    parser.add_argument("--use_clm", default=1, type=int)
+    # Causal LM loss
+    parser.add_argument("--use_clm", default=0, type=int)
     parser.add_argument("--clm_lambda", default=1.0, type=float)
+    parser.add_argument("--pool_clm", default=0, type=int, help="Use per-step pooled CLM loss (Section 3.1)")
 
+    # KL
     parser.add_argument("--use_kl", default=0, type=int)
     parser.add_argument("--kl_lambda", default=0.1, type=float)
 
+    # Max-margin loss
     parser.add_argument("--use_mml", default=0, type=int)
     parser.add_argument("--no_pos_mml", default=0, type=int, help="Use no-pos forward pass for MML hidden states")
     parser.add_argument("--mml_lambda", default=0.1, type=float)
     parser.add_argument("--margin_alpha", default=0.05, type=float)
+
+    # Step Token Prediction (Section 3.2)
+    parser.add_argument("--use_stp", default=0, type=int, help="Enable step token prediction loss")
+    parser.add_argument("--stp_lambda", default=1.0, type=float, help="Weight for step token prediction loss")
+    parser.add_argument("--stp_max_steps", default=32, type=int, help="M: number of pre-instantiated step token embeddings")
+    parser.add_argument("--stp_head_mode", default="linear", type=str, help="'linear' (projection D→M) or 'bilinear' (dot-product with emb table)")
 
     parser.add_argument("--k", default=8, type=int)
     parser.add_argument("--min_recipe_steps", default=0, type=int)
@@ -225,10 +301,24 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # ---- Validation -------------------------------------------------------
     if args.prompt_type in ["minimal_mono", "only_shuffled", "only_original"]:
         assert args.attn_mask_type == "full_input", (
             f"Only attn_mask_type==full_input makes sense with prompt_type=={args.prompt_type}"
         )
 
-    assert any([args.use_clm, args.use_kl, args.use_mml]), "at least one loss has to be used!"
+    if args.use_stp:
+        assert args.prompt_type == "step_token_pairs", (
+            f"use_stp requires prompt_type='step_token_pairs', got '{args.prompt_type}'"
+        )
+
+    if args.pool_clm:
+        assert args.prompt_type == "pooled_pairs", (
+            f"pool_clm requires prompt_type='pooled_pairs', got '{args.prompt_type}'"
+        )
+
+    assert any([args.use_clm, args.use_kl, args.use_mml, args.use_stp]), (
+        "at least one loss has to be used!"
+    )
+
     main(args)

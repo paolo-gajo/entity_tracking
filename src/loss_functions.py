@@ -1,5 +1,7 @@
-# src/loss_functions.py
-import torch        
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 
 class GradReverse(torch.autograd.Function):
     @staticmethod
@@ -11,24 +13,39 @@ class GradReverse(torch.autograd.Function):
     def backward(ctx, grad_output):
         return -ctx.lambd * grad_output, None
 
+
 def grad_reverse(x, lambd=1.0):
     return GradReverse.apply(x, lambd)
 
+
+# ---------------------------------------------------------------------------
+# Loss aggregation
+# ---------------------------------------------------------------------------
+
 def gather_losses(args,
-                causal_lm_loss_fn,
-                kl_loss_fn,
-                max_margin_loss_fn,
-                logits,
-                batch,
-                device,
-                lhs_mml,
-                pos_loss=None,
-                ):
-    if args.use_clm: assert logits is not None
-    if args.use_kl: assert logits is not None
+                  causal_lm_loss_fn,
+                  kl_loss_fn,
+                  max_margin_loss_fn,
+                  logits,
+                  batch,
+                  device,
+                  lhs_mml,
+                  pos_loss=None,
+                  stp_loss=None,
+                  ):
+    if args.use_clm:
+        assert logits is not None
+    if args.use_kl:
+        assert logits is not None
 
     if args.use_clm:
-        causal_lm_loss = causal_lm_loss_fn(logits, batch['input_ids'], batch['loss_mask'])
+        if args.pool_clm:
+            # Pooled CLM requires step indices from the completion side
+            causal_lm_loss = causal_lm_loss_fn(
+                logits, batch['input_ids'], batch['loss_mask'], batch['step_indices_mml']
+            )
+        else:
+            causal_lm_loss = causal_lm_loss_fn(logits, batch['input_ids'], batch['loss_mask'])
     else:
         causal_lm_loss = torch.tensor(0.0, device=device)
 
@@ -43,12 +60,14 @@ def gather_losses(args,
         max_margin_loss = torch.tensor(0.0, device=device)
 
     pos_loss = pos_loss if pos_loss is not None else torch.tensor(0.0, device=device)
+    stp_loss = stp_loss if stp_loss is not None else torch.tensor(0.0, device=device)
 
     total_loss = (
-        causal_lm_loss * args.clm_lambda +
-        kl_loss        * args.kl_lambda +
-        max_margin_loss* args.mml_lambda +
-        pos_loss       * args.pos_lambda
+        causal_lm_loss  * args.clm_lambda +
+        kl_loss         * args.kl_lambda +
+        max_margin_loss * args.mml_lambda +
+        pos_loss        * args.pos_lambda +
+        stp_loss        * args.stp_lambda
     )
 
     return {
@@ -56,35 +75,166 @@ def gather_losses(args,
         'kl_loss':         kl_loss,
         'max_margin_loss': max_margin_loss,
         'pos_loss':        pos_loss,
+        'stp_loss':        stp_loss,
         'total_loss':      total_loss,
     }
 
-class MaxMarginLoss(torch.nn.Module):
+class CausalLMLoss(nn.Module):
+    def __init__(self, ignore_index=-100):
+        super().__init__()
+        self.ignore_index = ignore_index
+        self.loss_fn = nn.CrossEntropyLoss(ignore_index=ignore_index)
+
+    def forward(self, logits, input_ids, loss_mask):
+        labels = input_ids.clone()
+        labels[loss_mask == 0] = self.ignore_index
+
+        shift_logits = logits[..., :-1, :].contiguous()
+        shift_labels = labels[..., 1:].contiguous()
+
+        return self.loss_fn(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+
+
+# ---------------------------------------------------------------------------
+# 2.  Pooled Causal LM Loss
+#
+#     L_clm = (1/B) sum_b sum_{j=1}^{N} [ -(1/|S_j|) sum_{t in S_j} log p(s_t | s_{<t}) ]
+#
+#     Instead of weighting every token uniformly, we first average per-token CE
+#     *within* each step, then sum over steps.  This prevents long steps from
+#     dominating the gradient and forces the model to allocate capacity to
+#     the first few tokens of each step (the "classification" tokens) that
+#     induction heads could otherwise shortcut.
+# ---------------------------------------------------------------------------
+
+class PooledCausalLMLoss(nn.Module):
+    """
+    Per-step pooled cross-entropy.
+
+    For each step j in each sample, the loss contribution is the *mean* CE
+    across that step's tokens, and the sample loss is the *sum* over steps.
+    We then average over samples in the batch.
+
+    Signature is intentionally a superset of CausalLMLoss so that the caller
+    in gather_losses can branch on args.pool_clm.
+    """
+
+    def __init__(self, ignore_index=-100):
+        super().__init__()
+        self.ignore_index = ignore_index
+
+    def forward(self, logits, input_ids, loss_mask, step_indices):
+        """
+        Args:
+            logits:       [B, T, V]
+            input_ids:    [B, T]
+            loss_mask:    [B, T]   1 = completion token
+            step_indices: [B, T]   step id per token (1..N in the completion,
+                                   0 elsewhere including prefix and padding)
+        Returns:
+            Scalar loss.
+        """
+        B, T, V = logits.shape
+
+        # --- next-token shift --------------------------------------------------
+        shift_logits = logits[:, :-1, :].contiguous()           # [B, T-1, V]
+        shift_labels = input_ids[:, 1:].contiguous()            # [B, T-1]
+        shift_mask   = loss_mask[:, 1:].contiguous().float()    # [B, T-1]
+        shift_steps  = step_indices[:, 1:].contiguous()         # [B, T-1]
+
+        # per-token CE, no reduction
+        per_token_ce = F.cross_entropy(
+            shift_logits.view(-1, V),
+            shift_labels.view(-1),
+            reduction='none',
+        ).view(B, T - 1)                                       # [B, T-1]
+
+        per_token_ce = per_token_ce * shift_mask                # mask padding / prefix
+
+        # --- pool by step, sum over steps, average over batch ------------------
+        batch_loss = torch.tensor(0.0, device=logits.device)
+        n_samples = 0
+
+        for b in range(B):
+            active = shift_mask[b].bool()
+            if not active.any():
+                continue
+
+            active_steps = shift_steps[b][active]
+            unique_steps = active_steps.unique()
+            unique_steps = unique_steps[unique_steps > 0]
+
+            if unique_steps.numel() == 0:
+                # Fallback: no step annotation on the completion side.
+                # This can happen with prompt types that don't assign step indices
+                # to completion tokens.  Fall back to flat mean over masked tokens.
+                batch_loss = batch_loss + per_token_ce[b][active].mean()
+                n_samples += 1
+                continue
+
+            sample_loss = torch.tensor(0.0, device=logits.device)
+            for s in unique_steps:
+                step_mask = (shift_steps[b] == s) & active
+                sample_loss = sample_loss + per_token_ce[b][step_mask].mean()
+
+            batch_loss = batch_loss + sample_loss
+            n_samples += 1
+
+        if n_samples == 0:
+            return torch.tensor(0.0, device=logits.device)
+        return batch_loss / n_samples
+
+
+# ---------------------------------------------------------------------------
+# 3.  Step Token Prediction Loss  (Section 3.2 of the paper)
+#
+#     At each completion position, predict which learned step-token embedding
+#     comes next via classification over M pre-instantiated embeddings.
+# ---------------------------------------------------------------------------
+
+class StepTokenLoss(nn.Module):
+    """
+    Cross-entropy over M step-token classes.
+
+    Operates on the raw hidden states and a lightweight classification head
+    (StepTokenHead).  Positions where stp_labels == -100 are ignored.
+    """
+
+    def __init__(self, step_token_head):
+        super().__init__()
+        self.head = step_token_head
+
+    def forward(self, hidden_states, stp_labels):
+        """
+        Args:
+            hidden_states: [B, T, D]  — last hidden states from the transformer
+            stp_labels:    [B, T]     — target step-token class (0 … M-1)
+                                        at each position;  -100 = ignore.
+        Returns:
+            Scalar CE loss (averaged over valid positions).
+        """
+        logits = self.head(hidden_states)                       # [B, T, M]
+        B, T, M = logits.shape
+
+        # Clamp step labels to valid range [0, M-1] (ignoring -100 which we restore)
+        valid_mask = stp_labels != -100
+        clamped_labels = stp_labels.clone()
+        clamped_labels[valid_mask] = clamped_labels[valid_mask].clamp(min=0, max=M - 1)
+
+        return F.cross_entropy(
+            logits.view(-1, M),
+            clamped_labels.view(-1),
+            ignore_index=-100,
+        )
+
+
+# ---------------------------------------------------------------------------
+# 4.  Max-Margin Loss  — unchanged from your original
+# ---------------------------------------------------------------------------
+
+class MaxMarginLoss(nn.Module):
     """
     Computes the max-margin order embedding loss for directed acyclic graph (DAG) topologies.
-
-    Reference:
-        Vendrov et al., 2016. "Order-Embeddings of Images and Language".
-        The original formulation enforces a partial order such that $x \preceq y \iff x_i \ge y_i \forall i$.
-        In Vendrov et al., this geometry maps semantic hierarchies (hypernymy/hyponymy), where
-        larger embedding vectors represent abstract concepts that entail specific concepts.
-
-    Topological Adaptation:
-        This implementation adapts the cone-inclusion geometry to model causal reachability in procedural DAGs.
-        - Leaves (initial steps/ingredients) are mapped to the smallest magnitude embeddings.
-        - Sinks (final steps) are mapped to the largest magnitude embeddings.
-        - Transitive reachability is modeled as entailment: $H_{\text{sink}} \succeq H_{\text{leaf}}$.
-        
-    Divergence from Vendrov et al.:
-        Vendrov et al. construct negative samples by drawing independent entities (e.g., mismatched image-caption pairs).
-        This implementation constructs negatives via stochastic permutations of a single causal sequence.
-        Consequently, random permutations may contain valid transitive edges. This necessitates the dynamic
-        boolean masking implemented in the forward pass to prevent the injection of false-negative gradients 
-        on structurally valid sub-paths.
-
-    Objective function:
-        $$ \mathcal{L} = \sum_{(u,v) \in \mathcal{P}} E(f(u), f(v)) + \sum_{(u',v') \in \mathcal{N}} \max(0, \alpha - E(f(u'), f(v'))) $$
-        where $E(x, y) = \lVert \max(0, y - x) \rVert^2$.
     """
     def __init__(self, alpha, activations):
         super().__init__()
@@ -93,63 +243,37 @@ class MaxMarginLoss(torch.nn.Module):
 
     @staticmethod
     def E(x, y):
-        """
-        Computes the asymmetric distance metric $E(x, y)$.s
-        If $x \succeq y$ coordinate-wise, the distance evaluates to strictly zero.
-        """
         return torch.relu(y - x).pow(2).mean(dim=-1)
-        # return torch.relu(y - x).pow(2).sum(dim=-1)
 
     def forward(self, inputs, step_ids, binary_labels):
-        """
-        Computes the batched max-margin loss.
-
-        Args:
-            inputs: Tensor of token-level hidden states.
-            step_ids: Tensor mapping tokens to discrete step indices.
-            binary_labels: Tensor indicating whether the sequence is topologically valid (1) or a permutation (0).
-
-        Returns:
-            Scalar loss normalized by the number of valid pairwise evaluations.
-        """
         if self.activations == 'non-negative':
             inputs = torch.abs(inputs)
-        
+
         inputs_true = inputs[binary_labels == 1, ...]
         step_ids_true = step_ids[binary_labels == 1, ...]
-        
+
         inputs_corrupted = inputs[binary_labels == 0, ...]
         step_ids_corrupted = step_ids[binary_labels == 0, ...]
 
         total_loss = torch.tensor(0.0, device=inputs.device)
         num_samples = 0
-        
-        positives, _ = self.get_step_embeddings(inputs_true, step_ids_true) 
+
+        positives, _ = self.get_step_embeddings(inputs_true, step_ids_true)
         negatives, neg_orders = self.get_step_embeddings(inputs_corrupted, step_ids_corrupted)
 
-        # Process ground-truth topological sequences
         for H in positives:
             H_prev = H[:-1, :]
-            H_next = H[1:, :] 
-
-            # Enforce E(H_next, H_prev) = 0, mapping H_next inside the cone of H_prev
+            H_next = H[1:, :]
             loss_pos = self.E(H_next, H_prev).mean()
             total_loss = total_loss + loss_pos
             num_samples += 1
 
-        # Process stochastic permutations
         for H, order in zip(negatives, neg_orders):
             order_tensor = torch.tensor(order, device=H.device)
-            
-            # Isolate invalid topological transitions (u > v)
-            # This masks out randomly preserved transitive edges to prevent optimization pathologies
             mask_invalid_topology = order_tensor[:-1] > order_tensor[1:]
-            
             if mask_invalid_topology.any():
                 H_prev = H[:-1, :][mask_invalid_topology]
-                H_next = H[1:, :][mask_invalid_topology] 
-                
-                # Enforce margin \alpha for invalid transitions
+                H_next = H[1:, :][mask_invalid_topology]
                 loss_neg = torch.relu(self.alpha - self.E(H_next, H_prev)).mean()
                 total_loss = total_loss + loss_neg
                 num_samples += 1
@@ -157,98 +281,57 @@ class MaxMarginLoss(torch.nn.Module):
         return total_loss / (num_samples + 1e-9)
 
     def get_step_embeddings(self, hidden_states, step_ids):
-        """
-        Extracts pooled latent representations and discrete sequence orders from token-level tensors.
-
-        Args:
-            hidden_states: Tensor of shape [batch, seq_len, dim].
-            step_ids: Tensor of shape [batch, seq_len] containing step indices.
-
-        Returns:
-            H_list: List of pooled step embedding tensors.
-            order_list: List of corresponding discrete topological indices.
-        """
         H_list = []
         order_list = []
         for b in range(hidden_states.size(0)):
             step_order_tensor = step_ids[b]
             step_order = step_order_tensor[step_order_tensor != 0]
-            
-            # Extract sequence order while preserving the permutation
+
             seen = set()
             sequential_order = [x.item() for x in step_order if not (x.item() in seen or seen.add(x.item()))]
 
-            if len(sequential_order) < 2: continue
-                
+            if len(sequential_order) < 2:
+                continue
+
             h_list = []
             for s in sequential_order:
                 mask = (step_ids[b] == s)
                 h_list.append(hidden_states[b][mask].mean(dim=0))
-                
+
             H = torch.stack(h_list)
             H_list.append(H)
             order_list.append(sequential_order)
-            
+
         return H_list, order_list
-    
-class CausalLMLoss(torch.nn.Module):
-    def __init__(self, ignore_index=-100):
-        super().__init__()
-        self.ignore_index = ignore_index
-        self.loss_fn = torch.nn.CrossEntropyLoss(ignore_index=ignore_index)
-
-    def forward(self, logits, input_ids, attention_mask):
-        labels = input_ids.clone()
-        labels[attention_mask == 0] = self.ignore_index
-
-        shift_logits = logits[..., :-1, :].contiguous()
-        shift_labels = labels[..., 1:].contiguous()
-
-        return self.loss_fn(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
 
 
-class KLDivergenceLoss(torch.nn.Module):
+# ---------------------------------------------------------------------------
+# 5.  KL Divergence Loss  — unchanged
+# ---------------------------------------------------------------------------
+
+class KLDivergenceLoss(nn.Module):
     def __init__(self, ref_model):
-        """
-        Computes KL(Student || Reference).
-        Args:
-            ref_model: The pretrained reference model (frozen).
-        """
         super().__init__()
         self.ref_model = ref_model
         self.ref_model.eval()
-        # Ensure reference model is frozen
         for param in self.ref_model.parameters():
             param.requires_grad = False
 
     def forward(self, student_logits, input_ids, attention_mask):
-        """
-        Args:
-            student_logits: Logits from the model being trained [Batch, Seq, Vocab]
-            input_ids: Input IDs [Batch, Seq]
-            attention_mask: Attention Mask [Batch, Seq]
-        """
-        # Get Reference Logits
         with torch.no_grad():
             ref_outputs = self.ref_model(input_ids=input_ids, attention_mask=attention_mask)
             ref_logits = ref_outputs.logits
 
-        # Shift logits and masks (predict next token)
         shift_ref_logits = ref_logits[..., :-1, :].contiguous()
         shift_student_logits = student_logits[..., :-1, :].contiguous()
         shift_mask = attention_mask[..., 1:].contiguous().float()
 
-        # KL Div requires log_target=False (default): input is log_probs, target is probs
-        log_probs_student = torch.functional.F.log_softmax(shift_student_logits, dim=-1)
-        probs_ref = torch.functional.F.softmax(shift_ref_logits, dim=-1)
+        log_probs_student = F.log_softmax(shift_student_logits, dim=-1)
+        probs_ref = F.softmax(shift_ref_logits, dim=-1)
 
-        # Compute KL per token
-        # reduction='none' returns [Batch, Seq_Len]
-        kl_per_token = torch.functional.F.kl_div(log_probs_student, probs_ref, reduction='none').sum(dim=-1)
-        
-        # Mask and average
+        kl_per_token = F.kl_div(log_probs_student, probs_ref, reduction='none').sum(dim=-1)
+
         num_valid_tokens = shift_mask.sum()
-        
         if num_valid_tokens > 0:
             return (kl_per_token * shift_mask).sum() / num_valid_tokens
         return torch.tensor(0.0, device=input_ids.device)

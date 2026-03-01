@@ -6,14 +6,6 @@ from loss_functions import grad_reverse
 
 
 def pool_steps_and_posbins(lhs, step_ids, attn_mask, n_bins: int):
-    """
-    lhs: [B,T,D]
-    step_ids: [B,T] (0 for non-step tokens)
-    attn_mask: [B,T] (1 for active tokens)
-    Returns:
-      H: [M,D] pooled step embeddings
-      y: [M]   pos bins
-    """
     B, T, D = lhs.shape
     H_list, y_list = [], []
 
@@ -32,10 +24,8 @@ def pool_steps_and_posbins(lhs, step_ids, attn_mask, n_bins: int):
             idx = torch.where(mask)[0]
             if idx.numel() == 0:
                 continue
-
-            h = lhs[b][mask].mean(dim=0)  # [D]
+            h = lhs[b][mask].mean(dim=0)
             H_list.append(h)
-
             first_pos = idx.min().item()
             pos_bin = int(first_pos * n_bins / max(T_eff, 1))
             pos_bin = min(pos_bin, n_bins - 1)
@@ -50,12 +40,6 @@ def pool_steps_and_posbins(lhs, step_ids, attn_mask, n_bins: int):
 
 
 def compute_pos_adv_loss(args, pos_head, lhs, batch):
-    """
-    Uses *normal* lhs (with positions) to discourage absolute-position leakage.
-    Returns:
-      pos_loss: scalar tensor
-      pos_acc:  scalar float tensor or None
-    """
     device = lhs.device
     pos_loss = torch.tensor(0.0, device=device)
     pos_acc = None
@@ -64,16 +48,12 @@ def compute_pos_adv_loss(args, pos_head, lhs, batch):
         return pos_loss, pos_acc
 
     H_steps, y_pos = pool_steps_and_posbins(
-        lhs,
-        batch["step_indices_mml"],
-        batch["attn_mask"],
-        args.pos_bins,
+        lhs, batch["step_indices_mml"], batch["attn_mask"], args.pos_bins,
     )
 
     if H_steps is None:
         return pos_loss, pos_acc
 
-    # GRL: encoder receives reversed gradients; head is trained normally
     feats = grad_reverse(H_steps, args.grl_lambda)
     pos_logits = pos_head(feats)
     pos_loss = F.cross_entropy(pos_logits, y_pos)
