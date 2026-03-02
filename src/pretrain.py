@@ -277,7 +277,7 @@ if __name__ == "__main__":
     # Step Token Prediction (Section 3.2)
     parser.add_argument("--use_stp", default=0, type=int, help="Enable step token prediction loss")
     parser.add_argument("--stp_lambda", default=1.0, type=float, help="Weight for step token prediction loss")
-    parser.add_argument("--stp_max_steps", default=32, type=int, help="M: number of step tokens added to the vocabulary")
+    parser.add_argument("--stp_max_steps", default=15, type=int, help="M: number of step tokens added to the vocabulary")
 
     parser.add_argument("--k", default=8, type=int)
     parser.add_argument("--min_recipe_steps", default=0, type=int)

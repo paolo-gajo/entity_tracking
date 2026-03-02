@@ -372,9 +372,6 @@ if __name__ == "__main__":
     parser.add_argument("--repeat", default=1, type=int)
     parser.add_argument("--activations", default="real", type=str, help="real | non-negative")
     parser.add_argument("--save_heatmaps", default=0, type=int)
-
-    # IMPORTANT: this is the A.T issue you ran into.
-    # If your old sims needed A.T to align with S, set this to 1.
     parser.add_argument("--use_gold_transpose", default=0, type=int)
 
     args = parser.parse_args()

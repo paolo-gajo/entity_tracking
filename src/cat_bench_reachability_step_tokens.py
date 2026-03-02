@@ -177,7 +177,7 @@ def eval_catbench(model, tokenizer, step_token_ids, df, device, activations, max
 # Saving
 # -------------------------
 
-def get_model_info(model_path, args, task_name="cat_bench_step_tokens"):
+def get_model_info(model_path, args, task_name="cat_bench_reachability_step_tokens"):
     train_conf_path = os.path.join(model_path, "train_config.json")
 
     if os.path.exists(train_conf_path):

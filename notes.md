@@ -1,6 +1,7 @@
-2026-02-25
+2026-03-02
 
-
+- need to check how much correlation there is between the AUC obtained by sims.py on the `permutations` samples and the f1 macro score obtained by the regression probe on the cat-bench samples. if there is a strong correlation, then this could be an indication of the fact that the model's reasoning is reflected in the topology of its latent space.
+- also need to try with non-negative activations. it seems right now i'm getting a lot of instability and the AUC can actually even flip and below 0.5, which is not bad per se, but it probably means the model is flipping the cone inclusion.
 
 2026-02-24
 

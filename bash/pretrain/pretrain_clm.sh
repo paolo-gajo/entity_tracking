@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-clm
+#SBATCH -J pt-clm-full_loss
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
@@ -33,8 +33,8 @@ model_name="openai-community/gpt2"
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
-# loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
-loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
+loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+# loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 prompt_type=minimal_pairs
 # prompt_type=natlang_pairs
 
@@ -57,6 +57,7 @@ cmd="python src/pretrain.py
 --model_name $model_name
 --prompt_type $prompt_type
 --attn_mask_type $attn_mask_type
+--loss_mask_type $loss_mask_type
 --num_samples $num_samples
 --save_interval $save_interval
 --batch_size $batch_size
@@ -66,7 +67,6 @@ cmd="python src/pretrain.py
 --pool_clm $pool_clm
 --use_kl $use_kl
 --use_mml $use_mml
---mml_lambda $mml_lambda
 --activations $activations
 --min_recipe_steps $min_recipe_steps
 --neg_ratio $neg_ratio

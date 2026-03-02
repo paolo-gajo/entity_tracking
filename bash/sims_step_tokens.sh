@@ -20,8 +20,7 @@ use_gold_transpose=0
 # Define model directories
 model_dirs=(
 "openai-community/gpt2"
-# "models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/act=real/gpt2"
-"models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=full/clm=0/kl=0/mml=0/pos=0/stp=1/act=real/gpt2"
+"models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/act=real/gpt2"
 )
 
 n_models=${#model_dirs[@]}
@@ -36,7 +35,7 @@ if [[ -n "$SLURM_ARRAY_TASK_ID" ]]; then
         activations=real
     fi
 
-    cmd=(python src/sims.py
+    cmd=(python src/sims_reachability.py
     --n_runs "$n_runs"
     --model_dir "$model_dir"
     --save_results "$save_results"
@@ -58,7 +57,7 @@ elif [[ $1 ]]; then
             activations=real
         fi
 
-        cmd=(python src/sims.py
+        cmd=(python src/sims_step_tokens.py
         --n_runs "$n_runs"
         --model_dir "$model_dir"
         --save_results "$save_results"

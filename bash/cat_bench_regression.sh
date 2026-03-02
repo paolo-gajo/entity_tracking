@@ -11,7 +11,7 @@
 module load arrow
 source .env/bin/activate
 model_dir="models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/act=real/gpt2"
-sample_type=real
+sample_type=all
 repeat=0
 cmd="python src/cat_bench_regression.py
 --model_dir $model_dir
