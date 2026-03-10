@@ -13,9 +13,12 @@ def setup_config(train_config):
         'use_clm': 'clm',
         'use_kl': 'kl',
         'use_mml': 'mml',
-        'use_pos_adv': 'pos',
+        'use_grl': 'pos',
         'use_stp': 'stp',
-        'activations': 'act'
+        'use_cos': 'cos',
+        'init_from_eos': 'eos_init',
+        'use_lora': 'use_lora',
+        'activations': 'act',
     }
 
     # Keys to include in the directory path (in this specific order)
@@ -28,9 +31,12 @@ def setup_config(train_config):
         'use_clm',
         'use_kl',
         'use_mml',
-        'use_pos_adv',
+        'use_grl',
         'use_stp',
-        'activations'
+        'use_cos',
+        'init_from_eos',
+        'use_lora',
+        'activations',
     ]
 
     model_leaf = train_config['model_name'].split('/')[-1]
@@ -45,7 +51,7 @@ def setup_config(train_config):
 
     train_config['model_save_dir'] = os.path.join(
         './models',
-        'recipenlg',
+        train_config['data_path'].split('/')[2],
         *dynamic_subdirs,
         model_leaf
     )

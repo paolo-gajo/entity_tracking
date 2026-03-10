@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=1000000
+num_samples=10000
 batch_mode="random_samples"
 batch_size=8
 
@@ -27,18 +27,19 @@ batch_size=8
 # batch_mode="pos_neg"
 # batch_size=1
 
-model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2"
 # model_name="Qwen/Qwen3-0.6B-Base"
+# model_name="facebook/opt-350m"
+model_name="EleutherAI/gpt-neo-125m"
 
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
-loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
-# loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
+# loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 prompt_type=minimal_pairs
 # prompt_type=natlang_pairs
 
-# attn_mask_type='full_input'
 # prompt_type=only_shuffled
 # prompt_type=only_original
 # prompt_type=minimal_mono

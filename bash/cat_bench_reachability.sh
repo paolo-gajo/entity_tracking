@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J sims-clm
+#SBATCH -J cb-reach-all
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:1
@@ -12,18 +12,16 @@
 module load arrow
 source .env/bin/activate
 
-n_runs=1
 save_results=1
 repeat=1
-use_gold_transpose=0
+sample_type=real
 
 # Define model directories
 model_dirs=(
 # "openai-community/gpt2"
 # "models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/act=real/gpt2"
-# "models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=full/clm=0/kl=0/mml=0/pos=0/stp=1/act=real/gpt2"
-"models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn=full/loss=completion_only"
-"models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn=full/loss=full"
+"models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn=full/loss=completion_only/clm=1/kl=0/mml=0/pos=0/stp=0/act=real/gpt2"
+"models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn=full/loss=full/clm=1/kl=0/mml=0/pos=0/stp=0/act=real/gpt2"
 )
 
 n_models=${#model_dirs[@]}
@@ -38,13 +36,12 @@ if [[ -n "$SLURM_ARRAY_TASK_ID" ]]; then
         activations=real
     fi
 
-    cmd=(python src/sims.py
-    --n_runs "$n_runs"
+    cmd=(python src/cat_bench_reachability.py
     --model_dir "$model_dir"
+    --sample_type "$sample_type"
+    --activations "$activations"
     --save_results "$save_results"
     --repeat "$repeat"
-    --activations "$activations"
-    --use_gold_transpose $use_gold_transpose
     )
 
     printf 'Running:'; printf ' %q' "${cmd[@]}"; printf '\n'
@@ -60,13 +57,12 @@ elif [[ $1 ]]; then
             activations=real
         fi
 
-        cmd=(python src/sims.py
-        --n_runs "$n_runs"
+        cmd=(python src/cat_bench_reachability.py
         --model_dir "$model_dir"
+        --sample_type "$sample_type"
+        --activations "$activations"
         --save_results "$save_results"
         --repeat "$repeat"
-        --activations "$activations"
-        --use_gold_transpose $use_gold_transpose
         )
 
         printf 'Running:'; printf ' %q' "${cmd[@]}"; printf '\n'

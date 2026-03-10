@@ -6,7 +6,7 @@ def log_probe_stats(args, step: int, mml: float, pos_ce: float, pos_acc):
     """
     Explicit stdout flush for SLURM.
     """
-    if not args.use_pos_adv:
+    if not args.use_grl:
         return
     if pos_acc is None:
         return

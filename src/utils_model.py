@@ -1,6 +1,123 @@
 import torch
 import torch.nn as nn
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import get_peft_model, LoraConfig
 
+def initialize_step_tokens(args, model, ref_model, tokenizer, init_token_id=None):
+    if not args.use_stp:
+        return None
+
+    step_tokens = [f"<step_{i}>" for i in range(args.stp_max_steps)]
+    tokenizer.add_tokens(step_tokens, special_tokens=True)
+
+    model.resize_token_embeddings(len(tokenizer))
+    if ref_model is not None:
+        ref_model.resize_token_embeddings(len(tokenizer))
+
+    step_token_id_map = {
+        i: tokenizer.convert_tokens_to_ids(f"<step_{i}>")
+        for i in range(args.stp_max_steps)
+    }
+
+    new_token_ids = list(step_token_id_map.values())
+    old_vocab_size = len(tokenizer) - args.stp_max_steps
+
+    with torch.no_grad():
+        model_embeddings = model.get_input_embeddings().weight
+        
+        if init_token_id is not None:
+            init_vector = model_embeddings[init_token_id].clone()
+            model_embeddings[new_token_ids] = init_vector
+        else:
+            mu = model_embeddings[:old_vocab_size].mean()
+            sigma = model_embeddings[:old_vocab_size].std()
+            model_embeddings[new_token_ids] = torch.empty(
+                len(new_token_ids),
+                model_embeddings.size(1),
+                device=model_embeddings.device,
+                dtype=model_embeddings.dtype,
+            ).normal_(mean=mu.item(), std=sigma.item())
+
+        if ref_model is not None:
+            ref_embeddings = ref_model.get_input_embeddings().weight
+            
+            if init_token_id is not None:
+                ref_init_vector = ref_embeddings[init_token_id].clone()
+                ref_embeddings[new_token_ids] = ref_init_vector
+            else:
+                ref_mu = ref_embeddings[:old_vocab_size].mean()
+                ref_sigma = ref_embeddings[:old_vocab_size].std()
+                ref_embeddings[new_token_ids] = torch.empty(
+                    len(new_token_ids), ref_embeddings.size(1), device=ref_embeddings.device
+                ).normal_(mean=ref_mu.item(), std=ref_sigma.item())
+
+    return step_token_id_map
+
+def build_model_tokenizer(args, device):
+    print(f"Loading Active Model: {args.model_name}", flush=True)
+
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name, add_prefix_space=True)
+    if ("gpt2" in args.model_name.lower() or
+        "neo" in args.model_name.lower() or
+        "smol" in args.model_name.lower()):
+        if not tokenizer.pad_token_id:
+            tokenizer.pad_token_id = tokenizer.eos_token_id
+        if not tokenizer.bos_token_id:
+            tokenizer.bos_token_id = tokenizer.eos_token_id
+    if not hasattr(tokenizer, 'model_max_length'):
+        import pdb; pdb.set_trace()
+        tokenizer.model_max_length = ...
+
+    model = AutoModelForCausalLM.from_pretrained(
+        args.model_name,
+    ).to(device)
+
+    ref_model = None
+    if args.use_kl:
+        print(f"Loading Reference Model: {args.model_name}", flush=True)
+        ref_model = AutoModelForCausalLM.from_pretrained(args.model_name).to(device)
+        ref_model.eval()
+
+    # This function resizes both model and ref_model
+    step_token_id_map = initialize_step_tokens(args,
+                                                model,
+                                                ref_model,
+                                                tokenizer,
+                                                init_token_id=tokenizer.eos_token_id if args.init_from_eos else None,
+                                                )
+                                                
+    # Apply the absolute freeze AFTER all matrix resizing
+    if args.use_kl and ref_model is not None:
+        for p in ref_model.parameters():
+            p.requires_grad = False
+
+    if args.use_lora:
+        model.gradient_checkpointing_enable()
+        peft_config = LoraConfig(
+            task_type='CAUSAL_LM',
+            target_modules=[
+                'q_proj',
+                'k_proj',
+                'v_proj',
+                'o_proj',
+                'gate_proj',
+                'up_proj',
+                'down_proj',
+            ],
+            modules_to_save=[
+                'embed_tokens', 
+                'lm_head'
+            ],
+        )
+        model = get_peft_model(model, peft_config)
+    
+    params_total = sum(p.numel() for p in model.parameters())
+    print('params_total', params_total)
+    params_learnable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print('params_learnable', params_learnable)
+
+    model.train()
+    return tokenizer, step_token_id_map, model, ref_model
 
 class PositionHead(nn.Module):
     def __init__(self, d_model: int, n_bins: int, hidden: int = 256):

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-mml
+#SBATCH -J pt-cos
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=1000000
+num_samples=300000
 batch_mode="random_samples"
 batch_size=8
 
@@ -29,34 +29,19 @@ batch_size=8
 
 # model_name="openai-community/gpt2"
 model_name="HuggingFaceTB/SmolLM2-135M"
-# resume_from=""
-resume_from="models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=1/pos=0/stp=0/cos=0/eos_init=0/use_lora=0/act=non-negative/SmolLM2-135M/32000"
 # model_name="facebook/opt-350m"
 # model_name="Qwen/Qwen3-0.6B-Base"
 
-attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
-# attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
-
-# loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
-loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
+attn_mask_type='full'
+loss_mask_type='completion_only'
 prompt_type=minimal_pairs
-# prompt_type=natlang_pairs
-
-# prompt_type=only_shuffled
-# prompt_type=only_original
-# prompt_type=minimal_mono
 
 use_clm=0
 use_kl=0
-use_mml=1
-mml_lambda=1
-use_grl=0
-mml_proj_dim=32
+use_cos=1
+cos_lambda=1
+cos_alpha=0.5
 
-activations=real
-# activations=non-negative
-
-# --resume_from $resume_from
 cmd="python src/pretrain.py
 --data_path $data_path
 --model_name $model_name
@@ -70,13 +55,11 @@ cmd="python src/pretrain.py
 --batch_mode $batch_mode
 --use_clm $use_clm
 --use_kl $use_kl
---use_mml $use_mml
---mml_lambda $mml_lambda
---mml_proj_dim $mml_proj_dim
---activations $activations
+--use_cos $use_cos
+--cos_lambda $cos_lambda
+--cos_alpha $cos_alpha
 --min_recipe_steps $min_recipe_steps
 --neg_ratio $neg_ratio
---use_grl $use_grl
 "
 
 $cmd

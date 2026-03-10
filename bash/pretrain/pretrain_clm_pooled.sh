@@ -39,7 +39,6 @@ prompt_type=pooled_pairs
 # prompt_type=minimal_pairs
 # prompt_type=natlang_pairs
 
-# attn_mask_type='full_input'
 # prompt_type=only_shuffled
 # prompt_type=only_original
 # prompt_type=minimal_mono

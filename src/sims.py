@@ -140,7 +140,6 @@ def run_model(model, input_ids, attention_mask, activations='real'):
 
 def compute_scores(hidden_states, step_indices, step_order):
     H_steps = get_step_embeddings(hidden_states, step_indices, step_order)
-
     # directed: S[i,j] = -||relu(H[i]-H[j])||^2
     diff = H_steps.unsqueeze(0) - H_steps.unsqueeze(1)
     penalty = torch.relu(diff).pow(2).sum(dim=-1)
@@ -158,24 +157,12 @@ def compute_scores(hidden_states, step_indices, step_order):
 # -------------------------
 
 def widest_path_closure(S: torch.Tensor) -> torch.Tensor:
-    """
-    Max-min transitive closure over edge weights S.
-    Returns R where R[i,j] is the best bottleneck score over all paths i->j.
-
-    Floyd–Warshall variant:
-      R = S initially (no self)
-      R[i,j] = max(R[i,j], min(R[i,k], R[k,j])) for all k
-    """
     R = S.clone()
     n = R.shape[0]
-    # Exclude self
     R.fill_diagonal_(-1e9)
-
     for k in range(n):
-        # broadcast min over paths through k
         via = torch.minimum(R[:, k].unsqueeze(1), R[k, :].unsqueeze(0))
         R = torch.maximum(R, via)
-
     R.fill_diagonal_(-1e9)
     return R
 
@@ -345,7 +332,7 @@ def main(args):
                         num_steps = json.load(f)['num_steps']
                     model_list.append({'path': root, 'num_steps': num_steps})
         model_list = sorted(model_list, key=lambda x: x['num_steps'])
-        assert len(model_list) == len(set([el['num_steps'] for el in model_list]))
+        assert len(model_list) == len(set([el['num_steps'] for el in model_list])), "You're os.walking through 2+ model dir trees at once."
 
     for model in model_list:
         model_name = model['path']

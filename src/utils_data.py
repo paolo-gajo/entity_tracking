@@ -21,6 +21,7 @@ class Seq2SeqDataset(Dataset):
                  min_recipe_steps=0,
                  max_recipe_steps=32,
                  step_token_id_map=None,
+                 prepend_bos=False,
                  ):
         super().__init__()
         self.data = data
@@ -33,15 +34,12 @@ class Seq2SeqDataset(Dataset):
         self.prompt_type = prompt_type
         self.batch_mode = batch_mode
         self.step_token_id_map = step_token_id_map  # {0: id_for_<step_0>, 1: id_for_<step_1>, ...}
+        self.prepend_bos = prepend_bos
 
         if self.prompt_type == 'minimal_pairs':
             self.make_fn = self.make_minimal_pair_samples
         elif self.prompt_type == 'natlang_pairs':
             self.make_fn = self.make_natlang_pair_samples
-        elif self.prompt_type == 'only_shuffled':
-            self.make_fn = lambda x: self.make_one_sided_samples(x, side='shuf')
-        elif self.prompt_type == 'only_original':
-            self.make_fn = lambda x: self.make_one_sided_samples(x, side='orig')
         elif self.prompt_type == 'minimal_mono':
             self.make_fn = self.make_mono_samples
         elif self.prompt_type == 'step_token_pairs':
@@ -145,21 +143,21 @@ class Seq2SeqDataset(Dataset):
         formatted_batch = []
         for i, item in enumerate(batch):
             target_list = item['orig' if item['binary_label'] else 'shuf']
-            full_input_ids = []
-            full_step_indices = []
+            input_ids = []
+            step_indices = []
             for step_num, step_str in enumerate(target_list):
                 if step_num > 0:
                     step_str = ' ' + step_str
                 step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
-                full_input_ids.extend(step_tokens)
-                full_step_indices.extend([step_num + 1] * len(step_tokens))
-            full_input_ids.append(self.tokenizer.eos_token_id)
-            full_step_indices.append(0)
-            full_attention_mask = [1] * len(full_input_ids)
+                input_ids.extend(step_tokens)
+                step_indices.extend([step_num + 1] * len(step_tokens))
+            input_ids.append(self.tokenizer.eos_token_id)
+            step_indices.append(0)
+            attention_mask = [1] * len(input_ids)
             formatted_batch.append({
-                'input_ids': full_input_ids,
-                'attention_mask': full_attention_mask,
-                'step_indices': full_step_indices,
+                'input_ids': input_ids,
+                'attention_mask': attention_mask,
+                'step_indices': step_indices,
                 'binary_label': batch[i]['binary_label'],
             })
         return formatted_batch
@@ -195,17 +193,19 @@ class Seq2SeqDataset(Dataset):
             for step_num, chunk in enumerate(tgt_chunks):
                 tgt_step_indices.extend([step_num + 1] * len(chunk))
 
-            input_ids = src_ids + tgt_ids + [self.tokenizer.eos_token_id]
-            step_indices_mml = src_step_indices + [0] * len(tgt_step_indices) + [0]
+            bos_prefix = [self.tokenizer.bos_token_id] if self.prepend_bos else []
+            n_bos = len(bos_prefix)
+            input_ids = bos_prefix + src_ids + tgt_ids + [self.tokenizer.eos_token_id]
+            step_indices_mml = [0] * n_bos + src_step_indices + [0] * len(tgt_step_indices) + [0]
 
             if 'completion_only' in self.attn_mask_type:
-                attn_mask = [0] * len(src_ids) + [1] * len(tgt_ids) + [1]
+                attn_mask = [0] * (n_bos + len(src_ids)) + [1] * len(tgt_ids) + [1]
             elif 'full' in self.attn_mask_type:
                 attn_mask = [1] * len(input_ids)
             else:
                 raise ValueError(f"Unknown attn_mask_type: {self.attn_mask_type}")
             if 'completion_only' in self.loss_mask_type:
-                loss_mask = [0] * len(src_ids) + [1] * len(tgt_ids) + [1]
+                loss_mask = [0] * (n_bos + len(src_ids)) + [1] * len(tgt_ids) + [1]
             elif 'full' in self.loss_mask_type:
                 loss_mask = [1] * len(input_ids)
             else:
@@ -237,40 +237,18 @@ class Seq2SeqDataset(Dataset):
                 step_tokens = self.tokenizer.encode(current_step_text, add_special_tokens=False)
                 target_ids.extend(step_tokens)
                 target_step_indices.extend([step_num + 1] * len(step_tokens))
-            full_input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
-            full_step_indices = prompt_step_indices + target_step_indices + [0]
+            input_ids = prompt_ids + target_ids + [self.tokenizer.eos_token_id]
+            step_indices = prompt_step_indices + target_step_indices + [0]
             if 'completion_only' in self.attn_mask_type:
-                full_attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
+                attention_mask = [0] * len(prompt_ids) + [1] * len(target_ids) + [1]
             elif 'full' in self.attn_mask_type:
-                full_attention_mask = [1] * len(full_input_ids)
+                attention_mask = [1] * len(input_ids)
             else:
                 raise ValueError(f"Unknown attn_mask_type: {self.attn_mask_type}")
             formatted_batch.append({
-                'input_ids': full_input_ids,
-                'attention_mask': full_attention_mask,
-                'step_indices': full_step_indices,
-                'binary_label': batch[i]['binary_label'],
-            })
-        return formatted_batch
-
-    def make_one_sided_samples(self, batch, side='orig'):
-        formatted_batch = []
-        for i, item in enumerate(batch):
-            target_list = item[side]
-            full_input_ids, full_step_indices = [], []
-            for step_num, step_str in enumerate(target_list):
-                if step_num > 0:
-                    step_str = ' ' + step_str
-                step_tokens = self.tokenizer.encode(step_str, add_special_tokens=False)
-                full_input_ids.extend(step_tokens)
-                full_step_indices.extend([step_num + 1] * len(step_tokens))
-            full_input_ids.append(self.tokenizer.eos_token_id)
-            full_step_indices.append(0)
-            full_attention_mask = [1] * len(full_input_ids)
-            formatted_batch.append({
-                'input_ids': full_input_ids,
-                'attention_mask': full_attention_mask,
-                'step_indices': full_step_indices,
+                'input_ids': input_ids,
+                'attention_mask': attention_mask,
+                'step_indices': step_indices,
                 'binary_label': batch[i]['binary_label'],
             })
         return formatted_batch
@@ -387,10 +365,9 @@ class Seq2SeqDataset(Dataset):
         """
         Constructs sequences with real step-token vocabulary entries.
 
-        Each step in the shuffled prefix is prepended with its step token
-        (e.g. <step_2>).  The completion consists of the step tokens in
-        the correct topological order.  The training signal is the standard
-        causal LM cross-entropy on the completion positions.
+        Each step in the shuffled prefix is appended with its step token.
+        The completion consists of step tokens interleaved with natural 
+        text in the correct topological order.
 
         Requires ``self.step_token_id_map`` to be set — a dict mapping
         0-indexed step index → token id in the tokenizer.
@@ -419,12 +396,9 @@ class Seq2SeqDataset(Dataset):
                 continue
 
             # ---- build prefix ------------------------------------------------
-            # Step tokens are assigned by shuffled order (0, 1, 2, …),
-            # NOT by original position.  This forces the model to read
-            # the content to figure out what each step token represents,
-            # rather than relying on positional cues.
             prefix_ids = []
             prefix_step_indices_mml = []
+            loss_mask_prefix = [] # For standard text tokens (CLM) in prefix
 
             for j, shuf_step in enumerate(item['shuf']):
                 # 0-indexed original position (for MML step indices)
@@ -433,15 +407,25 @@ class Seq2SeqDataset(Dataset):
                 # Regular content tokens
                 prefix_ids.extend(chunks[j])
                 prefix_step_indices_mml.extend([orig_idx + 1] * len(chunks[j]))
+                loss_mask_prefix.extend([1] * len(chunks[j]))
 
                 # Step token assigned by shuffled order (j-th step in prefix
                 # gets <step_j>), appended after the step content
+                
+                # NOTE: Step j is associated the j-th element of the step_token_id_map.
+                # This means that the step token is always found at a random step slot
+                # and also at a random absolute token position in the input sequence.
+                # This is very important because it prevents the model from cheating
+                # and using positional information when predicting the step tokens
+                # in the completion.
                 prefix_ids.append(self.step_token_id_map[j])
                 prefix_step_indices_mml.append(orig_idx + 1)  # 1-indexed for MML
+                loss_mask_prefix.append(0) # Step tokens are excluded from CLM loss
 
             # Separator
             prefix_ids.extend(sep_ids)
             prefix_step_indices_mml.extend([0] * len(sep_ids))
+            loss_mask_prefix.extend([1] * len(sep_ids))
 
             n_prefix = len(prefix_ids)
 
@@ -452,42 +436,66 @@ class Seq2SeqDataset(Dataset):
             #
             # Example: shuf = [S3, S1, S2] → step tokens <step_0>=S3,
             #          <step_1>=S1, <step_2>=S2
-            #          orig order is S1, S2, S3 → completion = <step_1> <step_2> <step_0>
+            #          orig order is S1, S2, S3 → completion = <step_1> [Text 1] <step_2> [Text 2] <step_0> [Text 3]
             comp_ids = []
             comp_step_indices_mml = []
+            loss_mask_completion = [] # For standard text tokens (CLM)
+            stp_mask_completion = []  # For step tokens (STP)
+
             for orig_pos in range(n_steps):
                 # Which shuffled index holds orig step orig_pos?
                 orig_step = item['orig'][orig_pos]
                 shuf_j = item['shuf'].index(orig_step)
-                comp_ids.append(self.step_token_id_map[shuf_j])
+                
+                # 1. Emit Step token (Planning what goes next)
+                stp_id = self.step_token_id_map[shuf_j]
+                comp_ids.append(stp_id)
                 comp_step_indices_mml.append(orig_pos + 1)  # 1-indexed
+                loss_mask_completion.append(0) # Not part of standard CLM
+                stp_mask_completion.append(1)  # Included in STP
+                
+                # 2. Emit Step text (Grounding it into natural language)
+                text_chunk = chunks[shuf_j]
+                comp_ids.extend(text_chunk)
+                comp_step_indices_mml.extend([orig_pos + 1] * len(text_chunk))
+                loss_mask_completion.extend([1] * len(text_chunk))
+                stp_mask_completion.extend([0] * len(text_chunk))
 
             # ---- assemble full sequence + EOS --------------------------------
-            input_ids = prefix_ids + comp_ids + [self.tokenizer.eos_token_id]
+            bos_prefix = [self.tokenizer.bos_token_id] if self.prepend_bos else []
+            input_ids = bos_prefix + prefix_ids + comp_ids + [self.tokenizer.eos_token_id]
             attn_mask = [1] * len(input_ids)
 
             # MML step indices: prefix gets step ids, completion step tokens
             # also get their step ids (useful for geometry evaluation),
             # EOS gets 0.
+            n_bos = len(bos_prefix)
             step_indices_mml = (
-                prefix_step_indices_mml
+                [0] * n_bos
+                + prefix_step_indices_mml
                 + comp_step_indices_mml
                 + [0]
             )
 
-            # CLM loss mask: 1 at completion step-token positions only.
-            # The last separator token also gets 1 so the model learns to
-            # predict the first step token.
-            loss_mask = [0] * len(input_ids)
-            for k in range(n_steps):
-                loss_mask[n_prefix + k] = 1
-            # Also include last separator so shifted CLM covers predicting c_1
-            loss_mask[n_prefix - 1] = 1
+            # CLM loss mask (vocab tokens + EOS)
+            if 'completion_only' in self.loss_mask_type:
+                loss_mask = [0] * (n_bos + n_prefix) + loss_mask_completion + [1]
+                # The last separator token also gets 1 so the model learns to
+                # predict the first step token across the boundary in CLM mode.
+                loss_mask[n_bos + n_prefix - 1] = 1
+            elif 'full' in self.loss_mask_type:
+                loss_mask = [0] * n_bos + loss_mask_prefix + loss_mask_completion + [1]
+            else:
+                raise ValueError(f"Unknown loss_mask_type: {self.loss_mask_type}")
+
+            # STP loss mask (step tokens only)
+            stp_mask = [0] * (n_bos + n_prefix) + stp_mask_completion + [0]
 
             formatted_batch.append({
                 'input_ids': input_ids,
                 'attn_mask': attn_mask,
                 'loss_mask': loss_mask,
+                'stp_mask': stp_mask,
                 'step_indices_mml': step_indices_mml,
                 'binary_label': item['binary_label'],
             })
@@ -552,6 +560,9 @@ class Collator:
         step_token_ids_list = []
         step_token_mask_list = []
         stp_labels_list = []
+        has_stp_mask = 'stp_mask' in batch[0]
+
+        stp_mask_list = []
 
         has_step_token = 'step_token_ids' in batch[0]
         has_stp_labels = 'stp_labels' in batch[0]
@@ -610,6 +621,13 @@ class Collator:
                 stp_labels_list.append(
                     torch.tensor(list_pad(sl, -100, max_len), dtype=torch.long))
 
+            if has_stp_mask:
+                sm = el['stp_mask']
+                if isinstance(sm, torch.Tensor):
+                    sm = sm.tolist()
+                stp_mask_list.append(
+                    torch.tensor(list_pad(sm, 0, max_len), dtype=torch.long))
+
             if 'binary_label' in el:
                 binary_labels_list.append(el['binary_label'])
 
@@ -633,6 +651,9 @@ class Collator:
 
         if stp_labels_list:
             batch_dict['stp_labels'] = torch.stack(stp_labels_list)
+
+        if stp_mask_list:
+            batch_dict['stp_mask'] = torch.stack(stp_mask_list)
 
         if binary_labels_list:
             batch_dict['binary_label'] = torch.tensor(binary_labels_list, dtype=torch.float)
@@ -760,9 +781,14 @@ def prepare_text_batch_prompt(batch, tokenizer):
     prompt = ''
     for i in range(batch['input_ids'].shape[0]):
         decoded_all = tokenizer.decode(batch['input_ids'][i])
-        mask = batch['attn_mask'][i] == 1
-        valid_inputs = batch['input_ids'][i][mask]
+        clm_mask = batch['loss_mask'][i] == 1
+        valid_inputs = batch['input_ids'][i][clm_mask]
         decoded_valid = tokenizer.decode(valid_inputs)
+        stp_decoded = ''
+        if 'stp_mask' in batch:
+            stp_mask = batch['stp_mask'][i] == 1
+            valid_inputs_stp = batch['input_ids'][i][stp_mask]
+            stp_decoded = tokenizer.decode(valid_inputs_stp)
         prompt += (decoded_all +
                    '\n\n' +
                    ('-' * 100) +
@@ -772,6 +798,10 @@ def prepare_text_batch_prompt(batch, tokenizer):
                    f"Binary label: {batch['binary_label'][i]}" +
                    '\n\n' +
                    ('#' * 100) +
+                   '\n\n' +
+                   f'step_decoded: {stp_decoded}' +
+                   '\n\n' +
+                   ('=' * 100) +
                    '\n\n'
                    )
     return prompt

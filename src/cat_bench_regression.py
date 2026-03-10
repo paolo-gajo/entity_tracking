@@ -1,7 +1,8 @@
 import torch
 import pandas as pd
 import numpy as np
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel, PeftConfig
 from tqdm.auto import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report, roc_auc_score
@@ -77,14 +78,15 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
         l = min(len(seq), max_len)
         input_ids[i, :l] = seq[:l]
         attention_mask[i, :l] = 1
+    
     # 3. Forward Pass
     with torch.no_grad():
         outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
-    
     # Use the last hidden state: (Batch, Seq, Hidden)
     # Note: For some models like BERT, you might prefer the second-to-last layer, 
     # but last layer is standard for probing.
-    hidden_states = outputs.last_hidden_state
+    # hidden_states = outputs.last_hidden_state
+    hidden_states = outputs.hidden_states[-1]
     
     # 4. Extract Specific Step Embeddings
     features = []
@@ -172,10 +174,9 @@ def get_model_info(model_path, args, task_name="cat_bench_regression"):
         with open(train_conf_path, "r", encoding="utf8") as f:
             train_config_raw = json.load(f)
         train_config = setup_config(train_config_raw)
-        model_save_dir = os.path.normpath(train_config["model_save_dir"])
-        num_steps = str(train_config.get("num_steps", 0))
-        rel = os.path.relpath(model_save_dir, start=os.path.normpath("./models"))
-        save_path = os.path.join("./results", task_name, sample_dir, rel, num_steps)
+        rel = os.path.relpath(model_path, start=os.path.normpath("./models"))
+        save_path = os.path.join("./results", task_name, sample_dir, rel)
+        print(f'save_path: {save_path}')
         return save_path, train_config
 
     train_config = {"num_steps": 0}
@@ -229,9 +230,32 @@ def main(args):
             print(f"Skipping {model_name}: results exist at {result_file}")
             continue
 
-        print(f"Loading model: {model_name}")
-        model = AutoModel.from_pretrained(model_name).to(device)
+        print(f"Loading model from: {model_name}")
         tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+
+        # Dynamic Loading Logic
+        adapter_config_path = os.path.join(model_name, "adapter_config.json")
+        
+        if os.path.exists(adapter_config_path):
+            print("-> Detected LoRA adapter. Using PEFT two-stage loading...")
+            config = PeftConfig.from_pretrained(model_name)
+            base_model = AutoModelForCausalLM.from_pretrained(
+                config.base_model_name_or_path,
+                dtype=torch.float16,
+            ).to(device)
+            
+            # Resize the base model to accept the new embeddings
+            base_model.resize_token_embeddings(len(tokenizer))
+            
+            # Wrap in PEFT to inject LoRA weights and trained embeddings
+            model = PeftModel.from_pretrained(base_model, model_name)
+        else:
+            print("-> No adapter_config.json found. Loading as standard full fine-tuned model...")
+            model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+            ).to(device)
         model.eval()
 
         if tokenizer.pad_token is None:
@@ -251,7 +275,7 @@ def main(args):
 
         # Train logistic regression probe
         print("Training logistic regression probe...")
-        clf = LogisticRegression(max_iter=2000, C=1.0, solver='lbfgs')
+        clf = LogisticRegression(max_iter=2000, C=1.0, solver='lbfgs', verbose = 1)
         clf.fit(X_train, y_train)
 
         # Evaluate
@@ -287,7 +311,7 @@ if __name__ == "__main__":
     parser.add_argument("--model_dir", default="openai-community/gpt2")
     parser.add_argument("--save_results", default=1, type=int)
     parser.add_argument("--verbose_results", default=1, type=int)
-    parser.add_argument("--repeat", default=1, type=int)
-    parser.add_argument("--sample_type", default="real", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
+    parser.add_argument("--repeat", default=0, type=int)
+    parser.add_argument("--sample_type", default="all", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
     args = parser.parse_args()
     main(args)

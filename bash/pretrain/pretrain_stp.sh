@@ -27,8 +27,22 @@ batch_size=8
 # batch_mode="pos_neg"
 # batch_size=1
 
-model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2-medium"
+model_name="openai-community/gpt2-large"
+# model_name="EleutherAI/gpt-neo-125m"
 # model_name="Qwen/Qwen3-0.6B-Base"
+# model_name="Qwen/Qwen3-4B-Base"
+# model_name="Qwen/Qwen3.5-0.8B-Base"
+# model_name="Qwen/Qwen3.5-9B-Base"
+# model_name="Qwen/Qwen3.5-4B-Base"
+# model_name="facebook/opt-350m"
+# model_name="HuggingFaceTB/SmolLM2-135M"
+# model_name="HuggingFaceTB/SmolLM2-360M"
+
+use_lora=0
+prepend_bos=0
+detect_anomaly=0
 
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
@@ -38,7 +52,6 @@ loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_ori
 prompt_type=step_token_pairs
 # prompt_type=natlang_pairs
 
-# attn_mask_type='full_input'
 # prompt_type=only_shuffled
 # prompt_type=only_original
 # prompt_type=minimal_mono
@@ -51,6 +64,7 @@ mml_lambda=0.1
 use_stp=1
 stp_lambda=1.0
 stp_max_steps=15
+init_from_eos=0
 
 activations=real
 # activations=non-negative
@@ -58,6 +72,7 @@ activations=real
 cmd="python src/pretrain.py
 --data_path $data_path
 --model_name $model_name
+--use_lora $use_lora
 --prompt_type $prompt_type
 --attn_mask_type $attn_mask_type
 --num_samples $num_samples
@@ -75,6 +90,9 @@ cmd="python src/pretrain.py
 --use_stp $use_stp
 --stp_lambda $stp_lambda
 --stp_max_steps $stp_max_steps
+--init_from_eos $init_from_eos
+--prepend_bos $prepend_bos
+--detect_anomaly $detect_anomaly
 "
 
 $cmd

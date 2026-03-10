@@ -118,7 +118,6 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
 
         emb_a = get_pooling(idx_a, hidden_states[i], ranges)
         emb_b = get_pooling(idx_b, hidden_states[i], ranges)
-        # import pdb; pdb.set_trace()
         # Feature: [A, B, |A-B|, A*B] 
         # Note: |A-B| (Absolute diff) is often better for NLI than A-B, but A-B captures direction.
         # Given "Must happen before", direction matters, so A-B is correct.

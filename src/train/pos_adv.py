@@ -44,7 +44,7 @@ def compute_pos_adv_loss(args, pos_head, lhs, batch):
     pos_loss = torch.tensor(0.0, device=device)
     pos_acc = None
 
-    if not args.use_pos_adv:
+    if not args.use_grl:
         return pos_loss, pos_acc
 
     H_steps, y_pos = pool_steps_and_posbins(

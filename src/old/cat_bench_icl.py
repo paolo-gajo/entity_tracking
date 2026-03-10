@@ -20,7 +20,7 @@ import argparse
 
 def main(args):
 
-    model_save_dir = "./models/cat_bench"
+    model_save_dir = "./results/cat_bench_icl"
 
     # ----------------------------
     # Load Data
@@ -36,33 +36,44 @@ def main(args):
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    model_list = []
-    if os.path.exists(args.model_dir):
+    # Walk model_dir for checkpoints or treat as single model
+    if not os.path.exists(args.model_dir):
+        model_list = [{"path": args.model_dir, "num_steps": 0}]
+    else:
+        model_list = []
         for root, dirs, files in os.walk(args.model_dir):
             for filename in files:
-                if filename == 'model.safetensors':
-                    model_list.append(root)
-    else:
-        model_list.append(args.model_dir)
-    for model_name in model_list:
+                if filename == "train_config.json":
+                    with open(os.path.join(root, filename), "r", encoding="utf8") as f:
+                        num_steps = json.load(f)["num_steps"]
+                    model_list.append({"path": root, "num_steps": num_steps})
+        if not model_list:
+            model_list = [{"path": args.model_dir, "num_steps": 0}]
+        model_list = sorted(model_list, key=lambda x: x["num_steps"])
+
+    for m in model_list:
 
         # ----------------------------
         # Load Model
         # ----------------------------
-        add_prefix_space = True if "gpt2" in model_name else False
+        add_prefix_space = True if "gpt2" in m['path'] else False
 
-        model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+        model = AutoModelForCausalLM.from_pretrained(m['path'],
+                                                     ignore_mismatched_sizes=True,
+                                                     ).to(device)
         tokenizer = AutoTokenizer.from_pretrained(
-            model_name,
+            m['path'],
             add_prefix_space=add_prefix_space
         )
 
-        if "gpt2" in model_name:
+        if "gpt2" in m['path']:
             if tokenizer.pad_token_id is None:
                 tokenizer.pad_token_id = tokenizer.eos_token_id
             if tokenizer.bos_token_id is None:
                 tokenizer.bos_token_id = tokenizer.eos_token_id
-
+        elif "llama" in m['path']:
+            if tokenizer.pad_token_id is None:
+                tokenizer.pad_token_id = tokenizer.eos_token_id
         # ----------------------------
         # Build Dataset
         # ----------------------------
@@ -70,9 +81,9 @@ def main(args):
             icl_dataset=df_train,
             test_dataset=df_test,
             tokenizer=tokenizer,
-            n_icl=1,
-            max_length=1024,
-            num_samples=0,
+            n_icl=3,
+            max_length=1e9,
+            num_samples=100,
         )
 
         dataloader = DataLoader(
@@ -145,20 +156,20 @@ def main(args):
 
             # Debug first batch
             if i == 0:
-                print("Example log-likelihood scores:", score[:5].cpu().numpy())
-                print("Prob Yes:", prob_yes[:5].cpu().numpy())
-                print("Prob No :", prob_no[:5].cpu().numpy())
+                print("Example log-likelihood scores:", score[:5].to(dtype=torch.float16).cpu().numpy())
+                print("Prob Yes:", prob_yes[:5].to(dtype=torch.float16).cpu().numpy())
+                print("Prob No :", prob_no[:5].to(dtype=torch.float16).cpu().numpy())
                 print("------")
 
         # ----------------------------
         # Metrics
         # ----------------------------
         acc = accuracy_score(all_labels, all_preds)
-        f1  = f1_score(all_labels, all_preds)
+        f1  = f1_score(all_labels, all_preds, average = 'macro')
         roc = roc_auc_score(all_labels, all_scores)
         pr  = average_precision_score(all_labels, all_scores)
 
-        print("\nModel:", model_name)
+        print("\nModel:", m['path'])
         print("Accuracy:", acc)
         print("F1:", f1)
         print("ROC AUC:", roc)
@@ -180,7 +191,7 @@ def main(args):
 
         save_path = os.path.join(
             model_save_dir,
-            f"results_{model_name.split('/')[-1]}.json",
+            f"results_{'_'.join(m['path'].split('/')[:-2])}.json",
         )
 
         with open(save_path, "w") as f:

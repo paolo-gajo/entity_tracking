@@ -8,7 +8,7 @@
 import torch
 import pandas as pd
 import numpy as np
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from tqdm.auto import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report, roc_auc_score
@@ -16,6 +16,7 @@ import os
 import json
 import argparse
 from utils_sys import setup_config
+from peft import PeftModel, PeftConfig
 
 # -------------------------
 # Model setup (same as sims_step_tokens.py)
@@ -32,14 +33,33 @@ def get_step_token_ids(tokenizer, max_steps):
     return ids
 
 def setup_model(model_name, device, stp_max_steps=15):
-    print(f'Loading model: {model_name}')
-    model = AutoModel.from_pretrained(model_name)
+    print(f"Loading model from: {model_name}")
     tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
-    if 'gpt2' in model_name.lower():
-        if not tokenizer.pad_token_id:
-            tokenizer.pad_token_id = tokenizer.eos_token_id
-        if not tokenizer.bos_token_id:
-            tokenizer.bos_token_id = tokenizer.eos_token_id
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
+    # Dynamic Loading Logic
+    adapter_config_path = os.path.join(model_name, "adapter_config.json")
+    
+    if os.path.exists(adapter_config_path):
+        print("-> Detected LoRA adapter. Using PEFT two-stage loading...")
+        config = PeftConfig.from_pretrained(model_name)
+        base_model = AutoModelForCausalLM.from_pretrained(
+            config.base_model_name_or_path,
+            dtype=torch.float16,
+        ).to(device)
+        
+        # Resize the base model to accept the new embeddings
+        base_model.resize_token_embeddings(len(tokenizer))
+        
+        # Wrap in PEFT to inject LoRA weights and trained embeddings
+        model = PeftModel.from_pretrained(base_model, model_name)
+    else:
+        print("-> No adapter_config.json found. Loading as standard full fine-tuned model...")
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            dtype=torch.float16,
+        ).to(device)
 
     # Add step tokens if not present (random-init baseline)
     step_token_ids = get_step_token_ids(tokenizer, stp_max_steps)
@@ -87,7 +107,7 @@ def build_step_token_input(steps, tokenizer, step_token_ids, device):
 # -------------------------
 
 @torch.no_grad()
-def extract_features(df, tokenizer, model, step_token_ids, device, max_len):
+def extract_features(df, tokenizer, model, step_token_ids, device, max_len, activations):
     """
     For each sample, build input with step tokens, extract hidden states
     at the two queried step token positions, and build feature vector.
@@ -116,8 +136,13 @@ def extract_features(df, tokenizer, model, step_token_ids, device, max_len):
         if input_ids.numel() > max_len:
             continue
 
-        out = model(input_ids=input_ids.unsqueeze(0), attention_mask=attn_mask.unsqueeze(0))
-        lhs = out.last_hidden_state.squeeze(0)  # [T, D]
+        with torch.no_grad():
+            out = model(input_ids=input_ids.unsqueeze(0), attention_mask=attn_mask.unsqueeze(0), output_hidden_states=True)
+        lhs = out.hidden_states[-1]
+        lhs = lhs.squeeze(0)
+
+        if activations == "non-negative":
+            lhs = torch.abs(lhs)
 
         emb_a = lhs[stp_positions[idx_a]]
         emb_b = lhs[stp_positions[idx_b]]
@@ -144,10 +169,9 @@ def get_model_info(model_path, args, task_name="cat_bench_regression_step_tokens
         with open(train_conf_path, "r", encoding="utf8") as f:
             train_config_raw = json.load(f)
         train_config = setup_config(train_config_raw)
-        model_save_dir = os.path.normpath(train_config["model_save_dir"])
-        num_steps = str(train_config.get("num_steps", 0))
-        rel = os.path.relpath(model_save_dir, start=os.path.normpath("./models"))
-        save_path = os.path.join("./results", task_name, sample_dir, rel, num_steps)
+        rel = os.path.relpath(model_path, start=os.path.normpath("./models"))
+        save_path = os.path.join("./results", task_name, sample_dir, rel)
+        print(f'save_path: {save_path}')
         return save_path, train_config
 
     train_config = {"num_steps": 0}
@@ -172,9 +196,6 @@ def save_results_to_disk(results, save_path, train_config, args):
 # -------------------------
 
 def main(args):
-    data_path_train = './data/cat_bench/catplan-data-release/generated_questions/train_must_why/train_must_why.json'
-    data_path_test = './data/cat_bench/catplan-data-release/generated_questions/test_must_why/test_must_why.json'
-
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     # Walk model_dir for checkpoints or treat as single model
@@ -193,9 +214,9 @@ def main(args):
         model_list = sorted(model_list, key=lambda x: x["num_steps"])
 
     # Load data once
-    with open(data_path_train, 'r') as f:
+    with open(args.data_path_train, 'r') as f:
         df_train = pd.DataFrame(json.load(f))
-    with open(data_path_test, 'r') as f:
+    with open(args.data_path_test, 'r') as f:
         df_test = pd.DataFrame(json.load(f))
 
     # Filter by sample type
@@ -207,6 +228,7 @@ def main(args):
         model_name = m["path"]
         save_path, train_config = get_model_info(model_name, args)
         result_file = os.path.join(save_path, "results.json")
+        print(f"Checking existance of result_file: {result_file}")
         if os.path.exists(result_file) and not args.repeat:
             print(f"Skipping {model_name}: results exist at {result_file}")
             continue
@@ -220,9 +242,9 @@ def main(args):
 
         # Extract features
         print("--- Extracting train features ---")
-        X_train, y_train = extract_features(df_train, tokenizer, model, step_token_ids, device, max_len)
+        X_train, y_train = extract_features(df_train, tokenizer, model, step_token_ids, device, max_len, activations=args.activations)
         print("--- Extracting test features ---")
-        X_test, y_test = extract_features(df_test, tokenizer, model, step_token_ids, device, max_len)
+        X_test, y_test = extract_features(df_test, tokenizer, model, step_token_ids, device, max_len, activations=args.activations)
 
         print(f"Train: {X_train.shape}, Test: {X_test.shape}")
 
@@ -266,12 +288,17 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_dir", default="openai-community/gpt2")
+    parser.add_argument("--data_path_train", type=str, default = './data/cat_bench/catplan-data-release/generated_questions/train_must_why/train_must_why.json')
+    parser.add_argument("--data_path_test", type=str, default = './data/cat_bench/catplan-data-release/generated_questions/test_must_why/test_must_why.json')
+    parser.add_argument("--activations", default="real", choices=["real", "non-negative"])
     parser.add_argument("--max_len", type=int, default=1024)
-    parser.add_argument("--stp_max_steps", type=int, default=15)
+
+    parser.add_argument("--sample_type", default="all", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
     parser.add_argument("--save_results", default=1, type=int)
     parser.add_argument("--verbose_results", default=1, type=int)
     parser.add_argument("--repeat", default=1, type=int)
-    parser.add_argument("--sample_type", default="real", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
+    
+    parser.add_argument("--stp_max_steps", type=int, default=15)
 
     args = parser.parse_args()
     main(args)

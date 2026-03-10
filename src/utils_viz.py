@@ -24,33 +24,24 @@ def plot_tensor_heatmap(tensor, filename = 'tensor.pdf', title="Tensor Heatmap",
     # 2. Setup Plot
     fig, ax = plt.subplots(figsize=(8, 6))
     
-    # Render the heatmap
+    # Render heatmap
     im = ax.imshow(data, cmap=cmap)
 
-    # 3. Add Colorbar
-    cbar = ax.figure.colorbar(im, ax=ax)
+    # Add colorbar
+    cbar = fig.colorbar(im, ax=ax)
     cbar.ax.set_ylabel("Value", rotation=-90, va="bottom")
 
-    # 4. Add Ticks
+    # Ticks
     ax.set_xticks(np.arange(data.shape[1]))
     ax.set_yticks(np.arange(data.shape[0]))
-    
-    # Label axes starting from 0
     ax.set_xticklabels(np.arange(data.shape[1]))
     ax.set_yticklabels(np.arange(data.shape[0]))
 
-    # 5. Add Text Annotations (Loop through cells)
-    # Only do this if the tensor is reasonably small to prevent clutter
-    # if data.shape[0] <= 20 and data.shape[1] <= 20:
-    #     for i in range(data.shape[0]):
-    #         for j in range(data.shape[1]):
-    #             # Formatting float to 2 decimal places
-    #             text = ax.text(j, i, f"{data[i, j]:.2f}",
-    #                            ha="center", va="center", color=text_color, fontweight='bold')
-
     ax.set_title(title)
     fig.tight_layout()
-    plt.savefig(filename, dpi = dpi)
+
+    plt.savefig(filename, dpi=dpi)
+    plt.show()
 
 
 def save_heatmaps(S_directed, S_undirected, suffix = ''):

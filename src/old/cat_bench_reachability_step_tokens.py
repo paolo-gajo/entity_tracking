@@ -187,12 +187,12 @@ def get_model_info(model_path, args, task_name="cat_bench_reachability_step_toke
         model_save_dir = os.path.normpath(train_config["model_save_dir"])
         num_steps = str(train_config.get("num_steps", 0))
         rel = os.path.relpath(model_save_dir, start=os.path.normpath("./models"))
-        save_path = os.path.join("./results", task_name, rel, num_steps)
+        save_path = os.path.join("./results", task_name, rel, f"samples={args.sample_type}", num_steps)
         return save_path, train_config
 
     train_config = {"num_steps": 0}
     model_leaf = os.path.basename(os.path.normpath(model_path))
-    save_path = os.path.join("./results", task_name, "baseline", model_leaf, f"activations={args.activations}", "0")
+    save_path = os.path.join("./results", task_name, "baseline", model_leaf, f"activations={args.activations}", f"samples={args.sample_type}", "0")
     return save_path, train_config
 
 def save_results_to_disk(results, save_path, train_config, args):
@@ -211,24 +211,12 @@ def save_results_to_disk(results, save_path, train_config, args):
 # Main
 # -------------------------
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--model_dir", default="openai-community/gpt2")
-    ap.add_argument("--data_path", default="./data/cat_bench/catplan-data-release/generated_questions/test_must_why/test_must_why.json")
-    ap.add_argument("--activations", default="real", choices=["real", "non-negative"])
-    ap.add_argument("--max_len", type=int, default=1024)
-    ap.add_argument("--stp_max_steps", type=int, default=15)
-    ap.add_argument("--save_results", default=1, type=int)
-    ap.add_argument("--verbose_results", default=1, type=int)
-    ap.add_argument("--repeat", default=1, type=int)
-
-    args = ap.parse_args()
+def main(args):
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
     with open(args.data_path, "r") as f:
         data = json.load(f)
     df = pd.DataFrame(data)
-    df = df[df["type"] == "real"].reset_index(drop=True)
 
     # Walk model_dir for checkpoints or treat as single model
     if not os.path.exists(args.model_dir):
@@ -245,9 +233,13 @@ def main():
             model_list = [{"path": args.model_dir, "num_steps": 0}]
         model_list = sorted(model_list, key=lambda x: x["num_steps"])
 
+    # Filter by sample type
+    if args.sample_type != 'all':
+        df = df[df['type'] == args.sample_type].reset_index(drop=True)
+
     for m in model_list:
         model_name = m["path"]
-        save_path, train_config = get_model_info(model_name, args)
+        save_path, train_config = get_model_info(model_name, args, task_name="cat_bench_reachability_step_tokens")
         result_file = os.path.join(save_path, "results.json")
         
         if os.path.exists(result_file) and not args.repeat:
@@ -274,26 +266,65 @@ def main():
         threshold = float(np.median(y_score))
         y_pred = (y_score >= threshold).astype(int)
 
-        results = {
-            "n": int(len(y_true)),
-            "acc": float(accuracy_score(y_true, y_pred)),
-            "f1": float(f1_score(y_true, y_pred, zero_division=0)),
-        }
+        results = {"n": int(len(y_true))}
+
         if len(np.unique(y_true)) == 2:
-            results["roc_auc"] = float(roc_auc_score(y_true, y_score))
-            results["avg_precision"] = float(average_precision_score(y_true, y_score))
+            signed_roc_auc = float(roc_auc_score(y_true, y_score))
+            unsigned_roc_auc = max(signed_roc_auc, 1.0 - signed_roc_auc)
+            
+            # Determine signal polarity
+            is_inverted = signed_roc_auc < 0.5
+            
+            # Conditional thresholding
+            threshold = float(np.median(y_score))
+            if is_inverted:
+                y_pred = (y_score <= threshold).astype(int)
+            else:
+                y_pred = (y_score >= threshold).astype(int)
+
+            results["signed_roc_auc"] = signed_roc_auc
+            results["unsigned_roc_auc"] = unsigned_roc_auc
+            results["signed_avg_precision"] = float(average_precision_score(y_true, y_score))
+            
+            # Invert scores for unsigned AP if polarity is inverted
+            y_score_unsigned = -y_score if is_inverted else y_score
+            results["unsigned_avg_precision"] = float(average_precision_score(y_true, y_score_unsigned))
+
+        else:
+            # Fallback for mono-class edge cases
+            threshold = float(np.median(y_score))
+            y_pred = (y_score >= threshold).astype(int)
+
+        results["acc"] = float(accuracy_score(y_true, y_pred))
+        results["f1"] = float(f1_score(y_true, y_pred, zero_division=0))
 
         if args.verbose_results:
             print(f"n = {results['n']}")
             print(f"acc = {results['acc']:.4f}")
             print(f"f1  = {results['f1']:.4f}")
-            if "roc_auc" in results:
-                print(f"roc = {results['roc_auc']:.4f}")
-                print(f"pr  = {results['avg_precision']:.4f}")
+            if "signed_roc_auc" in results:
+                print(f"signed_roc   = {results['signed_roc_auc']:.4f}")
+                print(f"unsigned_roc = {results['unsigned_roc_auc']:.4f}")
+                print(f"signed_pr    = {results['signed_avg_precision']:.4f}")
+                print(f"unsigned_pr  = {results['unsigned_avg_precision']:.4f}")
             print(classification_report(y_true, y_pred, digits=4))
 
         if args.save_results:
             save_results_to_disk(results, save_path, train_config, args)
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model_dir", default="openai-community/gpt2")
+    parser.add_argument("--data_path", default="./data/cat_bench/catplan-data-release/generated_questions/test_must_why/test_must_why.json")
+    parser.add_argument("--activations", default="real", choices=["real", "non-negative"])
+    parser.add_argument("--max_len", type=int, default=1024)
+
+    parser.add_argument("--sample_type", default="real", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
+    parser.add_argument("--save_results", default=1, type=int)
+    parser.add_argument("--verbose_results", default=1, type=int)
+    parser.add_argument("--repeat", default=1, type=int)
+    
+    parser.add_argument("--stp_max_steps", type=int, default=15)
+
+    args = parser.parse_args()
+    main(args)
