@@ -251,6 +251,12 @@ if __name__ == "__main__":
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
     
+    # Absolute positional embeddings
+    parser.add_argument("--use_abs_pe", default=0, type=int,
+                        help="Inject learned absolute positional embeddings into the model")
+    parser.add_argument("--abs_pe_max_len", default=1024, type=int,
+                        help="Max sequence length for absolute positional embeddings")
+
     # BOS
     parser.add_argument("--prepend_bos", default=0, type=int)
     parser.add_argument("--detect_anomaly", default=0, type=int,

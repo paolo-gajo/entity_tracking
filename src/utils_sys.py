@@ -18,6 +18,7 @@ def setup_config(train_config):
         'use_cos': 'cos',
         'init_from_eos': 'eos_init',
         'use_lora': 'use_lora',
+        'use_abs_pe': 'abs_pe',
         'activations': 'act',
     }
 
@@ -36,10 +37,13 @@ def setup_config(train_config):
         'use_cos',
         'init_from_eos',
         'use_lora',
+        'use_abs_pe',
         'activations',
     ]
-
-    model_leaf = train_config['model_name'].split('/')[-1]
+    if train_config.get('resume_from'):
+        model_leaf = train_config['resume_from'].split('/')[-2]
+    else:
+        model_leaf = train_config['model_name'].split('/')[-1]
     
     # Build dynamic string: e.g. "bs=8/prompt=minimal_pairs/..."
     dynamic_subdirs = []
@@ -61,10 +65,21 @@ def get_current_time_string():
     return datetime.now().strftime("%Y-%m-%d--%H-%M-%S")
 
 def save_model_tokenizer(model, tokenizer, save_config, model_save_dir, filename = 'train_config.json'):
+    import torch
     os.makedirs(model_save_dir, exist_ok=True)
     with open(os.path.join(model_save_dir, filename), 'w', encoding='utf8') as f:
         json.dump(save_config, f, ensure_ascii = False, indent = 4, default = str)
-    model.save_pretrained(model_save_dir)
+
+    from utils_model import SmolLM2WithAbsPE
+    if isinstance(model, SmolLM2WithAbsPE):
+        # Save the base HF model and the abs PE weights separately
+        model.base_model.save_pretrained(model_save_dir)
+        torch.save(
+            model.abs_position_embeddings.state_dict(),
+            os.path.join(model_save_dir, 'abs_position_embeddings.pt'),
+        )
+    else:
+        model.save_pretrained(model_save_dir)
     tokenizer.save_pretrained(model_save_dir)
 
 def save_prompt_example(sample_prompt, model_save_dir):

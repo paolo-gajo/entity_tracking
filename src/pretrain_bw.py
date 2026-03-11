@@ -862,7 +862,7 @@ if __name__ == "__main__":
     )
 
     # ── BW generation ──
-    parser.add_argument("--n_problems", type=int, default=50_000)
+    parser.add_argument("--n_problems", type=int, default=100000)
     parser.add_argument("--n_blocks_min", type=int, default=6)
     parser.add_argument("--n_blocks_max", type=int, default=15)
     parser.add_argument("--n_towers_min", type=int, default=2)
@@ -875,7 +875,7 @@ if __name__ == "__main__":
     parser.add_argument("--resume_from", default=None, type=str)
 
     # ── Data ──
-    parser.add_argument("--data_path", default="./data/bw/bw_stp_dataset.json")
+    parser.add_argument("--data_path", default="./data/bw/bw_stp_dataset_100k_meta.json")
     parser.add_argument("--num_samples", default=0, type=int,
                         help="0 = use all generated samples")
     parser.add_argument("--neg_ratio", default=0.5, type=float)
@@ -889,6 +889,12 @@ if __name__ == "__main__":
     parser.add_argument("--loss_mask_type", default="completion_only")
     parser.add_argument("--batch_mode", default="random_samples")
     parser.add_argument("--prepend_bos", default=0, type=int)
+
+    # Absolute positional embeddings
+    parser.add_argument("--use_abs_pe", default=0, type=int,
+                        help="Inject learned absolute positional embeddings into the model")
+    parser.add_argument("--abs_pe_max_len", default=1024, type=int,
+                        help="Max sequence length for absolute positional embeddings")
 
     # ── Losses ──
     # STP (always on for this script)

@@ -1,7 +1,100 @@
 import torch
 import torch.nn as nn
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers.modeling_outputs import CausalLMOutputWithPast
 from peft import get_peft_model, LoraConfig
+
+
+class SmolLM2WithAbsPE(nn.Module):
+    """
+    Wraps a LlamaForCausalLM (SmolLM2) and injects learned absolute positional
+    embeddings that are added to the token embeddings before the transformer.
+
+    The original RoPE is still applied inside each attention layer, so this
+    model has *both* absolute PE and RoPE.
+    """
+
+    def __init__(self, base_model, max_position_embeddings: int = 1024):
+        super().__init__()
+        self.base_model = base_model
+        self.config = base_model.config
+        hidden_size = self.config.hidden_size
+        self.abs_position_embeddings = nn.Embedding(max_position_embeddings, hidden_size)
+        nn.init.normal_(self.abs_position_embeddings.weight, mean=0.0, std=0.02)
+
+    # Delegate attribute lookups to base_model so that code accessing
+    # model.model, model.lm_head, model.config, etc. still works.
+    def __getattr__(self, name):
+        try:
+            return super().__getattr__(name)
+        except AttributeError:
+            return getattr(self.base_model, name)
+
+    def get_input_embeddings(self):
+        return self.base_model.get_input_embeddings()
+
+    def set_input_embeddings(self, value):
+        self.base_model.set_input_embeddings(value)
+
+    def resize_token_embeddings(self, new_num_tokens):
+        return self.base_model.resize_token_embeddings(new_num_tokens)
+
+    def gradient_checkpointing_enable(self, **kwargs):
+        self.base_model.gradient_checkpointing_enable(**kwargs)
+
+    def forward(
+        self,
+        input_ids=None,
+        attention_mask=None,
+        position_ids=None,
+        inputs_embeds=None,
+        labels=None,
+        output_hidden_states=None,
+        use_cache=None,
+        return_dict=None,
+        **kwargs,
+    ):
+        # Build inputs_embeds with absolute PE injected
+        if inputs_embeds is None:
+            inputs_embeds = self.base_model.model.embed_tokens(input_ids)
+
+        B, T = inputs_embeds.shape[:2]
+        if position_ids is None:
+            position_ids = torch.arange(T, device=inputs_embeds.device).unsqueeze(0).expand(B, -1)
+
+        abs_pe = self.abs_position_embeddings(position_ids).to(inputs_embeds.dtype)
+        inputs_embeds = inputs_embeds + abs_pe
+
+        return self.base_model(
+            inputs_embeds=inputs_embeds,
+            attention_mask=attention_mask,
+            position_ids=position_ids,
+            labels=labels,
+            output_hidden_states=output_hidden_states,
+            use_cache=use_cache,
+            return_dict=return_dict,
+            **kwargs,
+        )
+
+def load_model_from_checkpoint(model_path, device='cpu'):
+    """
+    Load a model from a checkpoint directory. Automatically detects whether
+    the checkpoint includes abs PE weights and wraps accordingly.
+    Works for: plain HF models, HF hub IDs, and SmolLM2WithAbsPE checkpoints.
+    """
+    import os
+    base_model = AutoModelForCausalLM.from_pretrained(model_path)
+    abs_pe_path = os.path.join(model_path, 'abs_position_embeddings.pt')
+    if os.path.exists(abs_pe_path):
+        state = torch.load(abs_pe_path, map_location='cpu')
+        max_len = state['weight'].shape[0]
+        model = SmolLM2WithAbsPE(base_model, max_position_embeddings=max_len)
+        model.abs_position_embeddings.load_state_dict(state)
+        print(f"Loaded SmolLM2WithAbsPE (max_len={max_len}) from {model_path}")
+    else:
+        model = base_model
+    return model.to(device)
+
 
 def initialize_step_tokens(args, model, ref_model, tokenizer, init_token_id=None):
     if not args.use_stp:
@@ -64,13 +157,30 @@ def build_model_tokenizer(args, device):
             tokenizer.pad_token_id = tokenizer.eos_token_id
         if not tokenizer.bos_token_id:
             tokenizer.bos_token_id = tokenizer.eos_token_id
+    
     if not hasattr(tokenizer, 'model_max_length'):
         import pdb; pdb.set_trace()
         tokenizer.model_max_length = ...
 
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
-    ).to(device)
+    )
+
+    if getattr(args, 'use_abs_pe', 0):
+        tokenizer.model_max_length = args.abs_pe_max_len
+        abs_pe_len = getattr(args, 'abs_pe_max_len', 1024)
+        print(f"Injecting absolute positional embeddings (max_len={abs_pe_len})", flush=True)
+        model = SmolLM2WithAbsPE(model, max_position_embeddings=abs_pe_len)
+        # Load saved abs PE weights if resuming from a checkpoint
+        import os
+        abs_pe_path = os.path.join(args.model_name, 'abs_position_embeddings.pt')
+        if os.path.exists(abs_pe_path):
+            print(f"Loading abs PE weights from {abs_pe_path}", flush=True)
+            model.abs_position_embeddings.load_state_dict(
+                torch.load(abs_pe_path, map_location='cpu')
+            )
+
+    model = model.to(device)
 
     ref_model = None
     if args.use_kl:

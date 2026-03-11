@@ -1,6 +1,5 @@
 import argparse
 import json
-import torch
 from datasets import Dataset, DatasetDict
 from transformers import (
     AutoTokenizer,

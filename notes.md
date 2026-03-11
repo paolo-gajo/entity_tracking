@@ -1,3 +1,7 @@
+2026-03-10
+
+- what if the model somehow was able to choose which positional embedding to apply to which token?
+
 2026-03-04
 
 i still wanna see if i can do MML using LEACE (https://arxiv.org/pdf/2306.03819) to remove positional information instead of using GRL

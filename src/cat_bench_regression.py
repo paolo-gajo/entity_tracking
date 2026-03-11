@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel, PeftConfig
+from utils_model import load_model_from_checkpoint
 from tqdm.auto import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report, roc_auc_score
@@ -126,7 +127,7 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
         # Note: |A-B| (Absolute diff) is often better for NLI than A-B, but A-B captures direction.
         # Given "Must happen before", direction matters, so A-B is correct.
         feat = torch.cat([emb_a, emb_b, emb_a - emb_b, emb_a * emb_b], dim=0)
-        features.append(feat.cpu().numpy())
+        features.append(feat.cpu().float().numpy())
         
     return np.array(features)
 
@@ -237,7 +238,7 @@ def main(args):
 
         # Dynamic Loading Logic
         adapter_config_path = os.path.join(model_name, "adapter_config.json")
-        
+
         if os.path.exists(adapter_config_path):
             print("-> Detected LoRA adapter. Using PEFT two-stage loading...")
             config = PeftConfig.from_pretrained(model_name)
@@ -245,17 +246,15 @@ def main(args):
                 config.base_model_name_or_path,
                 dtype=torch.float16,
             ).to(device)
-            
+
             # Resize the base model to accept the new embeddings
             base_model.resize_token_embeddings(len(tokenizer))
-            
+
             # Wrap in PEFT to inject LoRA weights and trained embeddings
             model = PeftModel.from_pretrained(base_model, model_name)
         else:
-            print("-> No adapter_config.json found. Loading as standard full fine-tuned model...")
-            model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-            ).to(device)
+            print("-> Loading model (auto-detects abs PE wrapper)...")
+            model = load_model_from_checkpoint(model_name, device=device)
         model.eval()
 
         if tokenizer.pad_token is None:

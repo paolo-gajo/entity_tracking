@@ -17,6 +17,7 @@ import json
 import argparse
 from utils_sys import setup_config
 from peft import PeftModel, PeftConfig
+from utils_model import load_model_from_checkpoint
 
 # -------------------------
 # Model setup (same as sims_step_tokens.py)
@@ -55,11 +56,8 @@ def setup_model(model_name, device, stp_max_steps=15):
         # Wrap in PEFT to inject LoRA weights and trained embeddings
         model = PeftModel.from_pretrained(base_model, model_name)
     else:
-        print("-> No adapter_config.json found. Loading as standard full fine-tuned model...")
-        model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            dtype=torch.float16,
-        ).to(device)
+        print("-> Loading model (auto-detects abs PE wrapper)...")
+        model = load_model_from_checkpoint(model_name, device=device)
 
     # Add step tokens if not present (random-init baseline)
     step_token_ids = get_step_token_ids(tokenizer, stp_max_steps)
@@ -149,7 +147,7 @@ def extract_features(df, tokenizer, model, step_token_ids, device, max_len, acti
 
         # Feature: [A, B, A-B, A*B]
         feat = torch.cat([emb_a, emb_b, emb_a - emb_b, emb_a * emb_b], dim=0)
-        features.append(feat.cpu().numpy())
+        features.append(feat.cpu().float().numpy())
         labels.append(int(row['label']))
 
     if not features:
