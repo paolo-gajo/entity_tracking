@@ -48,7 +48,7 @@ def compute_pos_adv_loss(args, pos_head, lhs, batch):
         return pos_loss, pos_acc
 
     H_steps, y_pos = pool_steps_and_posbins(
-        lhs, batch["step_indices_mml"], batch["attn_mask"], args.pos_bins,
+        lhs, batch["step_indices"], batch["attn_mask"], args.pos_bins,
     )
 
     if H_steps is None:

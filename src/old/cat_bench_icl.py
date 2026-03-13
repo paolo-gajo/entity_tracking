@@ -82,7 +82,7 @@ def main(args):
             test_dataset=df_test,
             tokenizer=tokenizer,
             n_icl=3,
-            max_length=1e9,
+            max_length=tokenizer.max_model_length,
             num_samples=100,
         )
 

@@ -8,15 +8,14 @@ import math
 from itertools import permutations
 from tqdm import tqdm
 
-
 class Seq2SeqDataset(Dataset):
     def __init__(self,
                  data,
                  tokenizer,
                  max_length=1024,
-                 prompt_type='minimal',
+                 prompt_type_list=['minimal_pairs'],
                  attn_mask_type='full',
-                 loss_mask_type='completion_only',
+                 clm_mask_type='completion_only',
                  batch_mode='random_samples',
                  min_recipe_steps=0,
                  max_recipe_steps=32,
@@ -28,102 +27,110 @@ class Seq2SeqDataset(Dataset):
         self.tokenizer = tokenizer
         self.max_length = max_length
         self.attn_mask_type = attn_mask_type
-        self.loss_mask_type = loss_mask_type
+        self.clm_mask_type = clm_mask_type
         self.min_recipe_steps = min_recipe_steps
         self.max_recipe_steps = max_recipe_steps
-        self.prompt_type = prompt_type
+        self.prompt_type_list = prompt_type_list
         self.batch_mode = batch_mode
         self.step_token_id_map = step_token_id_map  # {0: id_for_<step_0>, 1: id_for_<step_1>, ...}
         self.prepend_bos = prepend_bos
 
-        if self.prompt_type == 'minimal_pairs':
-            self.make_fn = self.make_minimal_pair_samples
-        elif self.prompt_type == 'natlang_pairs':
-            self.make_fn = self.make_natlang_pair_samples
-        elif self.prompt_type == 'minimal_mono':
-            self.make_fn = self.make_mono_samples
-        elif self.prompt_type == 'step_token_pairs':
-            self.make_fn = self.make_step_token_pair_samples
-        elif self.prompt_type == 'pooled_pairs':
-            self.make_fn = self.make_pooled_pair_samples
+        make_fn_list = []
 
-        if self.batch_mode == 'pos_neg':
-            self.make_pos_neg_dataset()
-        elif self.batch_mode == 'random_samples':
-            self.make_random_samples_dataset()
+        for prompt_type in self.prompt_type_list:
+            if prompt_type == 'minimal_pairs':
+                make_fn_list.append((self.make_minimal_pair_samples, prompt_type))
+            elif prompt_type == 'natlang_pairs':
+                make_fn_list.append((self.make_natlang_pair_samples, prompt_type))
+            elif prompt_type == 'minimal_mono':
+                make_fn_list.append((self.make_mono_samples, prompt_type))
+            elif prompt_type == 'step_token_pairs':
+                make_fn_list.append((self.make_step_token_pair_samples, prompt_type))
 
-        self.prune_long_token_lengths()
-        self.prune_short_step_lengths()
-        self.prune_long_step_lengths()
+        self.data_formatted = []
+
+        for fn, prompt_type in make_fn_list:
+            if self.batch_mode == 'pos_neg':
+                self.data_formatted += self.make_pos_neg_dataset(fn, prompt_type)
+            elif self.batch_mode == 'random_samples':
+                self.data_formatted += self.make_random_samples_dataset(fn, prompt_type)
+
+        self.data_formatted = self.prune_long_token_lengths()
+        self.data_formatted = self.prune_short_step_lengths()
+        self.data_formatted = self.prune_long_step_lengths()
+
+        total_tokens_stp = sum(sum(item.get('stp_mask', [0])) for item in self.data_formatted)
+        total_tokens_clm = sum(sum(item.get('clm_mask', [0])) for item in self.data_formatted)
+        print(f"Dataset: {len(self.data)} samples, {total_tokens_clm:,} CLM tokens, {total_tokens_stp:,} STP tokens, ", flush=True)
 
     def prune_long_token_lengths(self):
         data_pruned = []
-        for i in tqdm(range(len(self.data)), desc='Pruning long token length samples...'):
-            if isinstance(self.data[i], list):
-                if all(len(self.data[i][j]['input_ids']) <= self.max_length for j in range(len(self.data[i]))):
-                    data_pruned.append(self.data[i])
+        for i in tqdm(range(len(self.data_formatted)), desc='Pruning long token length samples...'):
+            if isinstance(self.data_formatted[i], list):
+                if all(len(self.data_formatted[i][j]['input_ids']) <= self.max_length for j in range(len(self.data_formatted[i]))):
+                    data_pruned.append(self.data_formatted[i])
             else:
-                if len(self.data[i]['input_ids']) <= self.max_length:
-                    data_pruned.append(self.data[i])
+                if len(self.data_formatted[i]['input_ids']) <= self.max_length:
+                    data_pruned.append(self.data_formatted[i])
 
-        removed = len(self.data) - len(data_pruned)
+        removed = len(self.data_formatted) - len(data_pruned)
         if removed > 0:
             print(f"Pruned {removed} sequences exceeding {self.max_length} tokens.")
-        self.data = data_pruned
+        return data_pruned
 
     def prune_short_step_lengths(self):
         data_pruned = []
-        for i in tqdm(range(len(self.data)), desc='Pruning short step length samples...'):
-            if isinstance(self.data[i], list):
-                if max(self.data[i][0]['step_indices_mml']) >= self.min_recipe_steps:
-                    data_pruned.append(self.data[i])
+        for i in tqdm(range(len(self.data_formatted)), desc='Pruning short step length samples...'):
+            if isinstance(self.data_formatted[i], list):
+                if max(self.data_formatted[i][0]['step_indices']) >= self.min_recipe_steps:
+                    data_pruned.append(self.data_formatted[i])
             else:
-                if max(self.data[i]['step_indices_mml']) >= self.min_recipe_steps:
-                    data_pruned.append(self.data[i])
+                if max(self.data_formatted[i]['step_indices']) >= self.min_recipe_steps:
+                    data_pruned.append(self.data_formatted[i])
 
-        removed = len(self.data) - len(data_pruned)
+        removed = len(self.data_formatted) - len(data_pruned)
         if removed > 0:
             print(f"Pruned {removed} sequences with fewer than {self.min_recipe_steps} steps.")
-        self.data = data_pruned
+        return data_pruned
 
     def prune_long_step_lengths(self):
         data_pruned = []
-        for i in tqdm(range(len(self.data)), desc='Pruning long step length samples...'):
-            if isinstance(self.data[i], list):
-                if max(self.data[i][0]['step_indices_mml']) <= self.max_recipe_steps:
-                    data_pruned.append(self.data[i])
+        for i in tqdm(range(len(self.data_formatted)), desc='Pruning long step length samples...'):
+            if isinstance(self.data_formatted[i], list):
+                if max(self.data_formatted[i][0]['step_indices']) <= self.max_recipe_steps:
+                    data_pruned.append(self.data_formatted[i])
             else:
-                if max(self.data[i]['step_indices_mml']) <= self.max_recipe_steps:
-                    data_pruned.append(self.data[i])
+                if max(self.data_formatted[i]['step_indices']) <= self.max_recipe_steps:
+                    data_pruned.append(self.data_formatted[i])
 
-        removed = len(self.data) - len(data_pruned)
+        removed = len(self.data_formatted) - len(data_pruned)
         if removed > 0:
             print(f"Pruned {removed} sequences exceeding {self.max_recipe_steps} steps.")
-        self.data = data_pruned
+        return data_pruned
 
     def __getitem__(self, index):
-        return self.data[index]
+        return self.data_formatted[index]
 
     def __len__(self):
-        return len(self.data)
+        return len(self.data_formatted)
 
-    def make_random_samples_dataset(self):
+    def make_random_samples_dataset(self, make_fn, prompt_type):
         formatted_data = []
         chunk_size = 2048
         tbar = tqdm(range(0, len(self.data), chunk_size),
-                    desc=f'Formatting random-samples dataset (prompt_type = {self.prompt_type})...')
+                    desc=f'Formatting random-samples dataset (prompt_type = {prompt_type})...')
         for i in tbar:
             chunk = self.data[i: i + chunk_size]
-            formatted_data.extend(self.make_fn(chunk))
-        self.data = formatted_data
+            formatted_data.extend(make_fn(chunk))
+        return formatted_data
 
-    def make_pos_neg_dataset(self):
+    def make_pos_neg_dataset(self, make_fn, prompt_type):
         formatted_data = []
         for batch in tqdm(self.data,
-                          desc=f'Formatting pos-neg dataset (prompt_type = {self.prompt_type})...'):
-            formatted_batch = self.make_fn(batch)
+                          desc=f'Formatting pos-neg dataset (prompt_type = {prompt_type})...'):
+            formatted_batch = make_fn(batch)
             formatted_data.append(formatted_batch)
-        self.data = formatted_data
+        return formatted_data
 
     # ------------------------------------------------------------------
     # helpers
@@ -153,10 +160,12 @@ class Seq2SeqDataset(Dataset):
                 step_indices.extend([step_num + 1] * len(step_tokens))
             input_ids.append(self.tokenizer.eos_token_id)
             step_indices.append(0)
-            attention_mask = [1] * len(input_ids)
+            attn_mask = [1] * len(input_ids)
+            clm_mask = [1] * len(input_ids)
             formatted_batch.append({
                 'input_ids': input_ids,
-                'attention_mask': attention_mask,
+                'attn_mask': attn_mask,
+                'clm_mask': clm_mask,
                 'step_indices': step_indices,
                 'binary_label': batch[i]['binary_label'],
             })
@@ -196,7 +205,7 @@ class Seq2SeqDataset(Dataset):
             bos_prefix = [self.tokenizer.bos_token_id] if self.prepend_bos else []
             n_bos = len(bos_prefix)
             input_ids = bos_prefix + src_ids + tgt_ids + [self.tokenizer.eos_token_id]
-            step_indices_mml = [0] * n_bos + src_step_indices + [0] * len(tgt_step_indices) + [0]
+            step_indices = [0] * n_bos + src_step_indices + [0] * len(tgt_step_indices) + [0]
 
             if 'completion_only' in self.attn_mask_type:
                 attn_mask = [0] * (n_bos + len(src_ids)) + [1] * len(tgt_ids) + [1]
@@ -204,17 +213,17 @@ class Seq2SeqDataset(Dataset):
                 attn_mask = [1] * len(input_ids)
             else:
                 raise ValueError(f"Unknown attn_mask_type: {self.attn_mask_type}")
-            if 'completion_only' in self.loss_mask_type:
-                loss_mask = [0] * (n_bos + len(src_ids)) + [1] * len(tgt_ids) + [1]
-            elif 'full' in self.loss_mask_type:
-                loss_mask = [1] * len(input_ids)
+            if 'completion_only' in self.clm_mask_type:
+                clm_mask = [0] * (n_bos + len(src_ids)) + [1] * len(tgt_ids) + [1]
+            elif 'full' in self.clm_mask_type:
+                clm_mask = [1] * len(input_ids)
             else:
-                raise ValueError(f"Unknown loss_mask_type: {self.loss_mask_type}")
+                raise ValueError(f"Unknown clm_mask_type: {self.clm_mask_type}")
             formatted_batch.append({
                 'input_ids': input_ids,
                 'attn_mask': attn_mask,
-                'loss_mask': loss_mask,
-                'step_indices_mml': step_indices_mml,
+                'clm_mask': clm_mask,
+                'step_indices': step_indices,
                 'binary_label': batch[i]['binary_label'],
             })
         return formatted_batch
@@ -250,103 +259,6 @@ class Seq2SeqDataset(Dataset):
                 'attention_mask': attention_mask,
                 'step_indices': step_indices,
                 'binary_label': batch[i]['binary_label'],
-            })
-        return formatted_batch
-
-    # ==================================================================
-    #  NEW: Pooled-CLM pairs  (Section 3.1)
-    #
-    #  Same layout as minimal_pairs but the completion side also carries
-    #  step indices so PooledCausalLMLoss can group tokens by step.
-    # ==================================================================
-
-    def make_pooled_pair_samples(self, batch):
-        """
-        Format:  π_shuf ⊕ sep ⊕ π_orig ⊕ eos
-
-        Identical to make_minimal_pair_samples except that step_indices_mml
-        is populated on BOTH sides:
-          - prefix tokens get the *original* step index of the shuffled step
-            they belong to  (same as before — needed for MML)
-          - completion tokens get their sequential step index 1..N
-            (needed for PooledCausalLMLoss)
-
-        A new field `completion_step_indices` carries the completion-side
-        indices in a separate tensor to keep the MML and pooled-CLM index
-        semantics cleanly separated.
-        """
-        formatted_batch = []
-
-        flat_src, flat_tgt = [], []
-        for item in batch:
-            flat_src.extend([" " + s.strip() for s in item['shuf']])
-            flat_tgt.extend([" " + s.strip() for s in item['orig']])
-
-        shuf_encs = self.tokenizer(flat_src, add_special_tokens=False)['input_ids']
-        orig_encs = self.tokenizer(flat_tgt, add_special_tokens=False)['input_ids']
-        sep_ids = self.tokenizer.encode("\n\n", add_special_tokens=False)
-
-        shuf_idx, orig_idx = 0, 0
-        for i, item in enumerate(batch):
-            n_src = len(item['shuf'])
-            n_tgt = len(item['orig'])
-            src_chunks = shuf_encs[shuf_idx: shuf_idx + n_src]
-            tgt_chunks = orig_encs[orig_idx: orig_idx + n_tgt]
-            shuf_idx += n_src
-            orig_idx += n_tgt
-
-            # --- prefix (shuffled) ------------------------------------------
-            src_ids = self._concat(src_chunks) + sep_ids
-
-            # MML step indices on the prefix: map each shuffled step back to
-            # its original position
-            src_step_indices_mml = []
-            for j, shuf_step in enumerate(item['shuf']):
-                orig_pos = item['orig'].index(shuf_step) + 1
-                src_step_indices_mml.extend([orig_pos] * len(src_chunks[j]))
-            src_step_indices_mml.extend([0] * len(sep_ids))
-
-            # --- completion (original order) --------------------------------
-            tgt_ids = self._concat(tgt_chunks)
-
-            tgt_step_indices = []
-            for step_num, chunk in enumerate(tgt_chunks):
-                tgt_step_indices.extend([step_num + 1] * len(chunk))
-
-            # --- full sequence -----------------------------------------------
-            input_ids = src_ids + tgt_ids + [self.tokenizer.eos_token_id]
-
-            # MML indices: prefix has orig-position mapping; completion = 0
-            step_indices_mml = src_step_indices_mml + [0] * len(tgt_ids) + [0]
-
-            # Completion step indices for PooledCausalLMLoss:
-            # prefix = 0, completion = 1..N, eos = 0
-            completion_step_indices = (
-                [0] * len(src_ids) + tgt_step_indices + [0]
-            )
-
-            # --- masks --------------------------------------------------------
-            if 'completion_only' in self.attn_mask_type:
-                attn_mask = [0] * len(src_ids) + [1] * len(tgt_ids) + [1]
-            elif 'full' in self.attn_mask_type:
-                attn_mask = [1] * len(input_ids)
-            else:
-                raise ValueError(f"Unknown attn_mask_type: {self.attn_mask_type}")
-
-            if 'completion_only' in self.loss_mask_type:
-                loss_mask = [0] * len(src_ids) + [1] * len(tgt_ids) + [1]
-            elif 'full' in self.loss_mask_type:
-                loss_mask = [1] * len(input_ids)
-            else:
-                raise ValueError(f"Unknown loss_mask_type: {self.loss_mask_type}")
-
-            formatted_batch.append({
-                'input_ids': input_ids,
-                'attn_mask': attn_mask,
-                'loss_mask': loss_mask,
-                'step_indices_mml': step_indices_mml,
-                'completion_step_indices': completion_step_indices,
-                'binary_label': item['binary_label'],
             })
         return formatted_batch
 
@@ -397,8 +309,7 @@ class Seq2SeqDataset(Dataset):
 
             # ---- build prefix ------------------------------------------------
             prefix_ids = []
-            prefix_step_indices_mml = []
-            loss_mask_prefix = [] # For standard text tokens (CLM) in prefix
+            prefix_step_indices = []
 
             for j, shuf_step in enumerate(item['shuf']):
                 # 0-indexed original position (for MML step indices)
@@ -406,8 +317,7 @@ class Seq2SeqDataset(Dataset):
 
                 # Regular content tokens
                 prefix_ids.extend(chunks[j])
-                prefix_step_indices_mml.extend([orig_idx + 1] * len(chunks[j]))
-                loss_mask_prefix.extend([1] * len(chunks[j]))
+                prefix_step_indices.extend([orig_idx + 1] * len(chunks[j]))
 
                 # Step token assigned by shuffled order (j-th step in prefix
                 # gets <step_j>), appended after the step content
@@ -419,13 +329,11 @@ class Seq2SeqDataset(Dataset):
                 # and using positional information when predicting the step tokens
                 # in the completion.
                 prefix_ids.append(self.step_token_id_map[j])
-                prefix_step_indices_mml.append(orig_idx + 1)  # 1-indexed for MML
-                loss_mask_prefix.append(0) # Step tokens are excluded from CLM loss
+                prefix_step_indices.append(orig_idx + 1)  # 1-indexed for MML
 
             # Separator
             prefix_ids.extend(sep_ids)
-            prefix_step_indices_mml.extend([0] * len(sep_ids))
-            loss_mask_prefix.extend([1] * len(sep_ids))
+            prefix_step_indices.extend([0] * len(sep_ids))
 
             n_prefix = len(prefix_ids)
 
@@ -438,8 +346,7 @@ class Seq2SeqDataset(Dataset):
             #          <step_1>=S1, <step_2>=S2
             #          orig order is S1, S2, S3 → completion = <step_1> [Text 1] <step_2> [Text 2] <step_0> [Text 3]
             comp_ids = []
-            comp_step_indices_mml = []
-            loss_mask_completion = [] # For standard text tokens (CLM)
+            comp_step_indices = []
             stp_mask_completion = []  # For step tokens (STP)
 
             for orig_pos in range(n_steps):
@@ -447,56 +354,37 @@ class Seq2SeqDataset(Dataset):
                 orig_step = item['orig'][orig_pos]
                 shuf_j = item['shuf'].index(orig_step)
                 
-                # 1. Emit Step token (Planning what goes next)
+                # Emit Step token
                 stp_id = self.step_token_id_map[shuf_j]
                 comp_ids.append(stp_id)
-                comp_step_indices_mml.append(orig_pos + 1)  # 1-indexed
-                loss_mask_completion.append(0) # Not part of standard CLM
+                comp_step_indices.append(orig_pos + 1)  # 1-indexed
                 stp_mask_completion.append(1)  # Included in STP
-                
-                # 2. Emit Step text (Grounding it into natural language)
-                text_chunk = chunks[shuf_j]
-                comp_ids.extend(text_chunk)
-                comp_step_indices_mml.extend([orig_pos + 1] * len(text_chunk))
-                loss_mask_completion.extend([1] * len(text_chunk))
-                stp_mask_completion.extend([0] * len(text_chunk))
 
             # ---- assemble full sequence + EOS --------------------------------
             bos_prefix = [self.tokenizer.bos_token_id] if self.prepend_bos else []
             input_ids = bos_prefix + prefix_ids + comp_ids + [self.tokenizer.eos_token_id]
-            attn_mask = [1] * len(input_ids)
 
             # MML step indices: prefix gets step ids, completion step tokens
             # also get their step ids (useful for geometry evaluation),
             # EOS gets 0.
             n_bos = len(bos_prefix)
-            step_indices_mml = (
+            step_indices = (
                 [0] * n_bos
-                + prefix_step_indices_mml
-                + comp_step_indices_mml
+                + prefix_step_indices
+                + comp_step_indices
                 + [0]
             )
-
-            # CLM loss mask (vocab tokens + EOS)
-            if 'completion_only' in self.loss_mask_type:
-                loss_mask = [0] * (n_bos + n_prefix) + loss_mask_completion + [1]
-                # The last separator token also gets 1 so the model learns to
-                # predict the first step token across the boundary in CLM mode.
-                loss_mask[n_bos + n_prefix - 1] = 1
-            elif 'full' in self.loss_mask_type:
-                loss_mask = [0] * n_bos + loss_mask_prefix + loss_mask_completion + [1]
-            else:
-                raise ValueError(f"Unknown loss_mask_type: {self.loss_mask_type}")
+            
+            attn_mask = [1] * len(input_ids)
 
             # STP loss mask (step tokens only)
-            stp_mask = [0] * (n_bos + n_prefix) + stp_mask_completion + [0]
+            stp_mask = [0] * (n_bos + n_prefix) + stp_mask_completion + [1]
 
             formatted_batch.append({
                 'input_ids': input_ids,
                 'attn_mask': attn_mask,
-                'loss_mask': loss_mask,
                 'stp_mask': stp_mask,
-                'step_indices_mml': step_indices_mml,
+                'step_indices': step_indices,
                 'binary_label': item['binary_label'],
             })
 
@@ -551,22 +439,16 @@ class Collator:
 
         input_ids_list = []
         attn_mask_list = []
-        loss_mask_list = []
-        step_indices_mml_list = []
-        completion_step_indices_list = []
+        clm_mask_list = []
+        step_indices_list = []
         binary_labels_list = []
 
-        # Step-token prediction fields
-        step_token_ids_list = []
-        step_token_mask_list = []
-        stp_labels_list = []
         has_stp_mask = 'stp_mask' in batch[0]
+        has_clm_mask = 'clm_mask' in batch[0]
+        has_step_indices = 'step_indices' in batch[0]
+        has_binary_label = 'binary_label' in batch[0]
 
         stp_mask_list = []
-
-        has_step_token = 'step_token_ids' in batch[0]
-        has_stp_labels = 'stp_labels' in batch[0]
-        has_completion_step_indices = 'completion_step_indices' in batch[0]
 
         for el in batch:
             ids = el['input_ids']
@@ -581,76 +463,41 @@ class Collator:
             attn_mask_list.append(
                 torch.tensor(list_pad(mask, 0, max_len), dtype=torch.long))
 
-            l_mask = el['loss_mask']
-            if isinstance(l_mask, torch.Tensor):
-                l_mask = l_mask.tolist()
-            loss_mask_list.append(
-                torch.tensor(list_pad(l_mask, 0, max_len), dtype=torch.long))
-
-            if 'step_indices_mml' in el:
-                steps_mml = el['step_indices_mml']
-                if isinstance(steps_mml, torch.Tensor):
-                    steps_mml = steps_mml.tolist()
-                step_indices_mml_list.append(
-                    torch.tensor(list_pad(steps_mml, 0, max_len), dtype=torch.long))
-
-            if has_completion_step_indices:
-                csi = el['completion_step_indices']
-                if isinstance(csi, torch.Tensor):
-                    csi = csi.tolist()
-                completion_step_indices_list.append(
-                    torch.tensor(list_pad(csi, 0, max_len), dtype=torch.long))
-
-            if has_step_token:
-                st_ids = el['step_token_ids']
-                if isinstance(st_ids, torch.Tensor):
-                    st_ids = st_ids.tolist()
-                step_token_ids_list.append(
-                    torch.tensor(list_pad(st_ids, 0, max_len), dtype=torch.long))
-
-                st_mask = el['step_token_mask']
-                if isinstance(st_mask, torch.Tensor):
-                    st_mask = st_mask.tolist()
-                step_token_mask_list.append(
-                    torch.tensor(list_pad(st_mask, 0, max_len), dtype=torch.long))
-
-            if has_stp_labels:
-                sl = el['stp_labels']
-                if isinstance(sl, torch.Tensor):
-                    sl = sl.tolist()
-                stp_labels_list.append(
-                    torch.tensor(list_pad(sl, -100, max_len), dtype=torch.long))
+            if has_step_indices:
+                step_indices = el['step_indices']
+                if isinstance(step_indices, torch.Tensor):
+                    step_indices = step_indices.tolist()
+                step_indices_list.append(
+                    torch.tensor(list_pad(step_indices, 0, max_len), dtype=torch.long))
 
             if has_stp_mask:
-                sm = el['stp_mask']
-                if isinstance(sm, torch.Tensor):
-                    sm = sm.tolist()
+                stp_mask = el['stp_mask']
+                if isinstance(stp_mask, torch.Tensor):
+                    stp_mask = stp_mask.tolist()
                 stp_mask_list.append(
-                    torch.tensor(list_pad(sm, 0, max_len), dtype=torch.long))
+                    torch.tensor(list_pad(stp_mask, 0, max_len), dtype=torch.long))
 
-            if 'binary_label' in el:
+            if has_clm_mask:
+                clm_mask = el['clm_mask']
+                if isinstance(clm_mask, torch.Tensor):
+                    clm_mask = clm_mask.tolist()
+                clm_mask_list.append(
+                    torch.tensor(list_pad(clm_mask, 0, max_len), dtype=torch.long))
+
+            if has_binary_label:
                 binary_labels_list.append(el['binary_label'])
 
         batch_dict = {
             'input_ids': torch.stack(input_ids_list),
             'attn_mask': torch.stack(attn_mask_list),
-            'loss_mask': torch.stack(loss_mask_list),
         }
+        
+        # add optionals
+        if step_indices_list:
+            batch_dict['step_indices'] = torch.stack(step_indices_list)
 
-        if step_indices_mml_list:
-            batch_dict['step_indices_mml'] = torch.stack(step_indices_mml_list)
-
-        if completion_step_indices_list:
-            batch_dict['completion_step_indices'] = torch.stack(completion_step_indices_list)
-
-        if step_token_ids_list:
-            batch_dict['step_token_ids'] = torch.stack(step_token_ids_list)
-
-        if step_token_mask_list:
-            batch_dict['step_token_mask'] = torch.stack(step_token_mask_list)
-
-        if stp_labels_list:
-            batch_dict['stp_labels'] = torch.stack(stp_labels_list)
+        if clm_mask_list:
+            batch_dict['clm_mask'] = torch.stack(clm_mask_list)
 
         if stp_mask_list:
             batch_dict['stp_mask'] = torch.stack(stp_mask_list)
@@ -781,29 +628,32 @@ def prepare_text_batch_prompt(batch, tokenizer):
     prompt = ''
     for i in range(batch['input_ids'].shape[0]):
         decoded_all = tokenizer.decode(batch['input_ids'][i])
-        clm_mask = batch['loss_mask'][i] == 1
-        valid_inputs = batch['input_ids'][i][clm_mask]
-        decoded_valid = tokenizer.decode(valid_inputs)
-        stp_decoded = ''
+        attn_mask = batch['attn_mask'][i] == 1
+        attn_tokens = batch['input_ids'][i][attn_mask]
+        attn_tokens_decoded = tokenizer.decode(attn_tokens)
+        clm_tokens_decoded = ''
+        if 'clm_mask' in batch:
+            clm_mask = batch['clm_mask'][i] == 1
+            clm_tokens = batch['input_ids'][i][clm_mask]
+            clm_tokens_decoded = tokenizer.decode(clm_tokens)
+        stp_tokens_decoded = ''
         if 'stp_mask' in batch:
             stp_mask = batch['stp_mask'][i] == 1
-            valid_inputs_stp = batch['input_ids'][i][stp_mask]
-            stp_decoded = tokenizer.decode(valid_inputs_stp)
-        prompt += (decoded_all +
-                   '\n\n' +
-                   ('-' * 100) +
-                   '\n\n' +
-                   decoded_valid +
-                   '\n\n' +
-                   f"Binary label: {batch['binary_label'][i]}" +
-                   '\n\n' +
-                   ('#' * 100) +
-                   '\n\n' +
-                   f'step_decoded: {stp_decoded}' +
-                   '\n\n' +
-                   ('=' * 100) +
-                   '\n\n'
-                   )
+            stp_tokens = batch['input_ids'][i][stp_mask]
+            stp_tokens_decoded = tokenizer.decode(stp_tokens)
+        prompt += (
+            f"{'#' * 100}\n\n"
+            f'ALL input_ids:\n{decoded_all}\n\n'
+            f"{'-' * 100}\n\n"
+            f'ATTN TOKENS:\n{attn_tokens_decoded}\n\n'
+            f"{'-' * 100}\n\n"
+            f'CLM tokens:\n{clm_tokens_decoded}\n\n'
+            f"{'-' * 100}\n\n"
+            f'Step tokens:\n{stp_tokens_decoded}\n\n'
+            f"{'-' * 100}\n\n"
+            f"Binary label:\n{batch['binary_label'][i]}\n\n"
+            f"{'#' * 100}\n\n"
+        )
     return prompt
 
 

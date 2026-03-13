@@ -1,3 +1,7 @@
+2026-03-12
+
+
+
 2026-03-10
 
 - what if the model somehow was able to choose which positional embedding to apply to which token?

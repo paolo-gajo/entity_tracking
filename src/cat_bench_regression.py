@@ -182,6 +182,9 @@ def get_model_info(model_path, args, task_name="cat_bench_regression"):
 
     train_config = {"num_steps": 0}
     model_leaf = os.path.basename(os.path.normpath(model_path))
+    revision = getattr(args, 'revision', None)
+    if revision:
+        model_leaf = f"{model_leaf}_{revision}"
     save_path = os.path.join("./results", task_name, sample_dir, "baseline", model_leaf, "0")
     return save_path, train_config
 
@@ -231,8 +234,9 @@ def main(args):
             print(f"Skipping {model_name}: results exist at {result_file}")
             continue
 
-        print(f"Loading model from: {model_name}")
-        tokenizer = AutoTokenizer.from_pretrained(model_name, add_prefix_space=True)
+        revision = getattr(args, 'revision', None)
+        print(f"Loading model from: {model_name}" + (f" (revision={revision})" if revision else ""))
+        tokenizer = AutoTokenizer.from_pretrained(model_name, revision=revision, add_prefix_space=True)
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token
 
@@ -254,7 +258,7 @@ def main(args):
             model = PeftModel.from_pretrained(base_model, model_name)
         else:
             print("-> Loading model (auto-detects abs PE wrapper)...")
-            model = load_model_from_checkpoint(model_name, device=device)
+            model = load_model_from_checkpoint(model_name, device=device, revision=revision)
         model.eval()
 
         if tokenizer.pad_token is None:
@@ -312,5 +316,7 @@ if __name__ == "__main__":
     parser.add_argument("--verbose_results", default=1, type=int)
     parser.add_argument("--repeat", default=0, type=int)
     parser.add_argument("--sample_type", default="all", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
+    parser.add_argument("--revision", default=None, type=str,
+                        help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")
     args = parser.parse_args()
     main(args)

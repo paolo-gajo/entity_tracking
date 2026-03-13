@@ -20,7 +20,8 @@ class SmolLM2WithAbsPE(nn.Module):
         self.config = base_model.config
         hidden_size = self.config.hidden_size
         self.abs_position_embeddings = nn.Embedding(max_position_embeddings, hidden_size)
-        nn.init.normal_(self.abs_position_embeddings.weight, mean=0.0, std=0.02)
+        # nn.init.normal_(self.abs_position_embeddings.weight, mean=0.0, std=0.02)
+        nn.init.zeros_(self.abs_position_embeddings.weight)
 
     # Delegate attribute lookups to base_model so that code accessing
     # model.model, model.lm_head, model.config, etc. still works.
@@ -76,14 +77,14 @@ class SmolLM2WithAbsPE(nn.Module):
             **kwargs,
         )
 
-def load_model_from_checkpoint(model_path, device='cpu'):
+def load_model_from_checkpoint(model_path, device='cpu', revision=None):
     """
     Load a model from a checkpoint directory. Automatically detects whether
     the checkpoint includes abs PE weights and wraps accordingly.
     Works for: plain HF models, HF hub IDs, and SmolLM2WithAbsPE checkpoints.
     """
     import os
-    base_model = AutoModelForCausalLM.from_pretrained(model_path)
+    base_model = AutoModelForCausalLM.from_pretrained(model_path, revision=revision)
     abs_pe_path = os.path.join(model_path, 'abs_position_embeddings.pt')
     if os.path.exists(abs_pe_path):
         state = torch.load(abs_pe_path, map_location='cpu')
@@ -147,30 +148,32 @@ def initialize_step_tokens(args, model, ref_model, tokenizer, init_token_id=None
     return step_token_id_map
 
 def build_model_tokenizer(args, device):
-    print(f"Loading Active Model: {args.model_name}", flush=True)
+    revision = getattr(args, 'revision', None)
+    rev_str = f" (revision={revision})" if revision else ""
+    print(f"Loading Active Model: {args.model_name}{rev_str}", flush=True)
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name, add_prefix_space=True)
-    if ("gpt2" in args.model_name.lower() or
-        "neo" in args.model_name.lower() or
-        "smol" in args.model_name.lower()):
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name, revision=revision, add_prefix_space=True)
+    # import pdb; pdb.set_trace()
+    # orig_has_bos = tokenizer.bos_token_id is not None
+    model_name_lower = args.model_name.lower()
+    if ("gpt2" in model_name_lower or
+        "neo" in model_name_lower or
+        "smol" in model_name_lower):
         if not tokenizer.pad_token_id:
             tokenizer.pad_token_id = tokenizer.eos_token_id
         if not tokenizer.bos_token_id:
             tokenizer.bos_token_id = tokenizer.eos_token_id
-    
-    if not hasattr(tokenizer, 'model_max_length'):
-        import pdb; pdb.set_trace()
-        tokenizer.model_max_length = ...
 
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
+        revision=revision,
+        dtype = torch.bfloat16,
     )
 
     if getattr(args, 'use_abs_pe', 0):
-        tokenizer.model_max_length = args.abs_pe_max_len
         abs_pe_len = getattr(args, 'abs_pe_max_len', 1024)
         print(f"Injecting absolute positional embeddings (max_len={abs_pe_len})", flush=True)
-        model = SmolLM2WithAbsPE(model, max_position_embeddings=abs_pe_len)
+        model = SmolLM2WithAbsPE(model, max_position_embeddings=model.config.max_position_embeddings)
         # Load saved abs PE weights if resuming from a checkpoint
         import os
         abs_pe_path = os.path.join(args.model_name, 'abs_position_embeddings.pt')
@@ -179,13 +182,13 @@ def build_model_tokenizer(args, device):
             model.abs_position_embeddings.load_state_dict(
                 torch.load(abs_pe_path, map_location='cpu')
             )
-
+    
     model = model.to(device)
 
     ref_model = None
     if args.use_kl:
-        print(f"Loading Reference Model: {args.model_name}", flush=True)
-        ref_model = AutoModelForCausalLM.from_pretrained(args.model_name).to(device)
+        print(f"Loading Reference Model: {args.model_name}{rev_str}", flush=True)
+        ref_model = AutoModelForCausalLM.from_pretrained(args.model_name, revision=revision).to(device)
         ref_model.eval()
 
     # This function resizes both model and ref_model

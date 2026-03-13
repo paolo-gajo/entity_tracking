@@ -41,28 +41,22 @@ def gather_losses(args,
     use_pooled_clm = (args.use_clm and args.pool_clm)
     assert not (use_pooled_clm and args.use_mml), "can't use both pooled clm and mml right now because only one step_indices route exists for both"
     if args.use_clm:
-        if args.pool_clm:
-            # Pooled CLM requires step indices from the completion side
-            causal_lm_loss = causal_lm_loss_fn(
-                logits, batch['input_ids'], batch['loss_mask'], batch['step_indices_mml']
-            )
-        else:
-            causal_lm_loss = causal_lm_loss_fn(logits, batch['input_ids'], batch['loss_mask'])
+        causal_lm_loss = causal_lm_loss_fn(logits, batch['input_ids'], batch['clm_mask'])
     else:
         causal_lm_loss = torch.tensor(0.0, device=device)
 
     if args.use_kl:
-        kl_loss = kl_loss_fn(logits, batch['input_ids'], batch['loss_mask'])
+        kl_loss = kl_loss_fn(logits, batch['input_ids'], batch['clm_mask'])
     else:
         kl_loss = torch.tensor(0.0, device=device)
 
     if args.use_mml:
-        max_margin_loss = max_margin_loss_fn(last_hidden_state, batch['step_indices_mml'], batch['binary_label'])
+        max_margin_loss = max_margin_loss_fn(last_hidden_state, batch['step_indices'], batch['binary_label'])
     else:
         max_margin_loss = torch.tensor(0.0, device=device)
 
     if args.use_cos and cos_loss_fn is not None:
-        cos_loss = cos_loss_fn(last_hidden_state, batch['step_indices_mml'], batch['binary_label'])
+        cos_loss = cos_loss_fn(last_hidden_state, batch['step_indices'], batch['binary_label'])
     else:
         cos_loss = torch.tensor(0.0, device=device)
 
@@ -93,104 +87,13 @@ class CausalLMLoss(nn.Module):
         self.ignore_index = ignore_index
         self.loss_fn = nn.CrossEntropyLoss(ignore_index=ignore_index)
 
-    def forward(self, logits, input_ids, loss_mask):
+    def forward(self, logits, input_ids, clm_mask):
         labels = input_ids.clone()
-        labels[loss_mask == 0] = self.ignore_index
+        labels[clm_mask == 0] = self.ignore_index
 
         shift_logits = logits[..., :-1, :].contiguous()
         shift_labels = labels[..., 1:].contiguous()
-
         return self.loss_fn(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
-
-
-# ---------------------------------------------------------------------------
-# 2.  Pooled Causal LM Loss
-#
-#     L_clm = (1/B) sum_b sum_{j=1}^{N} [ -(1/|S_j|) sum_{t in S_j} log p(s_t | s_{<t}) ]
-#
-#     Instead of weighting every token uniformly, we first average per-token CE
-#     *within* each step, then sum over steps.  This prevents long steps from
-#     dominating the gradient and forces the model to allocate capacity to
-#     the first few tokens of each step (the "classification" tokens) that
-#     induction heads could otherwise shortcut.
-# ---------------------------------------------------------------------------
-
-class PooledCausalLMLoss(nn.Module):
-    """
-    Per-step pooled cross-entropy.
-
-    For each step j in each sample, the loss contribution is the *mean* CE
-    across that step's tokens, and the sample loss is the *sum* over steps.
-    We then average over samples in the batch.
-
-    Signature is intentionally a superset of CausalLMLoss so that the caller
-    in gather_losses can branch on args.pool_clm.
-    """
-
-    def __init__(self, ignore_index=-100):
-        super().__init__()
-        self.ignore_index = ignore_index
-
-    def forward(self, logits, input_ids, loss_mask, step_indices):
-        """
-        Args:
-            logits:       [B, T, V]
-            input_ids:    [B, T]
-            loss_mask:    [B, T]   1 = completion token
-            step_indices: [B, T]   step id per token (1..N in the completion,
-                                   0 elsewhere including prefix and padding)
-        Returns:
-            Scalar loss.
-        """
-        B, T, V = logits.shape
-
-        # --- next-token shift --------------------------------------------------
-        shift_logits = logits[:, :-1, :].contiguous()           # [B, T-1, V]
-        shift_labels = input_ids[:, 1:].contiguous()            # [B, T-1]
-        shift_mask   = loss_mask[:, 1:].contiguous().float()    # [B, T-1]
-        shift_steps  = step_indices[:, 1:].contiguous()         # [B, T-1]
-
-        # per-token CE, no reduction
-        per_token_ce = F.cross_entropy(
-            shift_logits.view(-1, V),
-            shift_labels.view(-1),
-            reduction='none',
-        ).view(B, T - 1)                                       # [B, T-1]
-
-        per_token_ce = per_token_ce * shift_mask                # mask padding / prefix
-
-        # --- pool by step, sum over steps, average over batch ------------------
-        batch_loss = torch.tensor(0.0, device=logits.device)
-        n_samples = 0
-        for b in range(B):
-            active = shift_mask[b].bool()
-            if not active.any():
-                continue
-
-            active_steps = shift_steps[b][active]
-            unique_steps = active_steps.unique()
-            unique_steps = unique_steps[unique_steps > 0]
-
-            if unique_steps.numel() == 0:
-                # Fallback: no step annotation on the completion side.
-                # This can happen with prompt types that don't assign step indices
-                # to completion tokens.  Fall back to flat mean over masked tokens.
-                batch_loss = batch_loss + per_token_ce[b][active].mean()
-                n_samples += 1
-                continue
-
-            sample_loss = torch.tensor(0.0, device=logits.device)
-            for s in unique_steps:
-                step_mask = (shift_steps[b] == s) & active
-                sample_loss = sample_loss + per_token_ce[b][step_mask].mean()
-
-            batch_loss = batch_loss + sample_loss
-            n_samples += 1
-
-        if n_samples == 0:
-            return torch.tensor(0.0, device=logits.device)
-        return batch_loss / n_samples
-
 
 # ---------------------------------------------------------------------------
 # 3.  Step Token Prediction Loss  (Section 3.2 of the paper)
@@ -198,7 +101,7 @@ class PooledCausalLMLoss(nn.Module):
 #     The completion consists of real step-token vocabulary entries in the
 #     correct topological order.  The loss is standard causal LM
 #     cross-entropy evaluated only at the step-token positions (controlled
-#     by loss_mask).
+#     by stp_mask).
 # ---------------------------------------------------------------------------
 
 class StepTokenLoss(nn.Module):
@@ -215,17 +118,17 @@ class StepTokenLoss(nn.Module):
         self.ignore_index = ignore_index
         self.loss_fn = nn.CrossEntropyLoss(ignore_index=ignore_index)
 
-    def forward(self, logits, input_ids, loss_mask):
+    def forward(self, logits, input_ids, stp_mask):
         """
         Args:
             logits:    [B, T, V] — full model logits
             input_ids: [B, T]    — input token ids (including step tokens)
-            loss_mask: [B, T]    — 1 at step-token completion positions
+            stp_mask: [B, T]    — 1 at step-token completion positions
         Returns:
             Scalar CE loss (averaged over valid positions).
         """
         labels = input_ids.clone()
-        labels[loss_mask == 0] = self.ignore_index
+        labels[stp_mask == 0] = self.ignore_index
 
         shift_logits = logits[..., :-1, :].contiguous()
         shift_labels = labels[..., 1:].contiguous()

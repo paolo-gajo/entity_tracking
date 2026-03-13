@@ -33,8 +33,8 @@ model_name="openai-community/gpt2"
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
-# loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
-loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
+# clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
+clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
 prompt_type=pooled_pairs
 # prompt_type=minimal_pairs
 # prompt_type=natlang_pairs

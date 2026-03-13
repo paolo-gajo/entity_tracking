@@ -33,7 +33,7 @@ model_name="HuggingFaceTB/SmolLM2-135M"
 # model_name="Qwen/Qwen3-0.6B-Base"
 
 attn_mask_type='full'
-loss_mask_type='completion_only'
+clm_mask_type='completion_only'
 prompt_type=minimal_pairs
 
 use_clm=0
@@ -47,7 +47,7 @@ cmd="python src/pretrain.py
 --model_name $model_name
 --prompt_type $prompt_type
 --attn_mask_type $attn_mask_type
---loss_mask_type $loss_mask_type
+--clm_mask_type $clm_mask_type
 --num_samples $num_samples
 --save_interval $save_interval
 --batch_size $batch_size

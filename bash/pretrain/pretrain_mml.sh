@@ -37,8 +37,8 @@ resume_from="models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
-# loss_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
-loss_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
+# clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
+clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
 prompt_type=minimal_pairs
 # prompt_type=natlang_pairs
 
@@ -62,7 +62,7 @@ cmd="python src/pretrain.py
 --model_name $model_name
 --prompt_type $prompt_type
 --attn_mask_type $attn_mask_type
---loss_mask_type $loss_mask_type
+--clm_mask_type $clm_mask_type
 --num_samples $num_samples
 --save_interval $save_interval
 --batch_size $batch_size

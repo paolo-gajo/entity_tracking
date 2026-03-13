@@ -13,8 +13,12 @@ from train.pos_adv import compute_pos_adv_loss
 from train.logging import log_probe_stats
 from sims import compute_scores
 from loss_functions import (
-    KLDivergenceLoss, CausalLMLoss, PooledCausalLMLoss,
-    MaxMarginLoss, CosineContrastiveLoss, StepTokenLoss, gather_losses,
+    KLDivergenceLoss,
+    CausalLMLoss,
+    MaxMarginLoss,
+    CosineContrastiveLoss,
+    StepTokenLoss,
+    gather_losses,
 )
 from tqdm.auto import tqdm
 import argparse
@@ -53,22 +57,21 @@ def main(args):
         raise ValueError(f"Unknown batch_mode: {args.batch_mode}")
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
-
     tokenizer, step_token_id_map, model, ref_model = build_model_tokenizer(args, device)
 
     dataset = Seq2SeqDataset(
         data_pairs,
         tokenizer,
-        max_length=tokenizer.model_max_length,
-        prompt_type=args.prompt_type,
+        max_length=model.config.max_position_embeddings,
+        prompt_type_list=train_config['prompt_type_list'],
         attn_mask_type=args.attn_mask_type,
-        loss_mask_type=args.loss_mask_type,
+        clm_mask_type=args.clm_mask_type,
         batch_mode=args.batch_mode,
         min_recipe_steps=args.min_recipe_steps,
         max_recipe_steps=args.stp_max_steps,
         step_token_id_map=step_token_id_map,
-        prepend_bos=args.prepend_bos,
-    )
+        prepend_bos=False,
+    )    
 
     collator = Collator(tokenizer=tokenizer)
     dataloader = DataLoader(
@@ -80,11 +83,8 @@ def main(args):
 
     # ---- Loss functions ---------------------------------------------------
 
-    # CLM: standard or pooled
-    if args.pool_clm:
-        causal_lm_loss_fn = PooledCausalLMLoss()
-    else:
-        causal_lm_loss_fn = CausalLMLoss()
+    # CLM loss
+    causal_lm_loss_fn = CausalLMLoss()
 
     hidden_dim = model.config.hidden_size if hasattr(model.config, 'hidden_size') else model.config.n_embd
     max_margin_loss_fn = MaxMarginLoss(
@@ -116,17 +116,12 @@ def main(args):
         params += list(max_margin_loss_fn.proj.parameters())
     optimizer = AdamW(params=params, lr=args.lr)
 
-    if args.detect_anomaly:
-        torch.autograd.set_detect_anomaly(True)
-
     tbar = tqdm(dataloader)
     num_steps = resume_steps
     losses = []
     prompt = None
 
     for batch_idx, batch in enumerate(tbar):
-        if batch_idx < resume_steps:
-            continue
         batch = {k: v.to(device) for k, v in batch.items()}
         
         logits, lhs = compute_forward_bundle(args, model, batch)
@@ -147,17 +142,17 @@ def main(args):
             pos_loss, pos_acc = compute_pos_adv_loss(args, pos_head, lhs, batch)
 
         if args.save_heatmaps:
-            S_directed, S_undirected = compute_scores(lhs[0], batch["step_indices_mml"][0])
+            S_directed, S_undirected = compute_scores(lhs[0], batch["step_indices"][0])
             save_heatmaps(S_directed, S_undirected, suffix=f"_{num_steps}")
 
         # ---- Pooled CLM: pass completion_step_indices if available -------
-        # For the pooled variant, gather_losses needs step_indices_mml to
+        # For the pooled variant, gather_losses needs step_indices to
         # actually contain the *completion-side* step indices.  When using
         # prompt_type='pooled_pairs', the collator produces a separate
         # 'completion_step_indices' tensor.  We temporarily swap it in.
         if args.pool_clm and 'completion_step_indices' in batch:
-            original_mml = batch.get('step_indices_mml')
-            batch['step_indices_mml'] = batch['completion_step_indices']
+            original_mml = batch.get('step_indices')
+            batch['step_indices'] = batch['completion_step_indices']
 
         loss = gather_losses(
             args,
@@ -175,7 +170,7 @@ def main(args):
 
         # Restore original MML indices if swapped
         if args.pool_clm and 'completion_step_indices' in batch:
-            batch['step_indices_mml'] = original_mml
+            batch['step_indices'] = original_mml
 
         optimizer.zero_grad()
         loss["total_loss"].backward()
@@ -219,6 +214,8 @@ def main(args):
             prompt = prepare_text_batch_prompt(batch, tokenizer)
             os.makedirs("./misc", exist_ok=True)
             print(prompt, file=open("./misc/last_prompt.txt", "w"), flush=True)
+            import pdb; pdb.set_trace()
+
         num_steps += 1
         if num_steps % args.save_interval == 0:
             save_config = train_config.copy()
@@ -244,7 +241,7 @@ if __name__ == "__main__":
     parser.add_argument("--batch_mode", default="random_samples", type=str)
     parser.add_argument("--prompt_type", default="minimal_pairs")
     parser.add_argument("--attn_mask_type", default="full")
-    parser.add_argument("--loss_mask_type", default="completion_only")
+    parser.add_argument("--clm_mask_type", default="completion_only")
     parser.add_argument("--num_samples", default=1_000_000, type=int)
     parser.add_argument("--neg_ratio", default=0.5, type=float)
     parser.add_argument("--batch_size", default=8, type=int)
@@ -256,11 +253,6 @@ if __name__ == "__main__":
                         help="Inject learned absolute positional embeddings into the model")
     parser.add_argument("--abs_pe_max_len", default=1024, type=int,
                         help="Max sequence length for absolute positional embeddings")
-
-    # BOS
-    parser.add_argument("--prepend_bos", default=0, type=int)
-    parser.add_argument("--detect_anomaly", default=0, type=int,
-                        help="Enable torch.autograd.set_detect_anomaly to find NaN source")
 
     # PEFT
     parser.add_argument("--use_lora", default=0, type=int)
@@ -310,23 +302,17 @@ if __name__ == "__main__":
     parser.add_argument("--pos_bins", default=32, type=int)
     parser.add_argument("--pos_head_hidden", default=256, type=int)
     parser.add_argument("--log_interval", default=100, type=int)
+    parser.add_argument("--revision", default=None, type=str,
+                        help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")
 
     args = parser.parse_args()
 
     # ---- Validation -------------------------------------------------------
-    if args.prompt_type in ["minimal_mono", "only_shuffled", "only_original"]:
-        assert args.attn_mask_type == "full", (
-            f"Only attn_mask_type==full makes sense with prompt_type=={args.prompt_type}"
-        )
+    assert args.attn_mask_type == "full", "Only attn_mask_type==full makes sense"
 
     if args.use_stp:
-        assert args.prompt_type == "step_token_pairs", (
+        assert "step_token_pairs" in args.prompt_type.split('+'), (
             f"use_stp requires prompt_type='step_token_pairs', got '{args.prompt_type}'"
-        )
-
-    if args.pool_clm:
-        assert args.prompt_type == "pooled_pairs", (
-            f"pool_clm requires prompt_type='pooled_pairs', got '{args.prompt_type}'"
         )
 
     assert any([args.use_clm, args.use_kl, args.use_mml, args.use_cos, args.use_stp]), (

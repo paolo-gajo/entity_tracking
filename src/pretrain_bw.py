@@ -520,13 +520,13 @@ class BWDataset(Dataset):
         tokenizer,
         step_token_id_map: dict[int, int],
         max_length: int = 1024,
-        loss_mask_type: str = "completion_only",
+        clm_mask_type: str = "completion_only",
         prepend_bos: bool = False,
     ):
         self.tokenizer = tokenizer
         self.step_token_id_map = step_token_id_map
         self.max_length = max_length
-        self.loss_mask_type = loss_mask_type
+        self.clm_mask_type = clm_mask_type
         self.prepend_bos = prepend_bos
         self.sep_ids = tokenizer.encode("\n\n", add_special_tokens=False)
 
@@ -613,22 +613,22 @@ class BWDataset(Dataset):
         # ── Prefix (shuffled order) ──────────────────────────────────
         prefix_ids: list[int] = []
         prefix_mml: list[int] = []
-        loss_mask_prefix: list[int] = []
+        clm_mask_prefix: list[int] = []
 
         for slot_j, canon_idx in enumerate(shuf_order):
             # Content tokens
             prefix_ids.extend(chunks[canon_idx])
             prefix_mml.extend([canon_idx + 1] * len(chunks[canon_idx]))
-            loss_mask_prefix.extend([1] * len(chunks[canon_idx]))
+            clm_mask_prefix.extend([1] * len(chunks[canon_idx]))
             # Step token (slot_j determines which <step_j> is used)
             prefix_ids.append(stp[slot_j])
             prefix_mml.append(canon_idx + 1)
-            loss_mask_prefix.append(0)
+            clm_mask_prefix.append(0)
 
         # Separator
         prefix_ids.extend(self.sep_ids)
         prefix_mml.extend([0] * len(self.sep_ids))
-        loss_mask_prefix.extend([1] * len(self.sep_ids))
+        clm_mask_prefix.extend([1] * len(self.sep_ids))
         n_prefix = len(prefix_ids)
 
         # ── Completion (valid toposort order) ────────────────────────
@@ -637,7 +637,7 @@ class BWDataset(Dataset):
 
         comp_ids: list[int] = []
         comp_mml: list[int] = []
-        loss_mask_comp: list[int] = []
+        clm_mask_comp: list[int] = []
         stp_mask_comp: list[int] = []
 
         for canon_idx in valid_order:
@@ -645,12 +645,12 @@ class BWDataset(Dataset):
             # Step token (the model must predict which slot token comes next)
             comp_ids.append(stp[slot_j])
             comp_mml.append(canon_idx + 1)
-            loss_mask_comp.append(0)
+            clm_mask_comp.append(0)
             stp_mask_comp.append(1)
             # Content tokens
             comp_ids.extend(chunks[canon_idx])
             comp_mml.extend([canon_idx + 1] * len(chunks[canon_idx]))
-            loss_mask_comp.extend([1] * len(chunks[canon_idx]))
+            clm_mask_comp.extend([1] * len(chunks[canon_idx]))
             stp_mask_comp.extend([0] * len(chunks[canon_idx]))
 
         # ── Assemble ─────────────────────────────────────────────────
@@ -659,26 +659,26 @@ class BWDataset(Dataset):
 
         input_ids = bos + prefix_ids + comp_ids + [self.tokenizer.eos_token_id]
         attn_mask = [1] * len(input_ids)
-        step_indices_mml = [0] * n_bos + prefix_mml + comp_mml + [0]
+        step_indices = [0] * n_bos + prefix_mml + comp_mml + [0]
 
-        if "completion_only" in self.loss_mask_type:
-            loss_mask = [0] * (n_bos + n_prefix) + loss_mask_comp + [1]
+        if "completion_only" in self.clm_mask_type:
+            clm_mask = [0] * (n_bos + n_prefix) + clm_mask_comp + [1]
             # Allow the last separator token to contribute to CLM so the
             # model learns to predict the first step token across the boundary.
-            loss_mask[n_bos + n_prefix - 1] = 1
-        elif "full" in self.loss_mask_type:
-            loss_mask = [0] * n_bos + loss_mask_prefix + loss_mask_comp + [1]
+            clm_mask[n_bos + n_prefix - 1] = 1
+        elif "full" in self.clm_mask_type:
+            clm_mask = [0] * n_bos + clm_mask_prefix + clm_mask_comp + [1]
         else:
-            raise ValueError(f"Unknown loss_mask_type: {self.loss_mask_type}")
+            raise ValueError(f"Unknown clm_mask_type: {self.clm_mask_type}")
 
         stp_mask = [0] * (n_bos + n_prefix) + stp_mask_comp + [0]
 
         return {
             "input_ids": input_ids,
             "attn_mask": attn_mask,
-            "loss_mask": loss_mask,
+            "clm_mask": clm_mask,
             "stp_mask": stp_mask,
-            "step_indices_mml": step_indices_mml,
+            "step_indices": step_indices,
             "binary_label": binary_label,
         }
 
@@ -730,16 +730,16 @@ def main(args):
 
     # ── Model + tokenizer + step tokens ──
     # build_model_tokenizer reads args.use_stp, args.stp_max_steps, etc.
-    tokenizer, step_token_id_map, model, ref_model = build_model_tokenizer(args, device)
+    tokenizer, step_token_id_map, model, ref_model, orig_has_bos = build_model_tokenizer(args, device)
 
     # ── Dataset ──
     dataset = BWDataset(
         data_pairs,
         tokenizer,
         step_token_id_map=step_token_id_map,
-        max_length=tokenizer.model_max_length,
-        loss_mask_type=args.loss_mask_type,
-        prepend_bos=bool(args.prepend_bos),
+        max_length=model.config.max_position_embeddings,
+        clm_mask_type=args.clm_mask_type,
+        prepend_bos=orig_has_bos,
     )
 
     collator = Collator(tokenizer=tokenizer)
@@ -886,9 +886,9 @@ if __name__ == "__main__":
     # ── Prompt / mask ──
     parser.add_argument("--prompt_type", default="step_token_pairs")
     parser.add_argument("--attn_mask_type", default="full")
-    parser.add_argument("--loss_mask_type", default="completion_only")
+    parser.add_argument("--clm_mask_type", default="completion_only")
     parser.add_argument("--batch_mode", default="random_samples")
-    parser.add_argument("--prepend_bos", default=0, type=int)
+
 
     # Absolute positional embeddings
     parser.add_argument("--use_abs_pe", default=0, type=int,

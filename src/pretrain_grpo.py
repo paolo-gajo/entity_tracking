@@ -10,7 +10,7 @@ Uses Group Relative Policy Optimization (GRPO) with verifiable rewards.
 
 import torch
 import torch.nn.functional as F
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 from torch.optim import AdamW
 from peft import get_peft_model, LoraConfig
 from utils_sys import save_run, setup_config
@@ -21,16 +21,15 @@ import json
 import random
 import os
 import re
-import math
-
-torch.set_printoptions(linewidth=100000)
-
 
 # ======================================================================
 # Prompt construction
 # ======================================================================
 
-def build_grpo_prompt(item, step_token_names, tokenizer):
+def build_grpo_prompt(item,
+                    #   step_token_names,
+                      tokenizer,
+                      ):
     """
     Build a chat-formatted prompt for GRPO training.
 
@@ -43,12 +42,11 @@ def build_grpo_prompt(item, step_token_names, tokenizer):
     """
     shuf = item['shuf']
     orig = item['orig']
-    n_steps = len(shuf)
 
     # Build the shuffled steps with step tokens
     steps_text = ""
     for j, step in enumerate(shuf):
-        steps_text += f"{step_token_names[j]} {step.strip()}\n"
+        steps_text += f"{j} {step.strip()}\n"
 
     # Ground truth: for each position in orig, find which step token (shuf index) it had
     ground_truth_order = []
@@ -57,11 +55,19 @@ def build_grpo_prompt(item, step_token_names, tokenizer):
         ground_truth_order.append(shuf_idx)
 
     system_msg = (
-        "You are given recipe steps in a shuffled order. Each step is labeled with a step token "
-        "(e.g., <step_0>, <step_1>, etc.). Your task is to reason about the correct chronological "
-        "order of the steps, then output the step tokens in the correct order.\n\n"
-        "First think step-by-step inside <think>...</think> tags, then output ONLY the step tokens "
+        "You are given recipe steps which can either be in the correct or shuffled order."
+        "Each source step is labeled with a step index "
+        "(e.g., 0, 1, ..., N, etc.)."
+        "Your task is to reason about the correct chronological "
+        "order of the steps, then output the step tokens in the correct order."
+        "If the original order is correct,"
+        "then simply output the target step indices in the same order 0, 1, ..., N;"
+        "otherwise, you will have to reorder the indices in your answer,"
+        "e.g. 6, 2, ..., 4."
+        "First think step-by-step inside <think>...</think> tags,"
+        "then output ONLY the step indices."
         "in the correct order, separated by spaces."
+        "Think in at most 2-3 sentences."
     )
 
     user_msg = f"{steps_text}\nOutput the step tokens in the correct chronological order."
@@ -71,11 +77,7 @@ def build_grpo_prompt(item, step_token_names, tokenizer):
         {"role": "user", "content": user_msg},
     ]
 
-    prompt_text = tokenizer.apply_chat_template(
-        messages, tokenize=False, add_generation_prompt=True,
-        enable_thinking=True,
-    )
-
+    prompt_text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
     return prompt_text, ground_truth_order
 
 
@@ -83,10 +85,10 @@ def build_grpo_prompt(item, step_token_names, tokenizer):
 # Response parsing & reward
 # ======================================================================
 
-def parse_step_tokens_from_response(response_text, n_steps):
+def parse_step_tokens_from_response(response_text):
     """
     Parse step token indices from model response.
-    Looks for <step_N> patterns after </think> tag.
+    Looks for integers after </think> tag.
 
     Returns:
         list[int] or None if parsing fails
@@ -96,9 +98,8 @@ def parse_step_tokens_from_response(response_text, n_steps):
     if think_end != -1:
         answer_part = response_text[think_end + len("</think>"):]
     else:
-        answer_part = response_text
-
-    pattern = r"<step_(\d+)>"
+        answer_part = response_text + f'</think>'
+    pattern = r"(\d+)"
     matches = re.findall(pattern, answer_part)
 
     if not matches:
@@ -167,23 +168,7 @@ def compute_reward(predicted_order, ground_truth_order, n_steps):
 # ======================================================================
 
 def compute_log_probs(model, input_ids, attention_mask, response_start_idx):
-    """Compute per-token log probs for the response portion (no grad)."""
-    with torch.no_grad():
-        logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
-
-    log_probs = F.log_softmax(logits[:, :-1, :], dim=-1)
-    token_log_probs = log_probs.gather(
-        2, input_ids[:, 1:].unsqueeze(-1)
-    ).squeeze(-1)
-
-    response_mask = torch.zeros_like(token_log_probs)
-    response_mask[:, response_start_idx - 1:] = 1.0
-
-    return token_log_probs, response_mask
-
-
-def compute_log_probs_with_grad(model, input_ids, attention_mask, response_start_idx):
-    """Compute per-token log probs for the response portion (with grad)."""
+    """Compute per-token log probs for the response portion."""
     logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
     log_probs = F.log_softmax(logits[:, :-1, :], dim=-1)
     token_log_probs = log_probs.gather(
@@ -200,8 +185,7 @@ def compute_log_probs_with_grad(model, input_ids, attention_mask, response_start
 # GRPO step
 # ======================================================================
 
-def grpo_step(model, ref_model, tokenizer, prompts_data, device, args,
-              step_token_names):
+def grpo_step(model, ref_model, tokenizer, prompts_data, device, args):
     """
     One GRPO update step.
 
@@ -217,9 +201,7 @@ def grpo_step(model, ref_model, tokenizer, prompts_data, device, args,
     n_prompts = 0
 
     for item in prompts_data:
-        prompt_text, ground_truth_order = build_grpo_prompt(
-            item, step_token_names, tokenizer
-        )
+        prompt_text, ground_truth_order = build_grpo_prompt(item, tokenizer)
         n_steps = len(item['shuf'])
 
         prompt_enc = tokenizer(prompt_text, return_tensors="pt", add_special_tokens=False)
@@ -233,30 +215,34 @@ def grpo_step(model, ref_model, tokenizer, prompts_data, device, args,
         completions_ids = []
         rewards = []
 
+        streamer = TextStreamer(tokenizer, skip_special_tokens=False)
         model.eval()
         with torch.no_grad():
             for g in range(G):
+                print(f"\n--- Generation {g+1}/{G} ---")
                 output_ids = model.generate(
                     prompt_ids,
+                    attention_mask=torch.ones_like(prompt_ids),
                     max_new_tokens=args.max_new_tokens,
                     do_sample=True,
                     temperature=args.temperature,
                     top_p=args.top_p,
                     top_k=args.top_k,
                     pad_token_id=tokenizer.pad_token_id,
+                    streamer=streamer,
                 )
 
                 response_ids = output_ids[0, prompt_len:]
                 response_text = tokenizer.decode(response_ids, skip_special_tokens=False)
                 completions_ids.append(output_ids)
-
-                predicted_order = parse_step_tokens_from_response(response_text, n_steps)
+                predicted_order = parse_step_tokens_from_response(response_text)
                 reward = compute_reward(predicted_order, ground_truth_order, n_steps)
                 rewards.append(reward)
 
         if not rewards:
             continue
 
+        torch.cuda.empty_cache()
         rewards_t = torch.tensor(rewards, dtype=torch.float32)
         total_reward += rewards_t.mean().item()
         n_prompts += 1
@@ -287,7 +273,7 @@ def grpo_step(model, ref_model, tokenizer, prompts_data, device, args,
             full_ids = completions_ids[g].to(device)
             attn = torch.ones_like(full_ids)
 
-            new_lp, resp_mask = compute_log_probs_with_grad(
+            new_lp, resp_mask = compute_log_probs(
                 model, full_ids, attn, prompt_len
             )
             old_lp = old_log_probs_list[g].detach()
@@ -399,18 +385,19 @@ def main(args):
 
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
-        torch_dtype=torch.bfloat16 if args.bf16 else torch.float32,
+        dtype=torch.bfloat16 if args.bf16 else torch.float32,
     ).to(device)
 
-    # Add step tokens to vocabulary
-    step_token_names = [f"<step_{i}>" for i in range(args.stp_max_steps)]
-    tokenizer.add_tokens(step_token_names, special_tokens=True)
-    model.resize_token_embeddings(len(tokenizer))
+    # step_token_names = [str(i) for i in range(args.stp_max_steps)]
+    # if args.add_step_tokens:
+    #     # Add step tokens to vocabulary
+    #     tokenizer.add_tokens(step_token_names, special_tokens=True)
+    #     model.resize_token_embeddings(len(tokenizer))
 
-    step_token_id_map = {
-        i: tokenizer.convert_tokens_to_ids(f"<step_{i}>")
-        for i in range(args.stp_max_steps)
-    }
+    #     step_token_id_map = {
+    #         i: tokenizer.convert_tokens_to_ids(f"S_{i}")
+    #         for i in range(args.stp_max_steps)
+    #     }
 
     # Reference model for KL penalty
     ref_model = None
@@ -418,7 +405,7 @@ def main(args):
         print(f"Loading reference model: {args.model_name}", flush=True)
         ref_model = AutoModelForCausalLM.from_pretrained(
             args.model_name,
-            torch_dtype=torch.bfloat16 if args.bf16 else torch.float32,
+            dtype=torch.bfloat16 if args.bf16 else torch.float32,
         ).to(device)
         ref_model.resize_token_embeddings(len(tokenizer))
         ref_model.eval()
@@ -433,11 +420,13 @@ def main(args):
                 'q_proj', 'k_proj', 'v_proj', 'o_proj',
                 'gate_proj', 'up_proj', 'down_proj',
             ],
-            modules_to_save=['embed_tokens', 'lm_head'],
+            # modules_to_save=['embed_tokens', 'lm_head'],
             r=args.lora_r,
             lora_alpha=args.lora_alpha,
         )
         model = get_peft_model(model, peft_config)
+        model.enable_input_require_grads()
+        model.gradient_checkpointing_enable()
         model.print_trainable_parameters()
 
     params_total = sum(p.numel() for p in model.parameters())
@@ -458,16 +447,15 @@ def main(args):
         desc="GRPO Training",
     )
 
+    # import pdb; pdb.set_trace()
+
     for batch_start in tbar:
         batch_items = data_pairs[batch_start: batch_start + args.batch_size]
 
         if not batch_items:
             continue
 
-        loss, avg_reward = grpo_step(
-            model, ref_model, tokenizer, batch_items, device, args,
-            step_token_names,
-        )
+        loss, avg_reward = grpo_step(model, ref_model, tokenizer, batch_items, device, args)
 
         if isinstance(loss, torch.Tensor) and loss.requires_grad:
             optimizer.zero_grad()
@@ -509,7 +497,7 @@ if __name__ == "__main__":
     )
 
     # Model & data
-    parser.add_argument("--model_name", default="Qwen/Qwen3-0.6B")
+    parser.add_argument("--model_name", default="Qwen/Qwen3.5-0.8B")
     parser.add_argument("--data_path", default="./data/recipenlg/recipenlg_clean.json")
     parser.add_argument("--bf16", default=1, type=int)
 
@@ -523,18 +511,13 @@ if __name__ == "__main__":
     # GRPO hyperparameters
     parser.add_argument("--num_generations", default=4, type=int,
                         help="G: completions sampled per prompt")
-    parser.add_argument("--max_new_tokens", default=1024, type=int)
+    parser.add_argument("--max_new_tokens", default=1000, type=int)
     parser.add_argument("--max_prompt_length", default=512, type=int)
-    parser.add_argument("--temperature", default=0.6, type=float,
-                        help="Qwen3 thinking mode recommended: 0.6")
-    parser.add_argument("--top_p", default=0.95, type=float,
-                        help="Qwen3 thinking mode recommended: 0.95")
-    parser.add_argument("--top_k", default=20, type=int,
-                        help="Qwen3 thinking mode recommended: 20")
-    parser.add_argument("--clip_epsilon", default=0.2, type=float,
-                        help="PPO-style clipping range")
-    parser.add_argument("--kl_beta", default=0.01, type=float,
-                        help="KL penalty coefficient against reference model")
+    parser.add_argument("--temperature", default=0.6, type=float, help="Qwen3 thinking mode recommended: 0.6")
+    parser.add_argument("--top_p", default=0.95, type=float, help="Qwen3 thinking mode recommended: 0.95")
+    parser.add_argument("--top_k", default=20, type=int, help="Qwen3 thinking mode recommended: 20")
+    parser.add_argument("--clip_epsilon", default=0.2, type=float, help="PPO-style clipping range")
+    parser.add_argument("--kl_beta", default=0.01, type=float, help="KL penalty coefficient against reference model")
 
     # Training
     parser.add_argument("--lr", default=1e-5, type=float)
@@ -550,12 +533,13 @@ if __name__ == "__main__":
     parser.add_argument("--batch_mode", default="grpo", type=str)
     parser.add_argument("--prompt_type", default="grpo_step_tokens", type=str)
     parser.add_argument("--attn_mask_type", default="full", type=str)
-    parser.add_argument("--loss_mask_type", default="completion_only", type=str)
+    parser.add_argument("--clm_mask_type", default="completion_only", type=str)
     parser.add_argument("--use_clm", default=0, type=int)
     parser.add_argument("--use_kl", default=0, type=int)
     parser.add_argument("--use_mml", default=0, type=int)
     parser.add_argument("--use_grl", default=0, type=int)
     parser.add_argument("--use_stp", default=1, type=int)
+    parser.add_argument("--add_step_tokens", default=1, type=int)
     parser.add_argument("--use_cos", default=0, type=int)
     parser.add_argument("--init_from_eos", default=0, type=int)
     parser.add_argument("--use_abs_pe", default=0, type=int)
