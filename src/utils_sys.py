@@ -60,7 +60,8 @@ def setup_config(train_config):
         './models',
         train_config['data_path'].split('/')[2],
         *dynamic_subdirs,
-        model_leaf
+        model_leaf,
+        get_current_time_string(),
     )
     return train_config
 

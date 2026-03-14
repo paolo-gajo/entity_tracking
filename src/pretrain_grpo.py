@@ -385,7 +385,6 @@ def main(args):
 
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
-        dtype=torch.bfloat16 if args.bf16 else torch.float32,
     ).to(device)
 
     # step_token_names = [str(i) for i in range(args.stp_max_steps)]
@@ -405,7 +404,6 @@ def main(args):
         print(f"Loading reference model: {args.model_name}", flush=True)
         ref_model = AutoModelForCausalLM.from_pretrained(
             args.model_name,
-            dtype=torch.bfloat16 if args.bf16 else torch.float32,
         ).to(device)
         ref_model.resize_token_embeddings(len(tokenizer))
         ref_model.eval()

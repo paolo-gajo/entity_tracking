@@ -167,7 +167,6 @@ def build_model_tokenizer(args, device):
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
         revision=revision,
-        dtype = torch.bfloat16,
     )
 
     if getattr(args, 'use_abs_pe', 0):
@@ -192,12 +191,25 @@ def build_model_tokenizer(args, device):
         ref_model.eval()
 
     # This function resizes both model and ref_model
-    step_token_id_map = initialize_step_tokens(args,
-                                                model,
-                                                ref_model,
-                                                tokenizer,
-                                                init_token_id=tokenizer.eos_token_id if args.init_from_eos else None,
-                                                )
+    # step_token_id_map = initialize_step_tokens(args,
+    #                                             model,
+    #                                             ref_model,
+    #                                             tokenizer,
+    #                                             init_token_id=tokenizer.eos_token_id if args.init_from_eos else None,
+    #                                             )
+    step_token_id_map = None
+    if args.use_stp:
+        step_tokens = [f"<step_{i}>" for i in range(args.stp_max_steps)]
+        num_added = tokenizer.add_tokens(step_tokens, special_tokens=True)
+        print(f"Added {num_added} step tokens to tokenizer (vocab size: {len(tokenizer)})")
+        model.resize_token_embeddings(len(tokenizer))
+        if ref_model is not None:
+            ref_model.resize_token_embeddings(len(tokenizer))
+        step_token_id_map = {
+            i: tokenizer.convert_tokens_to_ids(f"<step_{i}>")
+            for i in range(args.stp_max_steps)
+        }
+        print(f"Step token ID map (first 5): {dict(list(step_token_id_map.items())[:5])}")
                                                 
     # Apply the absolute freeze AFTER all matrix resizing
     if args.use_kl and ref_model is not None:

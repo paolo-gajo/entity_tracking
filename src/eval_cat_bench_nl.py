@@ -155,7 +155,6 @@ def main(args):
 
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
-        torch_dtype=torch.bfloat16 if args.bf16 else torch.float32,
     ).to(device)
     model.eval()
 

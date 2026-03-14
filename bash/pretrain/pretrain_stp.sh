@@ -30,7 +30,7 @@ batch_size=8
 # model_name="rinna/japanese-gpt2-small"
 # model_name="GroNLP/gpt2-small-italian"
 
-model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2"
 # model_name="EleutherAI/gpt-neo-125m"
 # model_name="facebook/opt-125m"
 
@@ -43,7 +43,7 @@ model_name="openai-community/gpt2"
 # model_name="HuggingFaceTB/SmolLM2-360M"
 
 # model_name="openai-community/gpt2-large"
-# model_name="Qwen/Qwen3-0.6B-Base"
+model_name="Qwen/Qwen3-0.6B-Base"
 # model_name="Qwen/Qwen3-4B-Base"
 # model_name="Qwen/Qwen3.5-0.8B-Base"
 # model_name="Qwen/Qwen3.5-9B-Base"
