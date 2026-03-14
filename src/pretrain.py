@@ -5,7 +5,7 @@ from utils_data import (
     Seq2SeqDataset, Collator, make_random_samples_dataset,
     make_pos_neg_samples_dataset, prepare_text_batch_prompt,
 )
-from utils_sys import save_run, setup_config
+from utils_sys import save_run, setup_config, capture_source_snapshot
 from utils_viz import save_heatmaps
 from utils_model import PositionHead, build_model_tokenizer
 from train.forward import compute_forward_bundle
@@ -29,6 +29,7 @@ import os
 torch.set_printoptions(linewidth=100000)
 
 def main(args):
+    source_snapshot = capture_source_snapshot()
     resume_steps = 0
     if args.resume_from:
         ckpt_config_path = os.path.join(args.resume_from, "train_config.json")
@@ -214,14 +215,13 @@ def main(args):
             prompt = prepare_text_batch_prompt(batch, tokenizer)
             os.makedirs("./misc", exist_ok=True)
             print(prompt, file=open("./misc/last_prompt.txt", "w"), flush=True)
-            import pdb; pdb.set_trace()
 
         num_steps += 1
         if num_steps % args.save_interval == 0:
             save_config = train_config.copy()
             save_config["num_steps"] = num_steps
             model_save_dir = os.path.join(train_config["model_save_dir"], str(num_steps))
-            save_run(save_config, model_save_dir, model, tokenizer, prompt)
+            save_run(save_config, model_save_dir, model, tokenizer, prompt, source_snapshot)
         
     json_path = os.path.join(train_config["model_save_dir"], "losses.json")
     if os.path.exists(train_config["model_save_dir"]):

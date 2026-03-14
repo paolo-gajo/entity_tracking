@@ -56,7 +56,6 @@ model_name="openai-community/gpt2"
 
 use_lora=0
 use_abs_pe=0
-detect_anomaly=0
 
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
@@ -106,7 +105,6 @@ cmd="python src/pretrain.py
 --stp_lambda $stp_lambda
 --stp_max_steps $stp_max_steps
 --init_from_eos $init_from_eos
---detect_anomaly $detect_anomaly
 ${resume_from:+--resume_from $resume_from}
 ${revision:+--revision $revision}
 "

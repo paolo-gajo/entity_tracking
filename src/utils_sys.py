@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import os
+import glob as globmod
 
 def setup_config(train_config):
     # Dictionary mapping config keys to short abbreviations for folder names
@@ -90,6 +91,30 @@ def save_prompt_example(sample_prompt, model_save_dir):
     with open(save_path, 'w', encoding='utf8') as f:
         f.write(sample_prompt if sample_prompt is not None else "")
 
-def save_run(save_config, model_save_dir, model, tokenizer, prompt):
+def capture_source_snapshot(src_dir=None):
+    """Read all .py files from src/ into memory. Call once at launch."""
+    if src_dir is None:
+        src_dir = os.path.dirname(os.path.abspath(__file__))
+    snapshot = {}
+    for py_file in globmod.glob(os.path.join(src_dir, '**', '*.py'), recursive=True):
+        if '__pycache__' in py_file or os.sep + 'old' + os.sep in py_file:
+            continue
+        rel_path = os.path.relpath(py_file, src_dir)
+        with open(py_file, 'r', encoding='utf8') as f:
+            snapshot[rel_path] = f.read()
+    return snapshot
+
+def save_source_snapshot(model_save_dir, snapshot):
+    """Write a previously captured source snapshot to model_save_dir/source_snapshot/."""
+    snapshot_dir = os.path.join(model_save_dir, 'source_snapshot')
+    for rel_path, content in snapshot.items():
+        dest = os.path.join(snapshot_dir, rel_path)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        with open(dest, 'w', encoding='utf8') as f:
+            f.write(content)
+
+def save_run(save_config, model_save_dir, model, tokenizer, prompt, source_snapshot=None):
     save_model_tokenizer(model, tokenizer, save_config, model_save_dir)
     save_prompt_example(prompt, model_save_dir)
+    if source_snapshot is not None:
+        save_source_snapshot(model_save_dir, source_snapshot)

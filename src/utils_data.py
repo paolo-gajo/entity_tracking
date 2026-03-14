@@ -643,15 +643,15 @@ def prepare_text_batch_prompt(batch, tokenizer):
             stp_tokens_decoded = tokenizer.decode(stp_tokens)
         prompt += (
             f"{'#' * 100}\n\n"
-            f'ALL input_ids:\n{decoded_all}\n\n'
+            f'ALL input_ids:\n`{decoded_all}`\n\n'
             f"{'-' * 100}\n\n"
-            f'ATTN TOKENS:\n{attn_tokens_decoded}\n\n'
+            f'ATTN TOKENS:\n`{attn_tokens_decoded}`\n\n'
             f"{'-' * 100}\n\n"
-            f'CLM tokens:\n{clm_tokens_decoded}\n\n'
+            f'CLM tokens:\n`{clm_tokens_decoded}`\n\n'
             f"{'-' * 100}\n\n"
-            f'Step tokens:\n{stp_tokens_decoded}\n\n'
+            f'Step tokens:\n`{stp_tokens_decoded}`\n\n'
             f"{'-' * 100}\n\n"
-            f"Binary label:\n{batch['binary_label'][i]}\n\n"
+            f"Binary label:\n`{batch['binary_label'][i]}`\n\n"
             f"{'#' * 100}\n\n"
         )
     return prompt
