@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=1000000
+num_samples=0
 batch_mode="random_samples"
 batch_size=8
 
@@ -36,15 +36,16 @@ batch_size=8
 
 # model_name="EleutherAI/pythia-160m"
 # model_name="amd/AMD-Llama-135m"
-model_name="HuggingFaceTB/SmolLM2-135M"
+# model_name="HuggingFaceTB/SmolLM2-135M"
 
 # model_name="openai-community/gpt2-medium"
-# model_name="facebook/opt-350m"
+model_name="facebook/opt-350m"
 # model_name="HuggingFaceTB/SmolLM2-360M"
 
 # model_name="openai-community/gpt2-large"
 # model_name="Qwen/Qwen3-0.6B-Base"
 # model_name="Qwen/Qwen3-4B-Base"
+# model_name="Qwen/Qwen3-1.7B-Base"
 # model_name="Qwen/Qwen3.5-0.8B-Base"
 # model_name="Qwen/Qwen3.5-9B-Base"
 # model_name="Qwen/Qwen3.5-4B-Base"
@@ -54,7 +55,7 @@ model_name="HuggingFaceTB/SmolLM2-135M"
 # revision="step4000"
 
 use_lora=0
-use_abs_pe=1
+use_abs_pe=0
 
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original

@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=1.0
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=1000000
+num_samples=0
 batch_mode="random_samples"
 batch_size=8
 
@@ -32,15 +32,13 @@ model_name="openai-community/gpt2"
 # model_name="facebook/opt-350m"
 # model_name="EleutherAI/gpt-neo-125m"
 
-attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+attn_mask_type='full' # N/A for minimal_mono
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
 clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
 # clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
 
 # prompt_type=minimal_pairs
-# prompt_type=natlang_pairs
-
 prompt_type=minimal_mono
 
 use_clm=1

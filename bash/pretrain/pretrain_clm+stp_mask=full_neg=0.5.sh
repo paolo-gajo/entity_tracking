@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-clm-pooled
+#SBATCH -J pt-stp
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=10000
+num_samples=1000000
 batch_mode="random_samples"
 batch_size=8
 
@@ -30,24 +30,32 @@ batch_size=8
 model_name="openai-community/gpt2"
 # model_name="Qwen/Qwen3-0.6B-Base"
 
-attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+attn_mask_type='full' # N/A for minimal_mono
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
-# clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
-clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
-prompt_type=pooled_pairs
-# prompt_type=minimal_pairs
-# prompt_type=natlang_pairs
+clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
+# clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
+
+prompt_type=step_token_pairs+natlang_pairs
 
 # prompt_type=only_shuffled
 # prompt_type=only_original
 # prompt_type=minimal_mono
 
 use_clm=1
-pool_clm=1
+clm_lambda=1.0
+
 use_kl=0
+kl_lambda=0
+
 use_mml=0
-use_stp=0
+mml_lambda=0.1
+
+use_stp=1
+stp_lambda=1.0
+stp_max_steps=15
+
+use_grl=0
 
 activations=real
 # activations=non-negative
@@ -57,19 +65,24 @@ cmd="python src/pretrain.py
 --model_name $model_name
 --prompt_type $prompt_type
 --attn_mask_type $attn_mask_type
+--clm_mask_type $clm_mask_type
 --num_samples $num_samples
 --save_interval $save_interval
 --batch_size $batch_size
 --lr $lr
 --batch_mode $batch_mode
 --use_clm $use_clm
---pool_clm $pool_clm
+--clm_lambda $clm_lambda
 --use_kl $use_kl
 --use_mml $use_mml
+--mml_lambda $mml_lambda
 --activations $activations
 --min_recipe_steps $min_recipe_steps
 --neg_ratio $neg_ratio
 --use_stp $use_stp
+--stp_lambda $stp_lambda
+--stp_max_steps $stp_max_steps
+--use_grl $use_grl
 "
 
 $cmd
