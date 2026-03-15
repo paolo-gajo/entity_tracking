@@ -167,6 +167,7 @@ def build_model_tokenizer(args, device):
     model = AutoModelForCausalLM.from_pretrained(
         args.model_name,
         revision=revision,
+        dtype=torch.float32,
     )
 
     if getattr(args, 'use_abs_pe', 0):
@@ -187,7 +188,7 @@ def build_model_tokenizer(args, device):
     ref_model = None
     if args.use_kl:
         print(f"Loading Reference Model: {args.model_name}{rev_str}", flush=True)
-        ref_model = AutoModelForCausalLM.from_pretrained(args.model_name, revision=revision).to(device)
+        ref_model = AutoModelForCausalLM.from_pretrained(args.model_name, revision=revision, dtype=getattr(torch, getattr(args, 'dtype', 'bfloat16'))).to(device)
         ref_model.eval()
 
     # This function resizes both model and ref_model
@@ -197,7 +198,7 @@ def build_model_tokenizer(args, device):
     #                                             tokenizer,
     #                                             init_token_id=tokenizer.eos_token_id if args.init_from_eos else None,
     #                                             )
-    step_token_id_map = None
+    step_token_id_map = None    
     if args.use_stp:
         step_tokens = [f"<step_{i}>" for i in range(args.stp_max_steps)]
         num_added = tokenizer.add_tokens(step_tokens, special_tokens=True)

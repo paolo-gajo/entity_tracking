@@ -122,52 +122,56 @@ def main(args):
     losses = []
     prompt = None
 
+    amp_dtype = getattr(torch, getattr(args, 'dtype', 'float32'))
+    use_amp = amp_dtype != torch.float32
+
     for batch_idx, batch in enumerate(tbar):
         batch = {k: v.to(device) for k, v in batch.items()}
-        
-        logits, lhs = compute_forward_bundle(args, model, batch)
 
-        if logits is not None and torch.isnan(logits).any():
-            print("NaN in logits before loss")
+        with torch.amp.autocast(device_type="cuda", dtype=amp_dtype, enabled=use_amp):
+            logits, lhs = compute_forward_bundle(args, model, batch)
 
-        # ---- STP loss ---------------------------------------------------
-        stp_loss = torch.tensor(0.0, device=device)
-        if args.use_stp and stp_loss_fn is not None:
-            stp_loss = stp_loss_fn(logits, batch['input_ids'], batch['stp_mask'])
+            if logits is not None and torch.isnan(logits).any():
+                print("NaN in logits before loss")
 
-        # ---- Pos-adv loss -----------------------------------------------
-        pos_loss, pos_acc = (torch.tensor(0.0, device=device), None)
-        if args.use_grl:
-            if lhs is None:
-                raise RuntimeError("use_grl requires normal lhs; check compute_forward_bundle.")
-            pos_loss, pos_acc = compute_pos_adv_loss(args, pos_head, lhs, batch)
+            # ---- STP loss ---------------------------------------------------
+            stp_loss = torch.tensor(0.0, device=device)
+            if args.use_stp and stp_loss_fn is not None:
+                stp_loss = stp_loss_fn(logits, batch['input_ids'], batch['stp_mask'])
 
-        if args.save_heatmaps:
-            S_directed, S_undirected = compute_scores(lhs[0], batch["step_indices"][0])
-            save_heatmaps(S_directed, S_undirected, suffix=f"_{num_steps}")
+            # ---- Pos-adv loss -----------------------------------------------
+            pos_loss, pos_acc = (torch.tensor(0.0, device=device), None)
+            if args.use_grl:
+                if lhs is None:
+                    raise RuntimeError("use_grl requires normal lhs; check compute_forward_bundle.")
+                pos_loss, pos_acc = compute_pos_adv_loss(args, pos_head, lhs, batch)
 
-        # ---- Pooled CLM: pass completion_step_indices if available -------
-        # For the pooled variant, gather_losses needs step_indices to
-        # actually contain the *completion-side* step indices.  When using
-        # prompt_type='pooled_pairs', the collator produces a separate
-        # 'completion_step_indices' tensor.  We temporarily swap it in.
-        if args.pool_clm and 'completion_step_indices' in batch:
-            original_mml = batch.get('step_indices')
-            batch['step_indices'] = batch['completion_step_indices']
+            if args.save_heatmaps:
+                S_directed, S_undirected = compute_scores(lhs[0], batch["step_indices"][0])
+                save_heatmaps(S_directed, S_undirected, suffix=f"_{num_steps}")
 
-        loss = gather_losses(
-            args,
-            causal_lm_loss_fn,
-            kl_loss_fn,
-            max_margin_loss_fn,
-            logits,
-            batch,
-            device,
-            lhs,
-            pos_loss,
-            stp_loss,
-            cos_loss_fn=cos_loss_fn,
-        )
+            # ---- Pooled CLM: pass completion_step_indices if available -------
+            # For the pooled variant, gather_losses needs step_indices to
+            # actually contain the *completion-side* step indices.  When using
+            # prompt_type='pooled_pairs', the collator produces a separate
+            # 'completion_step_indices' tensor.  We temporarily swap it in.
+            if args.pool_clm and 'completion_step_indices' in batch:
+                original_mml = batch.get('step_indices')
+                batch['step_indices'] = batch['completion_step_indices']
+
+            loss = gather_losses(
+                args,
+                causal_lm_loss_fn,
+                kl_loss_fn,
+                max_margin_loss_fn,
+                logits,
+                batch,
+                device,
+                lhs,
+                pos_loss,
+                stp_loss,
+                cos_loss_fn=cos_loss_fn,
+            )
 
         # Restore original MML indices if swapped
         if args.pool_clm and 'completion_step_indices' in batch:
@@ -302,6 +306,8 @@ if __name__ == "__main__":
     parser.add_argument("--pos_bins", default=32, type=int)
     parser.add_argument("--pos_head_hidden", default=256, type=int)
     parser.add_argument("--log_interval", default=100, type=int)
+    parser.add_argument("--dtype", default="bfloat16", type=str,
+                        help="Model dtype: float32, bfloat16, float16")
     parser.add_argument("--revision", default=None, type=str,
                         help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")
 

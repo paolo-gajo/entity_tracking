@@ -36,21 +36,20 @@ batch_size=8
 
 # model_name="EleutherAI/pythia-160m"
 # model_name="amd/AMD-Llama-135m"
-# model_name="HuggingFaceTB/SmolLM2-135M"
+model_name="HuggingFaceTB/SmolLM2-135M"
 
 # model_name="openai-community/gpt2-medium"
 # model_name="facebook/opt-350m"
 # model_name="HuggingFaceTB/SmolLM2-360M"
 
 # model_name="openai-community/gpt2-large"
-model_name="Qwen/Qwen3-0.6B-Base"
+# model_name="Qwen/Qwen3-0.6B-Base"
 # model_name="Qwen/Qwen3-4B-Base"
 # model_name="Qwen/Qwen3.5-0.8B-Base"
 # model_name="Qwen/Qwen3.5-9B-Base"
 # model_name="Qwen/Qwen3.5-4B-Base"
 
-# resume_from="models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/absresume_steps_pe=1/act=real/SmolLM2-135M/75000"
-# resume_from="models/recipenlg/mode=random_samples/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/SmolLM2-135M/75000"
+# resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/SmolLM2-135M/2026-03-15--08-35-54/9000"
 
 # revision="step4000"
 

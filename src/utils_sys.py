@@ -44,10 +44,13 @@ def setup_config(train_config):
     ]
     rev_string = f"_{train_config['revision']}" if train_config['revision'] else ""
     if train_config.get('resume_from'):
-        model_leaf = f"{train_config['resume_from'].split('/')[-2]}{rev_string}"
+        # Path is .../ModelName/timestamp/step_number
+        model_leaf = f"{train_config['resume_from'].split('/')[-3]}{rev_string}"
+        time_string = train_config['resume_from'].split('/')[-2]
     else:
         model_leaf = f"{train_config['model_name'].split('/')[-1]}{rev_string}"
-    
+        time_string = get_current_time_string()
+
     # Build dynamic string: e.g. "bs=8/prompt=minimal_pairs/..."
     dynamic_subdirs = []
     for k in grouping_keys:
@@ -61,7 +64,7 @@ def setup_config(train_config):
         train_config['data_path'].split('/')[2],
         *dynamic_subdirs,
         model_leaf,
-        get_current_time_string(),
+        time_string,
     )
     return train_config
 

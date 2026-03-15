@@ -1,16 +1,16 @@
 ####################################################################################################
 
 ALL input_ids:
-` Preheat oven to  3 5 0 °.<step_0> To prepare cake , heavily coat mini Bundt pans with cooking spray ; turn pan upside down to drain excess . Place granulated sugar , butter , and vanilla in a large bowl ; beat with a heavy -duty mixer at medium speed  2 minutes or until well blended . Add egg substitute and eggs to sugar mixture ; beat well . Lightly spoon flour into dry measuring cups ; level with a knife . Combine flour , baking soda , and salt in a bowl , stirring well . Sprinkle candy , dates , coconut , and nuts over flour ; stir well to disperse and coat candies . Add flour mixture to sugar mixture alternately with buttermilk , beginning and ending with flour mixture .<step_1> Spoon  1 / 3 cup batter into each mini Bundt cup . Bake at  3 5 0 ° for  1 6 minutes or until a wooden pick inserted in the center of  1 cake comes out clean . Cool in pans  5 minutes . Remove cakes from pans ; brush the top of each warm cake with about  2 teaspoons glaze . Cool completely on a wire rack . Garnish cakes with  1 tablespoon powdered sugar , if desired .<step_2> To prepare glaze , combine  1 cup powdered sugar and juice in a bowl , stirring until smooth .<step_3> 
+` Preheat oven to 325°F and line a baking sheet with a Silpat or parchment paper.<step_0> In the bowl of your mixer, on low-medium speed, combine the melted butter, honey, chocolate hazelnut spread, brown sugar, and vanilla extract.<step_1> On low speed, mix in the oats and salt until combined.<step_2> Using a spatula, spread the granola mixture onto the lined baking sheet. Bake for 10 minutes, then add the chopped hazelnuts and stir the granola.<step_3> Bake for another 10 minutes, and stir again.<step_4> Bake for 10 more minutes. Remove the baking sheet from the oven, and cool completely. Use your fingers to break up the granola if it's too clumpy.<step_5> Serve with milk, yogurt, ice cream, or by itself, and enjoy!<step_6> 
 
-<step_0><step_1><step_3><step_2><|endoftext|>`
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Preheat oven to  3 5 0 °.<step_0> To prepare cake , heavily coat mini Bundt pans with cooking spray ; turn pan upside down to drain excess . Place granulated sugar , butter , and vanilla in a large bowl ; beat with a heavy -duty mixer at medium speed  2 minutes or until well blended . Add egg substitute and eggs to sugar mixture ; beat well . Lightly spoon flour into dry measuring cups ; level with a knife . Combine flour , baking soda , and salt in a bowl , stirring well . Sprinkle candy , dates , coconut , and nuts over flour ; stir well to disperse and coat candies . Add flour mixture to sugar mixture alternately with buttermilk , beginning and ending with flour mixture .<step_1> Spoon  1 / 3 cup batter into each mini Bundt cup . Bake at  3 5 0 ° for  1 6 minutes or until a wooden pick inserted in the center of  1 cake comes out clean . Cool in pans  5 minutes . Remove cakes from pans ; brush the top of each warm cake with about  2 teaspoons glaze . Cool completely on a wire rack . Garnish cakes with  1 tablespoon powdered sugar , if desired .<step_2> To prepare glaze , combine  1 cup powdered sugar and juice in a bowl , stirring until smooth .<step_3> 
+` Preheat oven to 325°F and line a baking sheet with a Silpat or parchment paper.<step_0> In the bowl of your mixer, on low-medium speed, combine the melted butter, honey, chocolate hazelnut spread, brown sugar, and vanilla extract.<step_1> On low speed, mix in the oats and salt until combined.<step_2> Using a spatula, spread the granola mixture onto the lined baking sheet. Bake for 10 minutes, then add the chopped hazelnuts and stir the granola.<step_3> Bake for another 10 minutes, and stir again.<step_4> Bake for 10 more minutes. Remove the baking sheet from the oven, and cool completely. Use your fingers to break up the granola if it's too clumpy.<step_5> Serve with milk, yogurt, ice cream, or by itself, and enjoy!<step_6> 
 
-<step_0><step_1><step_3><step_2><|endoftext|>`
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -20,57 +20,26 @@ CLM tokens:
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_0><step_1><step_3><step_2><|endoftext|>`
+`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 Binary label:
-`0.0`
+`1.0`
 
 ####################################################################################################
 
 ####################################################################################################
 
 ALL input_ids:
-` Pour mixture into  2 ice cube trays , and freeze solid .<step_0> Repeat with second tray of cubes and remaining  1 / 2 cup soy creamer .<step_1> Puree coconut milk , maple syrup , peanut butter , and vanilla in blender until smooth .<step_2> Place half of ice cream cubes and  1 / 2 cup soy creamer in blender , and process until smooth and creamy .<step_3> Transfer to resealable plastic bags if storing for more than  2 days .<step_4> 
+` Cream cheese with mixer until smooth.<step_0> Add pineapple and mix. Add both puddings and mix on low.<step_1> Put in prebaked pie shell and refrigerate.<step_2> 
 
-<step_2><step_0><step_4><step_3><step_1><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Pour mixture into  2 ice cube trays , and freeze solid .<step_0> Repeat with second tray of cubes and remaining  1 / 2 cup soy creamer .<step_1> Puree coconut milk , maple syrup , peanut butter , and vanilla in blender until smooth .<step_2> Place half of ice cream cubes and  1 / 2 cup soy creamer in blender , and process until smooth and creamy .<step_3> Transfer to resealable plastic bags if storing for more than  2 days .<step_4> 
-
-<step_2><step_0><step_4><step_3><step_1><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_2><step_0><step_4><step_3><step_1><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Mix ingredients together with mixer on medium speed .<step_0> Pour into pastry lined pie pan .<step_1> Bake at  3 7 5 ° for  4 0 to  4 5 minutes .<step_2> 
-
-<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Mix ingredients together with mixer on medium speed .<step_0> Pour into pastry lined pie pan .<step_1> Bake at  3 7 5 ° for  4 0 to  4 5 minutes .<step_2> 
+` Cream cheese with mixer until smooth.<step_0> Add pineapple and mix. Add both puddings and mix on low.<step_1> Put in prebaked pie shell and refrigerate.<step_2> 
 
 <step_0><step_1><step_2><|endoftext|>`
 
@@ -94,14 +63,107 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Let cheese stay at room temperature .<step_0> Drain pineapple .<step_1> Mix together with beater .<step_2> Spread or dip with Ritz crackers or all -purpose crackers .<step_3> Great anytime , especially sitting around the fire watching a good movie .<step_4> 
+` Roast on a baking sheet, stirring every 5 minutes, until seeds are aromatic, crisp, and browned, about 10 to 15 minutes.<step_0> Remove from the oven, sprinkle with 2 tablespoons granulated sugar, 1/4 teaspoon ground cinnamon, 1/4 teaspoon ground nutmeg, and 1/8 teaspoon ground allspice, and toss to coat.<step_1> Heat the oven to 375 degrees F and arrange a rack in the middle.<step_2> Toss 2 cups pumpkin seeds with 2 teaspoons vegetable oil.<step_3> 
+
+<step_2><step_3><step_0><step_1><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Roast on a baking sheet, stirring every 5 minutes, until seeds are aromatic, crisp, and browned, about 10 to 15 minutes.<step_0> Remove from the oven, sprinkle with 2 tablespoons granulated sugar, 1/4 teaspoon ground cinnamon, 1/4 teaspoon ground nutmeg, and 1/8 teaspoon ground allspice, and toss to coat.<step_1> Heat the oven to 375 degrees F and arrange a rack in the middle.<step_2> Toss 2 cups pumpkin seeds with 2 teaspoons vegetable oil.<step_3> 
+
+<step_2><step_3><step_0><step_1><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+`<step_2><step_3><step_0><step_1><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`0.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` take all that weird stuff out of the turkey.<step_0> make the rub by mixing all non-turkey ingredients.<step_1> preheat oven to 350.<step_2> rub turkey with the rub. if there's any left over, stuff in turkey belly.<step_3> do not put stuffing inside turkey. gross! close the turkey legs with that plastic thing (or string if your turkey doesn't have that.<step_4> put turkey in roaster, elevated from bottom of pan.<step_5> cover with tin foil, making sure you don't let top of foil touch turkey.<step_6> let cook for about 2:45 or so with foil on. do not baste.<step_7> for last 15-20, remove foil, so turkey skin can get a good bit of color.<step_8> let rest about 20 so you can slice it up.<step_9> for gravy: take drippings, place in pot. heat up. while heating, make a mix of 1 cup cold water to 1/4 cup cornstarch. slowly add to the broth, a bit at a time so you make sure you haven't messed up too much.<step_10> warning: instructions for high altitude (5000 feet above sea level). make sure you adjust to your altitude. always cook turkey to like, 165-170.<step_11> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` take all that weird stuff out of the turkey.<step_0> make the rub by mixing all non-turkey ingredients.<step_1> preheat oven to 350.<step_2> rub turkey with the rub. if there's any left over, stuff in turkey belly.<step_3> do not put stuffing inside turkey. gross! close the turkey legs with that plastic thing (or string if your turkey doesn't have that.<step_4> put turkey in roaster, elevated from bottom of pan.<step_5> cover with tin foil, making sure you don't let top of foil touch turkey.<step_6> let cook for about 2:45 or so with foil on. do not baste.<step_7> for last 15-20, remove foil, so turkey skin can get a good bit of color.<step_8> let rest about 20 so you can slice it up.<step_9> for gravy: take drippings, place in pot. heat up. while heating, make a mix of 1 cup cold water to 1/4 cup cornstarch. slowly add to the broth, a bit at a time so you make sure you haven't messed up too much.<step_10> warning: instructions for high altitude (5000 feet above sea level). make sure you adjust to your altitude. always cook turkey to like, 165-170.<step_11> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` 1. Line a baking sheet with 1" sides with non stick foil (this is key). Set aside.<step_0> 2. Wash potatoes and slice into 1/2" fries. Place in a large bowl and cover with water. Allow to soak for 20 minutes to an hour. (This removes much of the starch and allows them to get crispy while in the oven.)<step_1> 3. Preheat oven to 425F. Thoroughly drain potatoes in a colander; shake them up to release as much water as possible.<step_2> 4. Put potatoes into a dry bowl. Drizzle 1 tablespoon of oil over, toss. Sprinkle garlic powder, salt, and pepper over potatoes and toss to coat. Sprinkle flour over potatoes and toss to evenly coat.<step_3> 5. Spread out over cookie sheet without overlapping. Drizzle remaining tablespoon of oil over potatoes.<step_4> 6. Bake for 25 minutes, remove from the oven and carefully give them a turn. Place back into the oven for an additional 15-20 minutes, or until browned to your liking.<step_5> Sprinkle parsley over potatoes. Serve immediately.<step_6> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` 1. Line a baking sheet with 1" sides with non stick foil (this is key). Set aside.<step_0> 2. Wash potatoes and slice into 1/2" fries. Place in a large bowl and cover with water. Allow to soak for 20 minutes to an hour. (This removes much of the starch and allows them to get crispy while in the oven.)<step_1> 3. Preheat oven to 425F. Thoroughly drain potatoes in a colander; shake them up to release as much water as possible.<step_2> 4. Put potatoes into a dry bowl. Drizzle 1 tablespoon of oil over, toss. Sprinkle garlic powder, salt, and pepper over potatoes and toss to coat. Sprinkle flour over potatoes and toss to evenly coat.<step_3> 5. Spread out over cookie sheet without overlapping. Drizzle remaining tablespoon of oil over potatoes.<step_4> 6. Bake for 25 minutes, remove from the oven and carefully give them a turn. Place back into the oven for an additional 15-20 minutes, or until browned to your liking.<step_5> Sprinkle parsley over potatoes. Serve immediately.<step_6> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Whisk together in saucepan, sugar, flour, salt, pepper and dry mustard.<step_0> Gradually add water, egg yolks, vinegar, corn syrup and honey.<step_1> Whisk constantly while cooking over low heat about 5 minutes or until mixture thickens, but does not boil.<step_2> Take off heat and whisk in corn oil.<step_3> Store in refrigerator.<step_4> 
 
 <step_0><step_1><step_2><step_3><step_4><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Let cheese stay at room temperature .<step_0> Drain pineapple .<step_1> Mix together with beater .<step_2> Spread or dip with Ritz crackers or all -purpose crackers .<step_3> Great anytime , especially sitting around the fire watching a good movie .<step_4> 
+` Whisk together in saucepan, sugar, flour, salt, pepper and dry mustard.<step_0> Gradually add water, egg yolks, vinegar, corn syrup and honey.<step_1> Whisk constantly while cooking over low heat about 5 minutes or until mixture thickens, but does not boil.<step_2> Take off heat and whisk in corn oil.<step_3> Store in refrigerator.<step_4> 
 
 <step_0><step_1><step_2><step_3><step_4><|endoftext|>`
 
@@ -125,16 +187,16 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Top with shiso leaves and sesame seeds .<step_0> Mince the tuna ( use the offcuts near the spine , or fatty tuna offcuts for negitoro ).<step_1> Mix the A ingredients together in a bowl .<step_2> Combine the seasoning ingredients from Step  1 and the chopped tuna .<step_3> 
+` Puree soup in cleaned blender in small batches and return to 4-quart saucepan, thinning with water if desired.<step_0> Season soup with salt and pepper and heat over moderately low heat, stirring occasionally, until heated through.<step_1> Return basil cream to small saucepan and keep warm.<step_2> In a 4-quart heavy saucepan cook onions in butter with salt and pepper to taste over moderate heat, stirring until pale golden.<step_3> Drain tips well.<step_4> Transfer asparagus tips with slotted spoon to a colander, reserving cooking liquid, and rinse under cold water to stop cooking.<step_5> Cook mixture over high heat, stirring, until basil is wilted, about 5 to 10 seconds, and in a blender puree mixture.<step_6> Divide soup among 6 bowls and add asparagus tips, arranging them decoratively.<step_7> Remove and discard asparagus ends with slotted spoon and bring water to a boil.<step_8> In a small saucepan simmer reserved asparagus ends in water, covered, 15 minutes.<step_9> Add asparagus stalk pieces, broth, and reserved cooking liquid and simmer, covered, 15 minutes, or until asparagus pieces are tender.<step_10> Make basil cream while soup simmers: In a small saucepan bring cream to a boil and stir in basil and salt.<step_11> Drizzle basil cream over each serving.<step_12> Add reserved asparagus tips and cook, uncovered, over high heat until crisp-tender, about 3 minutes.<step_13> 
 
-<step_2><step_1><step_3><step_0><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+<step_9><step_8><step_13><step_5><step_4><step_3><step_10><step_11><step_6><step_2><step_0><step_1><step_7><step_12><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Top with shiso leaves and sesame seeds .<step_0> Mince the tuna ( use the offcuts near the spine , or fatty tuna offcuts for negitoro ).<step_1> Mix the A ingredients together in a bowl .<step_2> Combine the seasoning ingredients from Step  1 and the chopped tuna .<step_3> 
+` Puree soup in cleaned blender in small batches and return to 4-quart saucepan, thinning with water if desired.<step_0> Season soup with salt and pepper and heat over moderately low heat, stirring occasionally, until heated through.<step_1> Return basil cream to small saucepan and keep warm.<step_2> In a 4-quart heavy saucepan cook onions in butter with salt and pepper to taste over moderate heat, stirring until pale golden.<step_3> Drain tips well.<step_4> Transfer asparagus tips with slotted spoon to a colander, reserving cooking liquid, and rinse under cold water to stop cooking.<step_5> Cook mixture over high heat, stirring, until basil is wilted, about 5 to 10 seconds, and in a blender puree mixture.<step_6> Divide soup among 6 bowls and add asparagus tips, arranging them decoratively.<step_7> Remove and discard asparagus ends with slotted spoon and bring water to a boil.<step_8> In a small saucepan simmer reserved asparagus ends in water, covered, 15 minutes.<step_9> Add asparagus stalk pieces, broth, and reserved cooking liquid and simmer, covered, 15 minutes, or until asparagus pieces are tender.<step_10> Make basil cream while soup simmers: In a small saucepan bring cream to a boil and stir in basil and salt.<step_11> Drizzle basil cream over each serving.<step_12> Add reserved asparagus tips and cook, uncovered, over high heat until crisp-tender, about 3 minutes.<step_13> 
 
-<step_2><step_1><step_3><step_0><|endoftext|>`
+<step_9><step_8><step_13><step_5><step_4><step_3><step_10><step_11><step_6><step_2><step_0><step_1><step_7><step_12><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -144,7 +206,7 @@ CLM tokens:
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_2><step_1><step_3><step_0><|endoftext|>`
+`<step_9><step_8><step_13><step_5><step_4><step_3><step_10><step_11><step_6><step_2><step_0><step_1><step_7><step_12><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -156,16 +218,16 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Return to oven and continue to roast for another  8 minutes , or until brown and tender .<step_0> Roast in oven for  1 0 minutes .<step_1> Preheat oven to  4 7 5 degrees .<step_2> In shallow baking dish , toss carrots with oil and salt to coat .<step_3> Heat butter in small saucepan until golden brown ( dont burn !), remove from heat and add maple syrup .<step_4> Serve immediately .<step_5> Drizzle over carrots and shake pan to coat .<step_6> 
+` In bacon grease, saute bell pepper and onions, then add all the above to beans.<step_0> Cook bacon, place in pot.<step_1> Add yellow mustard and brown sugar.<step_2> Simmer for 5 minutes more, then serve.<step_3> Cook over low heat for 30 minutes.<step_4> Place Pork-N-Beans in a pot.<step_5> 
 
-<step_2><step_3><step_1><step_4><step_6><step_0><step_5><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+<step_5><step_1><step_0><step_2><step_4><step_3><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Return to oven and continue to roast for another  8 minutes , or until brown and tender .<step_0> Roast in oven for  1 0 minutes .<step_1> Preheat oven to  4 7 5 degrees .<step_2> In shallow baking dish , toss carrots with oil and salt to coat .<step_3> Heat butter in small saucepan until golden brown ( dont burn !), remove from heat and add maple syrup .<step_4> Serve immediately .<step_5> Drizzle over carrots and shake pan to coat .<step_6> 
+` In bacon grease, saute bell pepper and onions, then add all the above to beans.<step_0> Cook bacon, place in pot.<step_1> Add yellow mustard and brown sugar.<step_2> Simmer for 5 minutes more, then serve.<step_3> Cook over low heat for 30 minutes.<step_4> Place Pork-N-Beans in a pot.<step_5> 
 
-<step_2><step_3><step_1><step_4><step_6><step_0><step_5><|endoftext|>`
+<step_5><step_1><step_0><step_2><step_4><step_3><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -175,69 +237,7 @@ CLM tokens:
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_2><step_3><step_1><step_4><step_6><step_0><step_5><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Add enough water to desired consistency .<step_0> Add all ingredients in large bowl .<step_1> Refrigerate for  2 to  3 hours ; the colder the better .<step_2> 
-
-<step_1><step_0><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Add enough water to desired consistency .<step_0> Add all ingredients in large bowl .<step_1> Refrigerate for  2 to  3 hours ; the colder the better .<step_2> 
-
-<step_1><step_0><step_2><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_1><step_0><step_2><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` mix cream cheese and chedder cheese .<step_0> preheat over to  3 5 0 .<step_1> stuff the peppers with the mixed cheeses .<step_2> cut tops off the peppers and clean all seeds out .<step_3> place foil over cookie sheet then place prepared peppers on foil do not wrap .<step_4> leave in longer for a more mild flavor .<step_5> when oven is ready , bake at  3 5 0 for  7 min or when cheese starts to melt .<step_6> 
-
-<step_1><step_3><step_0><step_2><step_4><step_6><step_5><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` mix cream cheese and chedder cheese .<step_0> preheat over to  3 5 0 .<step_1> stuff the peppers with the mixed cheeses .<step_2> cut tops off the peppers and clean all seeds out .<step_3> place foil over cookie sheet then place prepared peppers on foil do not wrap .<step_4> leave in longer for a more mild flavor .<step_5> when oven is ready , bake at  3 5 0 for  7 min or when cheese starts to melt .<step_6> 
-
-<step_1><step_3><step_0><step_2><step_4><step_6><step_5><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_1><step_3><step_0><step_2><step_4><step_6><step_5><|endoftext|>`
+`<step_5><step_1><step_0><step_2><step_4><step_3><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
