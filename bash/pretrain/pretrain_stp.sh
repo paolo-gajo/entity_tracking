@@ -54,7 +54,7 @@ model_name="HuggingFaceTB/SmolLM2-135M"
 # revision="step4000"
 
 use_lora=0
-use_abs_pe=0
+use_abs_pe=1
 
 attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original

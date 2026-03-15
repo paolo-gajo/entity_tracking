@@ -443,17 +443,13 @@ class Collator:
         step_indices_list = []
         binary_labels_list = []
 
-        has_stp_mask = 'stp_mask' in batch[0]
-        has_clm_mask = 'clm_mask' in batch[0]
-        has_step_indices = 'step_indices' in batch[0]
-        has_binary_label = 'binary_label' in batch[0]
-
         stp_mask_list = []
 
         for el in batch:
             ids = el['input_ids']
             if isinstance(ids, torch.Tensor):
                 ids = ids.tolist()
+            seq_len = len(ids)
             input_ids_list.append(
                 torch.tensor(list_pad(ids, self.tokenizer.pad_token_id, max_len), dtype=torch.long))
 
@@ -463,44 +459,34 @@ class Collator:
             attn_mask_list.append(
                 torch.tensor(list_pad(mask, 0, max_len), dtype=torch.long))
 
-            if has_step_indices:
-                step_indices = el['step_indices']
-                if isinstance(step_indices, torch.Tensor):
-                    step_indices = step_indices.tolist()
-                step_indices_list.append(
-                    torch.tensor(list_pad(step_indices, 0, max_len), dtype=torch.long))
+            step_indices = el.get('step_indices', [0] * seq_len)
+            if isinstance(step_indices, torch.Tensor):
+                step_indices = step_indices.tolist()
+            step_indices_list.append(
+                torch.tensor(list_pad(step_indices, 0, max_len), dtype=torch.long))
 
-            if has_stp_mask:
-                stp_mask = el['stp_mask']
-                if isinstance(stp_mask, torch.Tensor):
-                    stp_mask = stp_mask.tolist()
-                stp_mask_list.append(
-                    torch.tensor(list_pad(stp_mask, 0, max_len), dtype=torch.long))
+            stp_mask = el.get('stp_mask', [0] * seq_len)
+            if isinstance(stp_mask, torch.Tensor):
+                stp_mask = stp_mask.tolist()
+            stp_mask_list.append(
+                torch.tensor(list_pad(stp_mask, 0, max_len), dtype=torch.long))
 
-            if has_clm_mask:
-                clm_mask = el['clm_mask']
-                if isinstance(clm_mask, torch.Tensor):
-                    clm_mask = clm_mask.tolist()
-                clm_mask_list.append(
-                    torch.tensor(list_pad(clm_mask, 0, max_len), dtype=torch.long))
+            clm_mask = el.get('clm_mask', [0] * seq_len)
+            if isinstance(clm_mask, torch.Tensor):
+                clm_mask = clm_mask.tolist()
+            clm_mask_list.append(
+                torch.tensor(list_pad(clm_mask, 0, max_len), dtype=torch.long))
 
-            if has_binary_label:
+            if 'binary_label' in el:
                 binary_labels_list.append(el['binary_label'])
 
         batch_dict = {
             'input_ids': torch.stack(input_ids_list),
             'attn_mask': torch.stack(attn_mask_list),
+            'step_indices': torch.stack(step_indices_list),
+            'clm_mask': torch.stack(clm_mask_list),
+            'stp_mask': torch.stack(stp_mask_list),
         }
-        
-        # add optionals
-        if step_indices_list:
-            batch_dict['step_indices'] = torch.stack(step_indices_list)
-
-        if clm_mask_list:
-            batch_dict['clm_mask'] = torch.stack(clm_mask_list)
-
-        if stp_mask_list:
-            batch_dict['stp_mask'] = torch.stack(stp_mask_list)
 
         if binary_labels_list:
             batch_dict['binary_label'] = torch.tensor(binary_labels_list, dtype=torch.float)
