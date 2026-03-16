@@ -306,7 +306,7 @@ if __name__ == "__main__":
     parser.add_argument("--pos_bins", default=32, type=int)
     parser.add_argument("--pos_head_hidden", default=256, type=int)
     parser.add_argument("--log_interval", default=100, type=int)
-    parser.add_argument("--dtype", default="bfloat16", type=str,
+    parser.add_argument("--dtype", default="float32", type=str,
                         help="Model dtype: float32, bfloat16, float16")
     parser.add_argument("--revision", default=None, type=str,
                         help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")

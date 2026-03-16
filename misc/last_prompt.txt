@@ -1,32 +1,21 @@
 ####################################################################################################
 
 ALL input_ids:
-<<<<<<< HEAD
-` Bake in a 350° oven for 1 hour and 15 minutes.<step_0> Mix well.<step_1> Add oatmeal and mix again.<step_2> Place 3 to 4 strips of bacon in the bottom of the pan. Form loaf. Cover with remainder of the bacon.<step_3> In blender, place eggs, V-8, Worcestershire sauce and onion soup mix. Blend, then add mixture to meat.<step_4> Longer, if bacon is not brown. Let stand 5 to 10 minutes before serving.<step_5> 
+` heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes 
 
-<step_4><step_1><step_2><step_3><step_0><step_5><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-=======
-` Mix Group 1 ingredients Mix in Milk Mix in vinegar Cook over medium heat - bring to boil for about 10 minutes STIR CONSTANTLY - DO NOT LEAVE UNATTENDED!! ! 
-
- Mix Group 1 ingredients Mix in Milk Mix in vinegar Cook over medium heat - bring to boil for about 10 minutes STIR CONSTANTLY - DO NOT LEAVE UNATTENDED!! !<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
->>>>>>> refs/remotes/origin/main
+ heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-<<<<<<< HEAD
-` Bake in a 350° oven for 1 hour and 15 minutes.<step_0> Mix well.<step_1> Add oatmeal and mix again.<step_2> Place 3 to 4 strips of bacon in the bottom of the pan. Form loaf. Cover with remainder of the bacon.<step_3> In blender, place eggs, V-8, Worcestershire sauce and onion soup mix. Blend, then add mixture to meat.<step_4> Longer, if bacon is not brown. Let stand 5 to 10 minutes before serving.<step_5> 
+` heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes 
 
-<step_4><step_1><step_2><step_3><step_0><step_5><|endoftext|>`
-=======
-` Mix Group 1 ingredients Mix in Milk Mix in vinegar Cook over medium heat - bring to boil for about 10 minutes STIR CONSTANTLY - DO NOT LEAVE UNATTENDED!! ! 
-
- Mix Group 1 ingredients Mix in Milk Mix in vinegar Cook over medium heat - bring to boil for about 10 minutes STIR CONSTANTLY - DO NOT LEAVE UNATTENDED!! !<|endoftext|>`
+ heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-` Mix Group 1 ingredients Mix in Milk Mix in vinegar Cook over medium heat - bring to boil for about 10 minutes STIR CONSTANTLY - DO NOT LEAVE UNATTENDED!! !<|endoftext|>`
+` heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -43,28 +32,88 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Butter Bundt or tube pan. Cut rolls in 2 to 3 pieces. Place rolls in pan. Sprinkle pudding mix over rolls, then sprinkle with cinnamon and nuts. Melt butter and brown sugar in small pan. Pour this mixture over rolls. Cover pan with foil, then towel and leave on the counter overnight. Bake at 350° for approximately 20 minutes (with foil), then uncover and bake another 10 minutes. 
+` Saute onion and garlic in olive oil until translucent.<step_0> Add canned tomatoes, vegetable broth and honey.<step_1> Simmer over med-low heat for 35-40 minutes.<step_2> Add meat of fresh tomatoes, simmer an additional 15 minutes or until tomatoes are tender.<step_3> Serve with a dollop of sour cream and garnish with fresh basil or top with mozzarella.<step_4> Optional: grate a carrot into the soup to boost Vitamin A content.<step_5> 
 
- Butter Bundt or tube pan. Cut rolls in 2 to 3 pieces. Place rolls in pan. Sprinkle pudding mix over rolls, then sprinkle with cinnamon and nuts. Melt butter and brown sugar in small pan. Pour this mixture over rolls. Cover pan with foil, then towel and leave on the counter overnight. Bake at 350° for approximately 20 minutes (with foil), then uncover and bake another 10 minutes.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Butter Bundt or tube pan. Cut rolls in 2 to 3 pieces. Place rolls in pan. Sprinkle pudding mix over rolls, then sprinkle with cinnamon and nuts. Melt butter and brown sugar in small pan. Pour this mixture over rolls. Cover pan with foil, then towel and leave on the counter overnight. Bake at 350° for approximately 20 minutes (with foil), then uncover and bake another 10 minutes. 
+` Saute onion and garlic in olive oil until translucent.<step_0> Add canned tomatoes, vegetable broth and honey.<step_1> Simmer over med-low heat for 35-40 minutes.<step_2> Add meat of fresh tomatoes, simmer an additional 15 minutes or until tomatoes are tender.<step_3> Serve with a dollop of sour cream and garnish with fresh basil or top with mozzarella.<step_4> Optional: grate a carrot into the soup to boost Vitamin A content.<step_5> 
 
- Butter Bundt or tube pan. Cut rolls in 2 to 3 pieces. Place rolls in pan. Sprinkle pudding mix over rolls, then sprinkle with cinnamon and nuts. Melt butter and brown sugar in small pan. Pour this mixture over rolls. Cover pan with foil, then towel and leave on the counter overnight. Bake at 350° for approximately 20 minutes (with foil), then uncover and bake another 10 minutes.<|endoftext|>`
->>>>>>> refs/remotes/origin/main
+<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-<<<<<<< HEAD
 ``
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_4><step_1><step_2><step_3><step_0><step_5><|endoftext|>`
+`<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Mix and make as you do homemade ice cream.<step_0> Yield:<step_1> 4 quarts.<step_2> 
+
+<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Mix and make as you do homemade ice cream.<step_0> Yield:<step_1> 4 quarts.<step_2> 
+
+<step_0><step_1><step_2><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+`<step_0><step_1><step_2><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Cream the cheese and sour cream together; spread over baked pie shell. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip. 
+
+ Cream the cheese and sour cream together; spread over baked pie shell. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Cream the cheese and sour cream together; spread over baked pie shell. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip. 
+
+ Cream the cheese and sour cream together; spread over baked pie shell. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Cream the cheese and sour cream together; spread over baked pie shell. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
 
 ----------------------------------------------------------------------------------------------------
 
@@ -76,45 +125,14 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` In a saucepan simmer lentils in water to cover by 2 inches until tender but not falling apart, 15 to 20 minutes, and drain well.<step_0> Transfer hot lentils to a bowl and stir in 1 tablespoon lemon juice and salt and pepper to taste.<step_1> Cool lentils, stirring occasionally.<step_2> In saucepan bring 1 1/4 cups water to a boil and stir in couscous and salt.<step_3> Remove pan from heat and let couscous stand, covered, 5 minutes.<step_4> Fluff couscous with a fork and transfer to a large bowl.<step_5> Stir in 1 tablespoon oil and cool, stirring occasionally.<step_6> Mince and mash garlic with salt to taste and in a small bowl whisk together with remaining 2 tablespoons lemon juice and 3 tablespoons oil and salt and pepper to taste.<step_7> Stir lentils and dressing into couscous.<step_8> Chill salad, covered, at least 3 hours and up to 24.<step_9> Just before serving, shred romaine and cut lemon and each tomato into 6 wedges.<step_10> Stir mint and cheese into salad and season with salt and pepper.<step_11> Arrange romaine on a platter and top with salad.<step_12> Arrange tomato and lemon wedges around salad.<step_13> 
+` Grease one cookie sheet.<step_0> Line one cookie sheet with wax paper.<step_1> Mix first six ingredients and pour on greased cookie sheet.<step_2> Bake 15 minutes at 350°.<step_3> Turn onto wax paper that is sprinkled with powdered sugar.<step_4> Remove wax paper.<step_5> Allow to cool.<step_6> 
 
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><step_12><step_13><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` In a saucepan simmer lentils in water to cover by 2 inches until tender but not falling apart, 15 to 20 minutes, and drain well.<step_0> Transfer hot lentils to a bowl and stir in 1 tablespoon lemon juice and salt and pepper to taste.<step_1> Cool lentils, stirring occasionally.<step_2> In saucepan bring 1 1/4 cups water to a boil and stir in couscous and salt.<step_3> Remove pan from heat and let couscous stand, covered, 5 minutes.<step_4> Fluff couscous with a fork and transfer to a large bowl.<step_5> Stir in 1 tablespoon oil and cool, stirring occasionally.<step_6> Mince and mash garlic with salt to taste and in a small bowl whisk together with remaining 2 tablespoons lemon juice and 3 tablespoons oil and salt and pepper to taste.<step_7> Stir lentils and dressing into couscous.<step_8> Chill salad, covered, at least 3 hours and up to 24.<step_9> Just before serving, shred romaine and cut lemon and each tomato into 6 wedges.<step_10> Stir mint and cheese into salad and season with salt and pepper.<step_11> Arrange romaine on a platter and top with salad.<step_12> Arrange tomato and lemon wedges around salad.<step_13> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><step_12><step_13><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><step_12><step_13><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Grill brats over hot coals browning on all sides.<step_0> Remove from grill and place in large kettle or dutch oven,.<step_1> Cover with beer, onions and pepper.<step_2> Simmer at least 1 hour not over direct heat.<step_3> The heat removes the alcohol from the beer.<step_4> Brats may be simmered for several hours just add more beer if it gets too low.<step_5> Serve hot on toasted buns, with the peppers and onion or the toppings of your choice.<step_6> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Grill brats over hot coals browning on all sides.<step_0> Remove from grill and place in large kettle or dutch oven,.<step_1> Cover with beer, onions and pepper.<step_2> Simmer at least 1 hour not over direct heat.<step_3> The heat removes the alcohol from the beer.<step_4> Brats may be simmered for several hours just add more beer if it gets too low.<step_5> Serve hot on toasted buns, with the peppers and onion or the toppings of your choice.<step_6> 
+` Grease one cookie sheet.<step_0> Line one cookie sheet with wax paper.<step_1> Mix first six ingredients and pour on greased cookie sheet.<step_2> Bake 15 minutes at 350°.<step_3> Turn onto wax paper that is sprinkled with powdered sugar.<step_4> Remove wax paper.<step_5> Allow to cool.<step_6> 
 
 <step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
 
@@ -138,29 +156,26 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Slice tops from baked potatoes. Scoop out insides. For each potato, add 1 tablespoon margarine, 1 tablespoon milk and seasonings.<step_0> Beat until fluffy. Stir in process cheese spread. Fill shell. Place on cookie sheet. Bake at 375° for 20 minutes or until lightly browned.<step_1> 
+` In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips. 
 
-<step_0><step_1><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Slice tops from baked potatoes. Scoop out insides. For each potato, add 1 tablespoon margarine, 1 tablespoon milk and seasonings.<step_0> Beat until fluffy. Stir in process cheese spread. Fill shell. Place on cookie sheet. Bake at 375° for 20 minutes or until lightly browned.<step_1> 
+` In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips. 
 
-<step_0><step_1><|endoftext|>`
+ In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-``
-=======
-` Butter Bundt or tube pan. Cut rolls in 2 to 3 pieces. Place rolls in pan. Sprinkle pudding mix over rolls, then sprinkle with cinnamon and nuts. Melt butter and brown sugar in small pan. Pour this mixture over rolls. Cover pan with foil, then towel and leave on the counter overnight. Bake at 350° for approximately 20 minutes (with foil), then uncover and bake another 10 minutes.<|endoftext|>`
->>>>>>> refs/remotes/origin/main
+` In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_0><step_1><|endoftext|>`
+``
 
 ----------------------------------------------------------------------------------------------------
 
@@ -172,271 +187,62 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-<<<<<<< HEAD
-` .<step_0> MyRecipes is working with<step_1> Bring sauce to a boil; cook 2 minutes or until thick. Serve over chicken.<step_2> Melt butter in a large nonstick skillet over medium-high heat. Add chicken to pan; cook 3 minutes. Turn chicken over. Add broth, juice, and capers; reduce heat to medium, and simmer 3 minutes, basting chicken occasionally with sauce. Sprinkle with parsley; cook 1 minute. Remove chicken from pan; keep warm.<step_3> Place chicken between 2 sheets of plastic wrap; pound to an even thickness using a meat mallet or small heavy skillet. Sprinkle chicken evenly with salt and pepper. Place flour in a shallow dish; dredge chicken in flour.<step_4> , the Partnership for a Healthier America, and USDA's MyPlate to give anyone looking for healthier options access to a trove of recipes that will help them create healthy, tasty plates. For more information about creating a healthy plate, visit<step_5> 
+` Cream butter and sugar. Add yolk and flour. Cut in fruit and nuts. Shape dough into two rolls 2 inches in diameter and roll in waxed paper. Chill overnight.<step_0> Preheat oven to 375 degrees F (190 degrees C).<step_1> While still cold and wax paper still on, take a sharp knife and cut thin slices (1/8 inch). Set on greased cookie sheets, remove wax paper and bake for 10 minutes. (Slightly brown edges).<step_2> 
 
-<step_4><step_3><step_2><step_1><step_5><step_0><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-=======
-` Mix together well. Shape into patties. Fry in a small amount of oil (divide for small family). 
-
- Mix together well. Shape into patties. Fry in a small amount of oil (divide for small family).<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
->>>>>>> refs/remotes/origin/main
+<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-<<<<<<< HEAD
-` .<step_0> MyRecipes is working with<step_1> Bring sauce to a boil; cook 2 minutes or until thick. Serve over chicken.<step_2> Melt butter in a large nonstick skillet over medium-high heat. Add chicken to pan; cook 3 minutes. Turn chicken over. Add broth, juice, and capers; reduce heat to medium, and simmer 3 minutes, basting chicken occasionally with sauce. Sprinkle with parsley; cook 1 minute. Remove chicken from pan; keep warm.<step_3> Place chicken between 2 sheets of plastic wrap; pound to an even thickness using a meat mallet or small heavy skillet. Sprinkle chicken evenly with salt and pepper. Place flour in a shallow dish; dredge chicken in flour.<step_4> , the Partnership for a Healthier America, and USDA's MyPlate to give anyone looking for healthier options access to a trove of recipes that will help them create healthy, tasty plates. For more information about creating a healthy plate, visit<step_5> 
+` Cream butter and sugar. Add yolk and flour. Cut in fruit and nuts. Shape dough into two rolls 2 inches in diameter and roll in waxed paper. Chill overnight.<step_0> Preheat oven to 375 degrees F (190 degrees C).<step_1> While still cold and wax paper still on, take a sharp knife and cut thin slices (1/8 inch). Set on greased cookie sheets, remove wax paper and bake for 10 minutes. (Slightly brown edges).<step_2> 
 
-<step_4><step_3><step_2><step_1><step_5><step_0><|endoftext|>`
-=======
-` Mix together well. Shape into patties. Fry in a small amount of oil (divide for small family). 
-
- Mix together well. Shape into patties. Fry in a small amount of oil (divide for small family).<|endoftext|>`
->>>>>>> refs/remotes/origin/main
+<step_0><step_1><step_2><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-<<<<<<< HEAD
 ``
-=======
-` Mix together well. Shape into patties. Fry in a small amount of oil (divide for small family).<|endoftext|>`
->>>>>>> refs/remotes/origin/main
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_4><step_3><step_2><step_1><step_5><step_0><|endoftext|>`
+`<step_0><step_1><step_2><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals. Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. 
+
+ Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals. Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. 
+
+ Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
 
 ----------------------------------------------------------------------------------------------------
 
 Binary label:
 `0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Heat oil, add jalepeno, chopped red onion and cook for 4 minutes. In a small bowl, mash black beans with the cumin and season with salt & pepper.<step_0> In large bowl, combine honey, 2 tbsp oil, hot sauce and lime juice. Season with salt & pepper. Add sliced onion, cabbage and cilantro. Toss.<step_1> Coat fish with remaining 1 tbsp oil and the lime peel, and grill over medium for 8 minutes, turning once.<step_2> Warm taco shells and tortillas on the grill. Spread a few tbsp of the mashed beans on the outside of the taco, (stir in 1 to 2 tbsp hot water into beans if they are too thick) and wrap a tortilla around each one, pressing to ahere.<step_3> Flake half a piece of fish into each taco shell and top with some cabbage slaw. Top with creme fraiche or sour cream.<step_4> 
-
-<step_0><step_1><step_2><step_3><step_4><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Heat oil, add jalepeno, chopped red onion and cook for 4 minutes. In a small bowl, mash black beans with the cumin and season with salt & pepper.<step_0> In large bowl, combine honey, 2 tbsp oil, hot sauce and lime juice. Season with salt & pepper. Add sliced onion, cabbage and cilantro. Toss.<step_1> Coat fish with remaining 1 tbsp oil and the lime peel, and grill over medium for 8 minutes, turning once.<step_2> Warm taco shells and tortillas on the grill. Spread a few tbsp of the mashed beans on the outside of the taco, (stir in 1 to 2 tbsp hot water into beans if they are too thick) and wrap a tortilla around each one, pressing to ahere.<step_3> Flake half a piece of fish into each taco shell and top with some cabbage slaw. Top with creme fraiche or sour cream.<step_4> 
-
-<step_0><step_1><step_2><step_3><step_4><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-<<<<<<< HEAD
-` Prepare rice as per usual.<step_0> I always boil up 2 cups of water and then add in the rice.<step_1> I keep the lid on and simmer on low heat for 5 minutes or so and then I turn off the heat and forget about it.<step_2> Just don't open the lid as the steam makes everything perfect!<step_3> Heat up a large cast iron pan with the olive oil.<step_4> Add in the onions, garlic, celery, green peppers, and crushed dried chilis.<step_5> Throw in a dash of salt to help the juices flow and stir until everything gets wilty.<step_6> Next, add in the kidney beans, spices and salsa and stir about until everything is combined and heated through.<step_7> Taste to adjust spices and add in the rum and the honey if needed.<step_8> Simmer for a few minutes and then serve in deep bowls on top of the rice.<step_9> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-=======
-` After the cake and gelatin has set, take vanilla pudding and place a layer of pudding over the cake. Mix well. Smash the sliced strawberries that have been thawed out. Make vanilla pudding; cover and place in refrigerator until needed. Boil 2 cups of hot water; dissolve the strawberry Jello gelatin dessert. In a deep casserole dish with top. Make sure all pieces of the cake are soaked with gelatin. Place in bowl with hot strawberry gelatin. Proceed to pour the strawberry gelatin over the crumbled cake. Cover and place in refrigerator until it sets approximately two hours. Crumble the cake into small pieces and level the cake pieces. Take Cool 
-
- In a deep casserole dish with top. Crumble the cake into small pieces and level the cake pieces. Make vanilla pudding; cover and place in refrigerator until needed. Boil 2 cups of hot water; dissolve the strawberry Jello gelatin dessert. Smash the sliced strawberries that have been thawed out. Place in bowl with hot strawberry gelatin. Mix well. Proceed to pour the strawberry gelatin over the crumbled cake. Make sure all pieces of the cake are soaked with gelatin. Cover and place in refrigerator until it sets approximately two hours. After the cake and gelatin has set, take vanilla pudding and place a layer of pudding over the cake. Take Cool<|endoftext|>`
->>>>>>> refs/remotes/origin/main
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-<<<<<<< HEAD
-` Prepare rice as per usual.<step_0> I always boil up 2 cups of water and then add in the rice.<step_1> I keep the lid on and simmer on low heat for 5 minutes or so and then I turn off the heat and forget about it.<step_2> Just don't open the lid as the steam makes everything perfect!<step_3> Heat up a large cast iron pan with the olive oil.<step_4> Add in the onions, garlic, celery, green peppers, and crushed dried chilis.<step_5> Throw in a dash of salt to help the juices flow and stir until everything gets wilty.<step_6> Next, add in the kidney beans, spices and salsa and stir about until everything is combined and heated through.<step_7> Taste to adjust spices and add in the rum and the honey if needed.<step_8> Simmer for a few minutes and then serve in deep bowls on top of the rice.<step_9> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><|endoftext|>`
-=======
-` After the cake and gelatin has set, take vanilla pudding and place a layer of pudding over the cake. Mix well. Smash the sliced strawberries that have been thawed out. Make vanilla pudding; cover and place in refrigerator until needed. Boil 2 cups of hot water; dissolve the strawberry Jello gelatin dessert. In a deep casserole dish with top. Make sure all pieces of the cake are soaked with gelatin. Place in bowl with hot strawberry gelatin. Proceed to pour the strawberry gelatin over the crumbled cake. Cover and place in refrigerator until it sets approximately two hours. Crumble the cake into small pieces and level the cake pieces. Take Cool 
-
- In a deep casserole dish with top. Crumble the cake into small pieces and level the cake pieces. Make vanilla pudding; cover and place in refrigerator until needed. Boil 2 cups of hot water; dissolve the strawberry Jello gelatin dessert. Smash the sliced strawberries that have been thawed out. Place in bowl with hot strawberry gelatin. Mix well. Proceed to pour the strawberry gelatin over the crumbled cake. Make sure all pieces of the cake are soaked with gelatin. Cover and place in refrigerator until it sets approximately two hours. After the cake and gelatin has set, take vanilla pudding and place a layer of pudding over the cake. Take Cool<|endoftext|>`
->>>>>>> refs/remotes/origin/main
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-<<<<<<< HEAD
-=======
-` In a deep casserole dish with top. Crumble the cake into small pieces and level the cake pieces. Make vanilla pudding; cover and place in refrigerator until needed. Boil 2 cups of hot water; dissolve the strawberry Jello gelatin dessert. Smash the sliced strawberries that have been thawed out. Place in bowl with hot strawberry gelatin. Mix well. Proceed to pour the strawberry gelatin over the crumbled cake. Make sure all pieces of the cake are soaked with gelatin. Cover and place in refrigerator until it sets approximately two hours. After the cake and gelatin has set, take vanilla pudding and place a layer of pudding over the cake. Take Cool<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
->>>>>>> refs/remotes/origin/main
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-<<<<<<< HEAD
-` Bring oleo to room temperature.<step_0> Add all ingredients.<step_1> Roll out in small balls on cookie sheet.<step_2> Bake at 350° for 10 to 12 minutes.<step_3> Cool.<step_4> Roll in powdered sugar.<step_5> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-=======
-` You can serve it immediately or chill it. Broil 4 inches from the heat for two minutes or until the sugar is browned and bubbly. Sift brown sugar evenly over the surface. Spread sour cream over the top. Serves 4 to 6. Arrange cherries in the bottom of a 9-inch pie plate. Heat cherries until bubbly; drain. Sprinkle with cinnamon. 
-
- Heat cherries until bubbly; drain. Arrange cherries in the bottom of a 9-inch pie plate. Sprinkle with cinnamon. Spread sour cream over the top. Sift brown sugar evenly over the surface. Broil 4 inches from the heat for two minutes or until the sugar is browned and bubbly. You can serve it immediately or chill it. Serves 4 to 6.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
->>>>>>> refs/remotes/origin/main
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-<<<<<<< HEAD
-` Bring oleo to room temperature.<step_0> Add all ingredients.<step_1> Roll out in small balls on cookie sheet.<step_2> Bake at 350° for 10 to 12 minutes.<step_3> Cool.<step_4> Roll in powdered sugar.<step_5> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|>`
-=======
-` You can serve it immediately or chill it. Broil 4 inches from the heat for two minutes or until the sugar is browned and bubbly. Sift brown sugar evenly over the surface. Spread sour cream over the top. Serves 4 to 6. Arrange cherries in the bottom of a 9-inch pie plate. Heat cherries until bubbly; drain. Sprinkle with cinnamon. 
-
- Heat cherries until bubbly; drain. Arrange cherries in the bottom of a 9-inch pie plate. Sprinkle with cinnamon. Spread sour cream over the top. Sift brown sugar evenly over the surface. Broil 4 inches from the heat for two minutes or until the sugar is browned and bubbly. You can serve it immediately or chill it. Serves 4 to 6.<|endoftext|>`
->>>>>>> refs/remotes/origin/main
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-<<<<<<< HEAD
-=======
-` Heat cherries until bubbly; drain. Arrange cherries in the bottom of a 9-inch pie plate. Sprinkle with cinnamon. Spread sour cream over the top. Sift brown sugar evenly over the surface. Broil 4 inches from the heat for two minutes or until the sugar is browned and bubbly. You can serve it immediately or chill it. Serves 4 to 6.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
->>>>>>> refs/remotes/origin/main
-``
-
-----------------------------------------------------------------------------------------------------
-
-<<<<<<< HEAD
-=======
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Place rhubarb in pastry shell. Blend together egg, sugar, salt, tapioca and sour cream. Pour over rhubarb and bake. 
-
- Place rhubarb in pastry shell. Blend together egg, sugar, salt, tapioca and sour cream. Pour over rhubarb and bake.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Place rhubarb in pastry shell. Blend together egg, sugar, salt, tapioca and sour cream. Pour over rhubarb and bake. 
-
- Place rhubarb in pastry shell. Blend together egg, sugar, salt, tapioca and sour cream. Pour over rhubarb and bake.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-` Place rhubarb in pastry shell. Blend together egg, sugar, salt, tapioca and sour cream. Pour over rhubarb and bake.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Preheat oven to 350° and grease and flour a 9x5" loaf pan. Microwave chocolate and butter in large bowl on high for 2 minutes or until butter is melted. Stir until chocolate is completely melted. Add sugars and mix well. Blend in eggs, sour cream and vanilla. Stir together flour, baking powder, baking soda and add to batter. Mix well and stir in walnuts. Spread into prepared pan and bake for 1 hour or until toothpick inserted in center comes out clean. Cool completely before slicing. 
-
- Preheat oven to 350° and grease and flour a 9x5" loaf pan. Microwave chocolate and butter in large bowl on high for 2 minutes or until butter is melted. Stir until chocolate is completely melted. Add sugars and mix well. Blend in eggs, sour cream and vanilla. Stir together flour, baking powder, baking soda and add to batter. Mix well and stir in walnuts. Spread into prepared pan and bake for 1 hour or until toothpick inserted in center comes out clean. Cool completely before slicing.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Preheat oven to 350° and grease and flour a 9x5" loaf pan. Microwave chocolate and butter in large bowl on high for 2 minutes or until butter is melted. Stir until chocolate is completely melted. Add sugars and mix well. Blend in eggs, sour cream and vanilla. Stir together flour, baking powder, baking soda and add to batter. Mix well and stir in walnuts. Spread into prepared pan and bake for 1 hour or until toothpick inserted in center comes out clean. Cool completely before slicing. 
-
- Preheat oven to 350° and grease and flour a 9x5" loaf pan. Microwave chocolate and butter in large bowl on high for 2 minutes or until butter is melted. Stir until chocolate is completely melted. Add sugars and mix well. Blend in eggs, sour cream and vanilla. Stir together flour, baking powder, baking soda and add to batter. Mix well and stir in walnuts. Spread into prepared pan and bake for 1 hour or until toothpick inserted in center comes out clean. Cool completely before slicing.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-` Preheat oven to 350° and grease and flour a 9x5" loaf pan. Microwave chocolate and butter in large bowl on high for 2 minutes or until butter is melted. Stir until chocolate is completely melted. Add sugars and mix well. Blend in eggs, sour cream and vanilla. Stir together flour, baking powder, baking soda and add to batter. Mix well and stir in walnuts. Spread into prepared pan and bake for 1 hour or until toothpick inserted in center comes out clean. Cool completely before slicing.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Butter one side of each side of bread. Turn the bread over. On one slice, arrange the cheese slices. Sprinkle over the Parmesan and Worcestershire sauce. Top the sandwich with the second slice of bread (buttered side up) and place in the toaster. Close the lid and cook for 3 minutes until crisp and golden. Brush the sandwich toaster with a little sunflower oil, wiping off the excess with kitchen paper. Preheat the sandwich toaster to its highest setting. 
-
- Brush the sandwich toaster with a little sunflower oil, wiping off the excess with kitchen paper. Preheat the sandwich toaster to its highest setting. Butter one side of each side of bread. Turn the bread over. On one slice, arrange the cheese slices. Sprinkle over the Parmesan and Worcestershire sauce. Top the sandwich with the second slice of bread (buttered side up) and place in the toaster. Close the lid and cook for 3 minutes until crisp and golden.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Butter one side of each side of bread. Turn the bread over. On one slice, arrange the cheese slices. Sprinkle over the Parmesan and Worcestershire sauce. Top the sandwich with the second slice of bread (buttered side up) and place in the toaster. Close the lid and cook for 3 minutes until crisp and golden. Brush the sandwich toaster with a little sunflower oil, wiping off the excess with kitchen paper. Preheat the sandwich toaster to its highest setting. 
-
- Brush the sandwich toaster with a little sunflower oil, wiping off the excess with kitchen paper. Preheat the sandwich toaster to its highest setting. Butter one side of each side of bread. Turn the bread over. On one slice, arrange the cheese slices. Sprinkle over the Parmesan and Worcestershire sauce. Top the sandwich with the second slice of bread (buttered side up) and place in the toaster. Close the lid and cook for 3 minutes until crisp and golden.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-` Brush the sandwich toaster with a little sunflower oil, wiping off the excess with kitchen paper. Preheat the sandwich toaster to its highest setting. Butter one side of each side of bread. Turn the bread over. On one slice, arrange the cheese slices. Sprinkle over the Parmesan and Worcestershire sauce. Top the sandwich with the second slice of bread (buttered side up) and place in the toaster. Close the lid and cook for 3 minutes until crisp and golden.<|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
->>>>>>> refs/remotes/origin/main
-Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
 
 ####################################################################################################
 

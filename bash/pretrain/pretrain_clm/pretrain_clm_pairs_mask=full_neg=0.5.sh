@@ -28,6 +28,9 @@ batch_size=8
 # batch_size=1
 
 model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2-medium"
+# model_name="openai-community/gpt2-large"
+
 # model_name="Qwen/Qwen3-0.6B-Base"
 # model_name="facebook/opt-350m"
 # model_name="EleutherAI/gpt-neo-125m"
@@ -50,6 +53,8 @@ use_stp=0
 activations=real
 # activations=non-negative
 
+dtype=float32
+
 cmd="python src/pretrain.py
 --data_path $data_path
 --model_name $model_name
@@ -69,6 +74,7 @@ cmd="python src/pretrain.py
 --min_recipe_steps $min_recipe_steps
 --neg_ratio $neg_ratio
 --use_stp $use_stp
+--dtype $dtype
 "
 
 $cmd

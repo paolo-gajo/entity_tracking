@@ -3,7 +3,7 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 #SBATCH --mem=64G
 #SBATCH --output=./.slurm/%j_output.log
 #SBATCH --error=./.slurm/%j_error.log
@@ -30,7 +30,7 @@ batch_size=8
 # model_name="rinna/japanese-gpt2-small" # APE
 # model_name="GroNLP/gpt2-small-italian" # APE
 
-# model_name="openai-community/gpt2" # APE
+model_name="openai-community/gpt2" # APE
 # model_name="openai-community/gpt2-medium" # APE
 # model_name="openai-community/gpt2-large" # APE
 # model_name="EleutherAI/gpt-neo-125m" # APE
@@ -42,14 +42,14 @@ batch_size=8
 # model_name="HuggingFaceTB/SmolLM2-135M" # RoPE
 # model_name="HuggingFaceTB/SmolLM2-360M" # RoPE
 
-model_name="Qwen/Qwen3-0.6B-Base" # RoPE
+# model_name="Qwen/Qwen3-0.6B-Base" # RoPE
 # model_name="Qwen/Qwen3-4B-Base" # RoPE
 # model_name="Qwen/Qwen3-1.7B-Base" # RoPE
 # model_name="Qwen/Qwen3.5-0.8B-Base" # RoPE
 # model_name="Qwen/Qwen3.5-9B-Base" # RoPE
 # model_name="Qwen/Qwen3.5-4B-Base" # RoPE
 
-resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/Qwen3-0.6B-Base/2026-03-15--07-40-20/88000"
+# resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/Qwen3-0.6B-Base/2026-03-15--07-40-20/88000"
 
 # revision="step4000"
 
@@ -78,6 +78,8 @@ init_from_eos=0
 activations=real
 # activations=non-negative
 
+dtype=float32
+
 cmd="python src/pretrain.py
 --data_path $data_path
 --model_name $model_name
@@ -101,6 +103,7 @@ cmd="python src/pretrain.py
 --stp_lambda $stp_lambda
 --stp_max_steps $stp_max_steps
 --init_from_eos $init_from_eos
+--dtype $dtype
 ${resume_from:+--resume_from $resume_from}
 ${revision:+--revision $revision}
 "

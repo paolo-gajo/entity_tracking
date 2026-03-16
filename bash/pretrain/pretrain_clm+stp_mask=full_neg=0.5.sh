@@ -28,6 +28,9 @@ batch_size=8
 # batch_size=1
 
 model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2-medium"
+# model_name="openai-community/gpt2-large"
+
 # model_name="Qwen/Qwen3-0.6B-Base"
 
 attn_mask_type='full' # N/A for minimal_mono
@@ -37,9 +40,6 @@ clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
 # clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
 
 prompt_type=step_token_pairs+minimal_pairs
-
-# prompt_type=only_shuffled
-# prompt_type=only_original
 # prompt_type=minimal_mono
 
 use_clm=1
@@ -59,6 +59,8 @@ use_grl=0
 
 activations=real
 # activations=non-negative
+
+dtype=float32
 
 cmd="python src/pretrain.py
 --data_path $data_path
@@ -83,6 +85,7 @@ cmd="python src/pretrain.py
 --stp_lambda $stp_lambda
 --stp_max_steps $stp_max_steps
 --use_grl $use_grl
+--dtype $dtype
 "
 
 $cmd
