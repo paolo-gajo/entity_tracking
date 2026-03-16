@@ -730,7 +730,7 @@ def main(args):
 
     # ── Model + tokenizer + step tokens ──
     # build_model_tokenizer reads args.use_stp, args.stp_max_steps, etc.
-    tokenizer, step_token_id_map, model, ref_model, orig_has_bos = build_model_tokenizer(args, device)
+    tokenizer, step_token_id_map, model, ref_model = build_model_tokenizer(args, device)
 
     # ── Dataset ──
     dataset = BWDataset(
@@ -739,7 +739,7 @@ def main(args):
         step_token_id_map=step_token_id_map,
         max_length=model.config.max_position_embeddings,
         clm_mask_type=args.clm_mask_type,
-        prepend_bos=orig_has_bos,
+        prepend_bos=False,
     )
 
     collator = Collator(tokenizer=tokenizer)
@@ -934,7 +934,8 @@ if __name__ == "__main__":
     parser.add_argument("--init_from_eos", default=0, type=int)
     parser.add_argument("--detect_anomaly", default=0, type=int)
     parser.add_argument("--save_heatmaps", default=0, type=int)
-
+    parser.add_argument("--revision", default=None, type=str,
+                        help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")
     args = parser.parse_args()
 
     # ── Validation ──

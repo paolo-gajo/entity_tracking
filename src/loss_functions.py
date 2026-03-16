@@ -270,13 +270,13 @@ class CosineContrastiveLoss(nn.Module):
         super().__init__()
         self.alpha = alpha
 
-    def forward(self, inputs, step_ids, binary_labels):
-        inputs_true      = inputs[binary_labels == 1]
-        step_ids_true    = step_ids[binary_labels == 1]
-        inputs_corrupted = inputs[binary_labels == 0]
-        step_ids_corrupt = step_ids[binary_labels == 0]
+    def forward(self, lhs, step_indices, binary_labels):
+        inputs_true      = lhs[binary_labels == 1]
+        step_ids_true    = step_indices[binary_labels == 1]
+        inputs_corrupted = lhs[binary_labels == 0]
+        step_ids_corrupt = step_indices[binary_labels == 0]
 
-        total_loss  = torch.tensor(0.0, device=inputs.device)
+        total_loss  = torch.tensor(0.0, device=lhs.device)
         num_samples = 0
 
         positives, _          = _get_step_embeddings(inputs_true,      step_ids_true)

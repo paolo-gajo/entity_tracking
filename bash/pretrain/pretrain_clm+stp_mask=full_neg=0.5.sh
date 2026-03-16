@@ -36,7 +36,7 @@ attn_mask_type='full' # N/A for minimal_mono
 clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
 # clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
 
-prompt_type=step_token_pairs+natlang_pairs
+prompt_type=step_token_pairs+minimal_pairs
 
 # prompt_type=only_shuffled
 # prompt_type=only_original
