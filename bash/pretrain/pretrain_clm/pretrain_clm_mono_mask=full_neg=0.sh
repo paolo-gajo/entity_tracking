@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-clm
+#SBATCH -J pretrain_clm_mono_mask=full_neg=0
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1

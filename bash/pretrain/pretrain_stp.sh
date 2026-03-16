@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-stp
+#SBATCH -J pretrain_stp
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
@@ -27,46 +27,42 @@ batch_size=8
 # batch_mode="pos_neg"
 # batch_size=1
 
-# model_name="rinna/japanese-gpt2-small"
-# model_name="GroNLP/gpt2-small-italian"
+# model_name="rinna/japanese-gpt2-small" # APE
+# model_name="GroNLP/gpt2-small-italian" # APE
 
-# model_name="openai-community/gpt2"
-# model_name="EleutherAI/gpt-neo-125m"
-# model_name="facebook/opt-125m"
+# model_name="openai-community/gpt2" # APE
+# model_name="openai-community/gpt2-medium" # APE
+# model_name="openai-community/gpt2-large" # APE
+# model_name="EleutherAI/gpt-neo-125m" # APE
+# model_name="facebook/opt-125m" # APE
+# model_name="facebook/opt-350m" # APE
 
-# model_name="EleutherAI/pythia-160m"
-# model_name="amd/AMD-Llama-135m"
-# model_name="HuggingFaceTB/SmolLM2-135M"
+# model_name="EleutherAI/pythia-160m" # RoPE
+# model_name="amd/AMD-Llama-135m" # RoPE
+# model_name="HuggingFaceTB/SmolLM2-135M" # RoPE
+# model_name="HuggingFaceTB/SmolLM2-360M" # RoPE
 
-# model_name="openai-community/gpt2-medium"
-model_name="facebook/opt-350m"
-# model_name="HuggingFaceTB/SmolLM2-360M"
+model_name="Qwen/Qwen3-0.6B-Base" # RoPE
+# model_name="Qwen/Qwen3-4B-Base" # RoPE
+# model_name="Qwen/Qwen3-1.7B-Base" # RoPE
+# model_name="Qwen/Qwen3.5-0.8B-Base" # RoPE
+# model_name="Qwen/Qwen3.5-9B-Base" # RoPE
+# model_name="Qwen/Qwen3.5-4B-Base" # RoPE
 
-# model_name="openai-community/gpt2-large"
-# model_name="Qwen/Qwen3-0.6B-Base"
-# model_name="Qwen/Qwen3-4B-Base"
-# model_name="Qwen/Qwen3-1.7B-Base"
-# model_name="Qwen/Qwen3.5-0.8B-Base"
-# model_name="Qwen/Qwen3.5-9B-Base"
-# model_name="Qwen/Qwen3.5-4B-Base"
-
-# resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/SmolLM2-135M/2026-03-15--08-35-54/9000"
+resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/Qwen3-0.6B-Base/2026-03-15--07-40-20/88000"
 
 # revision="step4000"
 
 use_lora=0
 use_abs_pe=0
 
-attn_mask_type='full' # N/A for minimal_mono, only_shuffled, only_original
+attn_mask_type='full' # N/A for minimal_mono
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
 
 # clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
 clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
-prompt_type=step_token_pairs
-# prompt_type=natlang_pairs
 
-# prompt_type=only_shuffled
-# prompt_type=only_original
+prompt_type=step_token_pairs
 # prompt_type=minimal_mono
 
 use_clm=0

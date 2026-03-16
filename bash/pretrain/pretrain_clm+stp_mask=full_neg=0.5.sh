@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J pt-stp
+#SBATCH -J pretrain_clm+stp_mask=full_neg=0.5
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:h100:1
@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=1000000
+num_samples=0
 batch_mode="random_samples"
 batch_size=8
 
@@ -36,7 +36,7 @@ attn_mask_type='full' # N/A for minimal_mono
 clm_mask_type='full' # for minimal_mono, only_shuffled, only_original
 # clm_mask_type='completion_only' # for minimal_pairs, step_token_pairs
 
-prompt_type=step_token_pairs+natlang_pairs
+prompt_type=step_token_pairs+minimal_pairs
 
 # prompt_type=only_shuffled
 # prompt_type=only_original
