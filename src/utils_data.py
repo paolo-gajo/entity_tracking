@@ -256,7 +256,7 @@ class Seq2SeqDataset(Dataset):
                 raise ValueError(f"Unknown attn_mask_type: {self.attn_mask_type}")
             formatted_batch.append({
                 'input_ids': input_ids,
-                'attention_mask': attention_mask,
+                'attn_mask': attention_mask,
                 'step_indices': step_indices,
                 'binary_label': batch[i]['binary_label'],
             })
