@@ -140,6 +140,57 @@ class StepTokenLoss(nn.Module):
         return loss
 
 
+class StepTokenLossSliced(nn.Module):
+    """
+    Like StepTokenLoss but computes softmax over only the M step-token
+    logit columns instead of the full vocabulary.  This gives a stronger
+    gradient signal and avoids bfloat16 precision issues from summing
+    across 50k+ classes in the backward pass.
+    """
+
+    def __init__(self, step_token_ids, ignore_index=-100):
+        super().__init__()
+        self.ignore_index = ignore_index
+        self.loss_fn = nn.CrossEntropyLoss(ignore_index=ignore_index)
+        self.register_buffer(
+            'step_token_ids',
+            torch.tensor(step_token_ids, dtype=torch.long),
+        )
+        # vocab_id → 0-based class index for label remapping
+        self._id_to_class = {vid: idx for idx, vid in enumerate(step_token_ids)}
+
+    def forward(self, logits, input_ids, stp_mask):
+        """
+        Args:
+            logits:    [B, T, V] — full model logits
+            input_ids: [B, T]    — input token ids (including step tokens)
+            stp_mask:  [B, T]    — 1 at step-token completion positions
+        Returns:
+            Scalar CE loss (averaged over valid positions).
+        """
+        labels = input_ids.clone()
+        labels[stp_mask == 0] = self.ignore_index
+
+        shift_logits = logits[..., :-1, :].contiguous()
+        shift_labels = labels[..., 1:].contiguous()
+
+        # Slice logits to only the M step-token columns
+        shift_logits = shift_logits[..., self.step_token_ids]  # [B, T-1, M]
+
+        # Remap labels from vocab IDs to 0..M-1
+        flat_labels = shift_labels.view(-1)
+        remapped = torch.full_like(flat_labels, self.ignore_index)
+        for cls_idx, vid in enumerate(self.step_token_ids):
+            remapped[flat_labels == vid] = cls_idx
+        shift_labels = remapped.view(shift_labels.shape)
+
+        loss = self.loss_fn(
+            shift_logits.view(-1, shift_logits.size(-1)),
+            shift_labels.view(-1),
+        )
+        return loss
+
+
 # ---------------------------------------------------------------------------
 # Shared helper: pool hidden states by step id
 # ---------------------------------------------------------------------------

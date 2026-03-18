@@ -24,7 +24,7 @@ def get_auc(S: torch.Tensor, A: np.ndarray) -> float:
     ROC–AUC between continuous scores S and binary adjacency A.
     Excludes diagonal.
     """
-    S_np = S.detach().cpu().numpy()
+    S_np = S.detach().cpu().to(torch.float16).numpy()
     A_np = A.astype(int)
     n = A_np.shape[0]
     if S_np.shape != (n, n):
@@ -287,13 +287,12 @@ def process_model(model_name, args, data):
 # Saving (same logic as your sims.py)
 # -------------------------
 
-def get_model_info(model_path, args, task_name="sims_erfgc_reachability"):
+def get_model_info(model_path, args, task_name="erfgc_reachability"):
     train_conf_path = os.path.join(model_path, "train_config.json")
 
     if os.path.exists(train_conf_path):
         with open(train_conf_path, "r", encoding="utf8") as f:
-            train_config_raw = json.load(f)
-        train_config = setup_config(train_config_raw)
+            train_config = json.load(f)
         model_save_dir = os.path.normpath(train_config["model_save_dir"])
         num_steps = str(train_config.get("num_steps", 0))
         rel = os.path.relpath(model_save_dir, start=os.path.normpath("./models"))

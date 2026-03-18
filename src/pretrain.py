@@ -18,6 +18,7 @@ from loss_functions import (
     MaxMarginLoss,
     CosineContrastiveLoss,
     StepTokenLoss,
+    StepTokenLossSliced,
     gather_losses,
 )
 from tqdm.auto import tqdm
@@ -100,7 +101,11 @@ def main(args):
     # ---- Step Token Prediction loss ----------------------------------------
     stp_loss_fn = None
     if args.use_stp:
-        stp_loss_fn = StepTokenLoss().to(device)
+        if args.stp_sliced and step_token_id_map is not None:
+            stp_ids = [step_token_id_map[i] for i in range(len(step_token_id_map))]
+            stp_loss_fn = StepTokenLossSliced(step_token_ids=stp_ids).to(device)
+        else:
+            stp_loss_fn = StepTokenLoss().to(device)
 
     # ---- Position adversary head ------------------------------------------
     pos_head = None
@@ -291,6 +296,8 @@ if __name__ == "__main__":
                         help="Weight for step token prediction loss")
     parser.add_argument("--stp_max_steps", default=15, type=int,
                         help="M: number of step tokens added to the vocabulary")
+    parser.add_argument("--stp_sliced", default=0, type=int,
+                        help="Use sliced softmax over M step tokens instead of full vocab")
     parser.add_argument("--init_from_eos", default=0, type=int,
                         help="Whether to initialize the new step token embeddings with the same values as the EOS token embedding")
 

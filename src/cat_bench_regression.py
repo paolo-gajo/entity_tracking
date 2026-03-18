@@ -10,22 +10,34 @@ from sklearn.metrics import f1_score, classification_report, roc_auc_score
 import os
 import json
 import argparse
-from utils_sys import setup_config
+import random
+from utils_sys import get_current_time_string
 
-def get_step_embeddings(batch_df, tokenizer, model, device):
+def get_step_embeddings(batch_df, tokenizer, model, device, use_positional=False, shuffle_steps=False):
     """
-    Concatenates steps into a single sequence, runs the model, 
+    Concatenates steps into a single sequence, runs the model,
     and extracts average embeddings for the specific steps asked about.
     """
     inputs = []
     step_spans_batch = []
-    
+    idx_remap_batch = []
+
     # Reset index to ensure enumeration matches list indices 0..batch_size
     batch_df = batch_df.reset_index(drop=True)
-    
+
     # 1. Prepare Text and Track Token Spans
     for _, row in batch_df.iterrows():
-        steps = row['steps']
+        steps = list(row['steps'])
+
+        if shuffle_steps:
+            # Create a permutation and track where each original index ends up
+            perm = list(range(len(steps)))
+            random.shuffle(perm)
+            steps = [steps[p] for p in perm]
+            # idx_remap: original_idx -> new_idx (where did original step i end up?)
+            idx_remap = {orig: new for new, orig in enumerate(perm)}
+        else:
+            idx_remap = {i: i for i in range(len(steps))}
         
         # Join with space to mimic natural language flow
         sep = " " 
@@ -58,6 +70,7 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
             
         inputs.append(torch.tensor(ids_list))
         step_spans_batch.append(step_ranges)
+        idx_remap_batch.append(idx_remap)
 
     # 2. Pad and Batch
     if not inputs:
@@ -80,14 +93,20 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
         input_ids[i, :l] = seq[:l]
         attention_mask[i, :l] = 1
     
-    # 3. Forward Pass
-    with torch.no_grad():
-        outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
-    # Use the last hidden state: (Batch, Seq, Hidden)
-    # Note: For some models like BERT, you might prefer the second-to-last layer, 
-    # but last layer is standard for probing.
-    # hidden_states = outputs.last_hidden_state
-    hidden_states = outputs.hidden_states[-1]
+    # 3. Forward Pass (or PE-only lookup)
+    if use_positional:
+        # Zero out token embeddings, keep only positional information through the full transformer
+        wte = model.transformer.wte if hasattr(model, 'transformer') else model.base_model.model.transformer.wte
+        original_weight = wte.weight.data.clone()
+        wte.weight.data.zero_()
+        with torch.no_grad():
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
+        hidden_states = outputs.hidden_states[-1]
+        wte.weight.data.copy_(original_weight)
+    else:
+        with torch.no_grad():
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask, output_hidden_states=True)
+        hidden_states = outputs.hidden_states[-1]
     
     # 4. Extract Specific Step Embeddings
     features = []
@@ -95,8 +114,11 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
     # Iterate using simple integer index to match hidden_states[i]
     for i in range(len(batch_df)):
         row_data = batch_df.iloc[i]
-        idx_a, idx_b = row_data['step_pair_idx_asked_about']
-        
+        orig_idx_a, orig_idx_b = row_data['step_pair_idx_asked_about']
+        idx_remap = idx_remap_batch[i]
+        idx_a = idx_remap[orig_idx_a]
+        idx_b = idx_remap[orig_idx_b]
+
         ranges = step_spans_batch[i]
         
         # Helper to safely extract and pool embedding
@@ -131,7 +153,7 @@ def get_step_embeddings(batch_df, tokenizer, model, device):
         
     return np.array(features)
 
-def load_and_extract(path, tokenizer, model, device, sample_type='real', batch_size=8, sample_limit=None):
+def load_and_extract(path, tokenizer, model, device, sample_type='real', batch_size=8, sample_limit=None, use_positional=False, shuffle_steps=False, sample_frac=1.0):
     # Load JSON
     with open(path, 'r') as f:
         data = json.load(f)
@@ -143,6 +165,9 @@ def load_and_extract(path, tokenizer, model, device, sample_type='real', batch_s
     if sample_type != 'all':
         df = df[df['type'] == sample_type]
     
+    if sample_frac < 1.0:
+        df = df.sample(frac=sample_frac, random_state=42).reset_index(drop=True)
+
     if sample_limit:
         df = df.head(sample_limit)
         
@@ -154,7 +179,7 @@ def load_and_extract(path, tokenizer, model, device, sample_type='real', batch_s
     # Batch processing
     for i in tqdm(range(0, len(df), batch_size)):
         batch = df.iloc[i : i+batch_size]
-        feats = get_step_embeddings(batch, tokenizer, model, device)
+        feats = get_step_embeddings(batch, tokenizer, model, device, use_positional=use_positional, shuffle_steps=shuffle_steps)
         if len(feats) > 0:
             all_feats.append(feats)
             
@@ -173,8 +198,8 @@ def get_model_info(model_path, args, task_name="cat_bench_regression"):
 
     if os.path.exists(train_conf_path):
         with open(train_conf_path, "r", encoding="utf8") as f:
-            train_config_raw = json.load(f)
-        train_config = setup_config(train_config_raw)
+            train_config = json.load(f)
+        # train_config = setup_config(train_config_raw)
         rel = os.path.relpath(model_path, start=os.path.normpath("./models"))
         save_path = os.path.join("./results", task_name, sample_dir, rel)
         print(f'save_path: {save_path}')
@@ -227,7 +252,12 @@ def main(args):
 
     for m in model_list:
         model_name = m["path"]
-        save_path, train_config = get_model_info(model_name, args)
+        task_name = "cat_bench_regression"
+        if args.shuffle_steps:
+            task_name += "_shuffled"
+        if args.use_positional:
+            task_name += "_positional"
+        save_path, train_config = get_model_info(model_name, args, task_name=task_name)
         result_file = os.path.join(save_path, "results.json")
         
         if os.path.exists(result_file) and not args.repeat:
@@ -248,7 +278,7 @@ def main(args):
             config = PeftConfig.from_pretrained(model_name)
             base_model = AutoModelForCausalLM.from_pretrained(
                 config.base_model_name_or_path,
-                dtype=torch.float16,
+                torch_dtype=torch.bfloat16,
             ).to(device)
 
             # Resize the base model to accept the new embeddings
@@ -258,7 +288,7 @@ def main(args):
             model = PeftModel.from_pretrained(base_model, model_name)
         else:
             print("-> Loading model (auto-detects abs PE wrapper)...")
-            model = load_model_from_checkpoint(model_name, device=device, revision=revision)
+            model = load_model_from_checkpoint(model_name, device=device, revision=revision, dtype=torch.bfloat16)
         model.eval()
 
         if tokenizer.pad_token is None:
@@ -266,9 +296,9 @@ def main(args):
 
         # Extract features
         print("--- Processing Train Data ---")
-        X_train, y_train = load_and_extract(data_path_train, tokenizer, model, device, sample_type=args.sample_type)
+        X_train, y_train = load_and_extract(data_path_train, tokenizer, model, device, sample_type=args.sample_type, use_positional=args.use_positional, shuffle_steps=args.shuffle_steps, sample_frac=args.sample_frac)
         print("--- Processing Test Data ---")
-        X_test, y_test = load_and_extract(data_path_test, tokenizer, model, device, sample_type=args.sample_type)
+        X_test, y_test = load_and_extract(data_path_test, tokenizer, model, device, sample_type=args.sample_type, use_positional=args.use_positional, shuffle_steps=args.shuffle_steps, sample_frac=args.sample_frac)
 
         print(f"Train: {X_train.shape}, Test: {X_test.shape}")
 
@@ -278,7 +308,7 @@ def main(args):
 
         # Train logistic regression probe
         print("Training logistic regression probe...")
-        clf = LogisticRegression(max_iter=2000, C=1.0, solver='lbfgs', verbose = 1)
+        clf = LogisticRegression(max_iter=args.max_iter, C=1.0, solver='lbfgs', verbose=1)
         clf.fit(X_train, y_train)
 
         # Evaluate
@@ -316,6 +346,14 @@ if __name__ == "__main__":
     parser.add_argument("--verbose_results", default=1, type=int)
     parser.add_argument("--repeat", default=0, type=int)
     parser.add_argument("--sample_type", default="all", choices=["real", "all"], help="'real' for only real samples, 'all' for real+switched")
+    parser.add_argument("--use_positional", default=0, type=int,
+                        help="Use only learned absolute positional embeddings (no content, no transformer layers)")
+    parser.add_argument("--shuffle_steps", default=0, type=int,
+                        help="Shuffle step order before encoding to test robustness")
+    parser.add_argument("--sample_frac", default=1.0, type=float,
+                        help="Fraction of data to use (0.0-1.0)")
+    parser.add_argument("--max_iter", default=2000, type=int,
+                        help="Max iterations for logistic regression")
     parser.add_argument("--revision", default=None, type=str,
                         help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")
     args = parser.parse_args()

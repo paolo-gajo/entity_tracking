@@ -1,21 +1,23 @@
 ####################################################################################################
 
 ALL input_ids:
-` heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes 
+` In a medium sauce pot bring wine, water, preserves, vanilla, orange juice, and cinnamon to a boil. Once boiling add the pear halves and reduce liquid to a simmer. Continue simmering until pears are tender about 5-10 minutes. Remove pears and set aside and whisk corn starch into the liquid in the sauce pot. Continue to simmer stirring constantly until liquid as thickened. 
 
- heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ In a medium sauce pot bring wine, water, preserves, vanilla, orange juice, and cinnamon to a boil. Once boiling add the pear halves and reduce liquid to a simmer. Continue simmering until pears are tender about 5-10 minutes. Remove pears and set aside and whisk corn starch into the liquid in the sauce pot. Continue to simmer stirring constantly until liquid as thickened.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes 
+` In a medium sauce pot bring wine, water, preserves, vanilla, orange juice, and cinnamon to a boil. Once boiling add the pear halves and reduce liquid to a simmer. Continue simmering until pears are tender about 5-10 minutes. Remove pears and set aside and whisk corn starch into the liquid in the sauce pot. Continue to simmer stirring constantly until liquid as thickened. 
 
- heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes<|endoftext|>`
+ In a medium sauce pot bring wine, water, preserves, vanilla, orange juice, and cinnamon to a boil. Once boiling add the pear halves and reduce liquid to a simmer. Continue simmering until pears are tender about 5-10 minutes. Remove pears and set aside and whisk corn starch into the liquid in the sauce pot. Continue to simmer stirring constantly until liquid as thickened.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-` heat pan, add onions and peppers with butter and sausage.cook until brwon add gumbo file and flour, cook 3 min add seafood and chicken stock , garlic thyme, wine cook 5 minutes. add clams last 3 minutes<|endoftext|>`
+` In a medium sauce pot bring wine, water, preserves, vanilla, orange juice, and cinnamon to a boil. Once boiling add the pear halves and reduce liquid to a simmer. Continue simmering until pears are tender about 5-10 minutes. Remove pears and set aside and whisk corn starch into the liquid in the sauce pot. Continue to simmer stirring constantly until liquid as thickened. 
+
+ In a medium sauce pot bring wine, water, preserves, vanilla, orange juice, and cinnamon to a boil. Once boiling add the pear halves and reduce liquid to a simmer. Continue simmering until pears are tender about 5-10 minutes. Remove pears and set aside and whisk corn starch into the liquid in the sauce pot. Continue to simmer stirring constantly until liquid as thickened.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -32,26 +34,28 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Saute onion and garlic in olive oil until translucent.<step_0> Add canned tomatoes, vegetable broth and honey.<step_1> Simmer over med-low heat for 35-40 minutes.<step_2> Add meat of fresh tomatoes, simmer an additional 15 minutes or until tomatoes are tender.<step_3> Serve with a dollop of sour cream and garnish with fresh basil or top with mozzarella.<step_4> Optional: grate a carrot into the soup to boost Vitamin A content.<step_5> 
+` Mix sugar, margarine, chocolate, vanilla and milk together in saucepan. Bring to a boil and cook for one minute. Take off the stove and add oats and peanut butter. Mix together thoroughly. Spoon onto cookie sheet to cool. 
 
-<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ Mix sugar, margarine, chocolate, vanilla and milk together in saucepan. Bring to a boil and cook for one minute. Take off the stove and add oats and peanut butter. Mix together thoroughly. Spoon onto cookie sheet to cool.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Saute onion and garlic in olive oil until translucent.<step_0> Add canned tomatoes, vegetable broth and honey.<step_1> Simmer over med-low heat for 35-40 minutes.<step_2> Add meat of fresh tomatoes, simmer an additional 15 minutes or until tomatoes are tender.<step_3> Serve with a dollop of sour cream and garnish with fresh basil or top with mozzarella.<step_4> Optional: grate a carrot into the soup to boost Vitamin A content.<step_5> 
+` Mix sugar, margarine, chocolate, vanilla and milk together in saucepan. Bring to a boil and cook for one minute. Take off the stove and add oats and peanut butter. Mix together thoroughly. Spoon onto cookie sheet to cool. 
 
-<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|>`
+ Mix sugar, margarine, chocolate, vanilla and milk together in saucepan. Bring to a boil and cook for one minute. Take off the stove and add oats and peanut butter. Mix together thoroughly. Spoon onto cookie sheet to cool.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-``
+` Mix sugar, margarine, chocolate, vanilla and milk together in saucepan. Bring to a boil and cook for one minute. Take off the stove and add oats and peanut butter. Mix together thoroughly. Spoon onto cookie sheet to cool. 
+
+ Mix sugar, margarine, chocolate, vanilla and milk together in saucepan. Bring to a boil and cook for one minute. Take off the stove and add oats and peanut butter. Mix together thoroughly. Spoon onto cookie sheet to cool.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><step_5><|endoftext|>`
+``
 
 ----------------------------------------------------------------------------------------------------
 
@@ -63,52 +67,23 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Mix and make as you do homemade ice cream.<step_0> Yield:<step_1> 4 quarts.<step_2> 
+` Serve with: Spicy Celery Seed Coleslaw Spread mustard evenly on one side of bread slices. Cut pork into thin slices. Add pork slices to sauce, tossing to coat. Arrange pork slices over mustard. Spoon sauce evenly over pork. While pork is standing, increase heat to medium-high, and add cola and bourbon to pan. Bring to a boil; cook 7 minutes or until mixture is reduced to 1/4 cup. Sprinkle pork evenly with salt and pepper; coat with cooking spray. Heat a large nonstick skillet over medium-high heat. Coat pan with cooking spray. Add pork; cook 3 minutes or until browned on 1 side. Reduce heat to medium-low; turn pork over. Cover and cook 17 minutes or until a thermometer registers 160° (slightly pink). Remove pork from pan. Cover and let stand 5 minutes. 
 
-<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Mix and make as you do homemade ice cream.<step_0> Yield:<step_1> 4 quarts.<step_2> 
-
-<step_0><step_1><step_2><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_1><step_2><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Cream the cheese and sour cream together; spread over baked pie shell. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip. 
-
- Cream the cheese and sour cream together; spread over baked pie shell. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip.<|endoftext|>`
+ Sprinkle pork evenly with salt and pepper; coat with cooking spray. Heat a large nonstick skillet over medium-high heat. Coat pan with cooking spray. Add pork; cook 3 minutes or until browned on 1 side. Reduce heat to medium-low; turn pork over. Cover and cook 17 minutes or until a thermometer registers 160° (slightly pink). Remove pork from pan. Cover and let stand 5 minutes. While pork is standing, increase heat to medium-high, and add cola and bourbon to pan. Bring to a boil; cook 7 minutes or until mixture is reduced to 1/4 cup. Spread mustard evenly on one side of bread slices. Cut pork into thin slices. Add pork slices to sauce, tossing to coat. Arrange pork slices over mustard. Spoon sauce evenly over pork. Serve with: Spicy Celery Seed Coleslaw<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Cream the cheese and sour cream together; spread over baked pie shell. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip. 
+` Serve with: Spicy Celery Seed Coleslaw Spread mustard evenly on one side of bread slices. Cut pork into thin slices. Add pork slices to sauce, tossing to coat. Arrange pork slices over mustard. Spoon sauce evenly over pork. While pork is standing, increase heat to medium-high, and add cola and bourbon to pan. Bring to a boil; cook 7 minutes or until mixture is reduced to 1/4 cup. Sprinkle pork evenly with salt and pepper; coat with cooking spray. Heat a large nonstick skillet over medium-high heat. Coat pan with cooking spray. Add pork; cook 3 minutes or until browned on 1 side. Reduce heat to medium-low; turn pork over. Cover and cook 17 minutes or until a thermometer registers 160° (slightly pink). Remove pork from pan. Cover and let stand 5 minutes. 
 
- Cream the cheese and sour cream together; spread over baked pie shell. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip.<|endoftext|>`
+ Sprinkle pork evenly with salt and pepper; coat with cooking spray. Heat a large nonstick skillet over medium-high heat. Coat pan with cooking spray. Add pork; cook 3 minutes or until browned on 1 side. Reduce heat to medium-low; turn pork over. Cover and cook 17 minutes or until a thermometer registers 160° (slightly pink). Remove pork from pan. Cover and let stand 5 minutes. While pork is standing, increase heat to medium-high, and add cola and bourbon to pan. Bring to a boil; cook 7 minutes or until mixture is reduced to 1/4 cup. Spread mustard evenly on one side of bread slices. Cut pork into thin slices. Add pork slices to sauce, tossing to coat. Arrange pork slices over mustard. Spoon sauce evenly over pork. Serve with: Spicy Celery Seed Coleslaw<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-` Cream the cheese and sour cream together; spread over baked pie shell. Prepare strawberries. Place 1 cup of strawberries in a saucepan with the water and simmer for 5 minutes. Combine sugar and cornstarch; mix with cooked berries, stirring constantly. Cook until syrup is clear and thick. Add lemon juice and cool. Put rest of uncooked berries on top of cheese. Pour cooked strawberries and syrup on top of strawberries. Chill and serve with ice cream or Cool Whip.<|endoftext|>`
+` Serve with: Spicy Celery Seed Coleslaw Spread mustard evenly on one side of bread slices. Cut pork into thin slices. Add pork slices to sauce, tossing to coat. Arrange pork slices over mustard. Spoon sauce evenly over pork. While pork is standing, increase heat to medium-high, and add cola and bourbon to pan. Bring to a boil; cook 7 minutes or until mixture is reduced to 1/4 cup. Sprinkle pork evenly with salt and pepper; coat with cooking spray. Heat a large nonstick skillet over medium-high heat. Coat pan with cooking spray. Add pork; cook 3 minutes or until browned on 1 side. Reduce heat to medium-low; turn pork over. Cover and cook 17 minutes or until a thermometer registers 160° (slightly pink). Remove pork from pan. Cover and let stand 5 minutes. 
+
+ Sprinkle pork evenly with salt and pepper; coat with cooking spray. Heat a large nonstick skillet over medium-high heat. Coat pan with cooking spray. Add pork; cook 3 minutes or until browned on 1 side. Reduce heat to medium-low; turn pork over. Cover and cook 17 minutes or until a thermometer registers 160° (slightly pink). Remove pork from pan. Cover and let stand 5 minutes. While pork is standing, increase heat to medium-high, and add cola and bourbon to pan. Bring to a boil; cook 7 minutes or until mixture is reduced to 1/4 cup. Spread mustard evenly on one side of bread slices. Cut pork into thin slices. Add pork slices to sauce, tossing to coat. Arrange pork slices over mustard. Spoon sauce evenly over pork. Serve with: Spicy Celery Seed Coleslaw<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -125,52 +100,23 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Grease one cookie sheet.<step_0> Line one cookie sheet with wax paper.<step_1> Mix first six ingredients and pour on greased cookie sheet.<step_2> Bake 15 minutes at 350°.<step_3> Turn onto wax paper that is sprinkled with powdered sugar.<step_4> Remove wax paper.<step_5> Allow to cool.<step_6> 
+` Place bulgur and onions in large bowl. Finely chop parsley in processor. Add to bulgur. Finely chop carrots in processor; add to bulgur. Finely chop bell pepper in processor; add to bulgur. Add tomato juice and next 5 ingredients; toss. Cover; chill overnight. Mix thyme into tabbouleh. Season with salt and pepper; serve. 
 
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Grease one cookie sheet.<step_0> Line one cookie sheet with wax paper.<step_1> Mix first six ingredients and pour on greased cookie sheet.<step_2> Bake 15 minutes at 350°.<step_3> Turn onto wax paper that is sprinkled with powdered sugar.<step_4> Remove wax paper.<step_5> Allow to cool.<step_6> 
-
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`1.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips. 
-
- In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ Place bulgur and onions in large bowl. Finely chop parsley in processor. Add to bulgur. Finely chop carrots in processor; add to bulgur. Finely chop bell pepper in processor; add to bulgur. Add tomato juice and next 5 ingredients; toss. Cover; chill overnight. Mix thyme into tabbouleh. Season with salt and pepper; serve.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips. 
+` Place bulgur and onions in large bowl. Finely chop parsley in processor. Add to bulgur. Finely chop carrots in processor; add to bulgur. Finely chop bell pepper in processor; add to bulgur. Add tomato juice and next 5 ingredients; toss. Cover; chill overnight. Mix thyme into tabbouleh. Season with salt and pepper; serve. 
 
- In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips.<|endoftext|>`
+ Place bulgur and onions in large bowl. Finely chop parsley in processor. Add to bulgur. Finely chop carrots in processor; add to bulgur. Finely chop bell pepper in processor; add to bulgur. Add tomato juice and next 5 ingredients; toss. Cover; chill overnight. Mix thyme into tabbouleh. Season with salt and pepper; serve.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-` In medium bowl, combine sour cream, salsa, and taco seasoning mix. Mix well. Serve with tortilla chips.<|endoftext|>`
+` Place bulgur and onions in large bowl. Finely chop parsley in processor. Add to bulgur. Finely chop carrots in processor; add to bulgur. Finely chop bell pepper in processor; add to bulgur. Add tomato juice and next 5 ingredients; toss. Cover; chill overnight. Mix thyme into tabbouleh. Season with salt and pepper; serve. 
+
+ Place bulgur and onions in large bowl. Finely chop parsley in processor. Add to bulgur. Finely chop carrots in processor; add to bulgur. Finely chop bell pepper in processor; add to bulgur. Add tomato juice and next 5 ingredients; toss. Cover; chill overnight. Mix thyme into tabbouleh. Season with salt and pepper; serve.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -187,26 +133,28 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Cream butter and sugar. Add yolk and flour. Cut in fruit and nuts. Shape dough into two rolls 2 inches in diameter and roll in waxed paper. Chill overnight.<step_0> Preheat oven to 375 degrees F (190 degrees C).<step_1> While still cold and wax paper still on, take a sharp knife and cut thin slices (1/8 inch). Set on greased cookie sheets, remove wax paper and bake for 10 minutes. (Slightly brown edges).<step_2> 
+` Preheat broiler. Combine first 8 ingredients in a bowl; cover and chill until ready to serve. Place chicken on a broiler pan coated with cooking spray; sprinkle with salt and black pepper. Broil 5 minutes on each side or until done. Serve tomato mixture over chicken. 
 
-<step_0><step_1><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ Preheat broiler. Combine first 8 ingredients in a bowl; cover and chill until ready to serve. Place chicken on a broiler pan coated with cooking spray; sprinkle with salt and black pepper. Broil 5 minutes on each side or until done. Serve tomato mixture over chicken.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Cream butter and sugar. Add yolk and flour. Cut in fruit and nuts. Shape dough into two rolls 2 inches in diameter and roll in waxed paper. Chill overnight.<step_0> Preheat oven to 375 degrees F (190 degrees C).<step_1> While still cold and wax paper still on, take a sharp knife and cut thin slices (1/8 inch). Set on greased cookie sheets, remove wax paper and bake for 10 minutes. (Slightly brown edges).<step_2> 
+` Preheat broiler. Combine first 8 ingredients in a bowl; cover and chill until ready to serve. Place chicken on a broiler pan coated with cooking spray; sprinkle with salt and black pepper. Broil 5 minutes on each side or until done. Serve tomato mixture over chicken. 
 
-<step_0><step_1><step_2><|endoftext|>`
+ Preheat broiler. Combine first 8 ingredients in a bowl; cover and chill until ready to serve. Place chicken on a broiler pan coated with cooking spray; sprinkle with salt and black pepper. Broil 5 minutes on each side or until done. Serve tomato mixture over chicken.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-``
+` Preheat broiler. Combine first 8 ingredients in a bowl; cover and chill until ready to serve. Place chicken on a broiler pan coated with cooking spray; sprinkle with salt and black pepper. Broil 5 minutes on each side or until done. Serve tomato mixture over chicken. 
+
+ Preheat broiler. Combine first 8 ingredients in a bowl; cover and chill until ready to serve. Place chicken on a broiler pan coated with cooking spray; sprinkle with salt and black pepper. Broil 5 minutes on each side or until done. Serve tomato mixture over chicken.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_0><step_1><step_2><|endoftext|>`
+``
 
 ----------------------------------------------------------------------------------------------------
 
@@ -218,21 +166,89 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals. Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. 
+` In a large sauce pan,cook the hot dogs in oil over medium heat for 3-4 minutes or until browned. Add rest of ingredients to hot dogs and stir well. Cook and stir for about 15 minutes or until heated through. 
 
- Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ In a large sauce pan,cook the hot dogs in oil over medium heat for 3-4 minutes or until browned. Add rest of ingredients to hot dogs and stir well. Cook and stir for about 15 minutes or until heated through.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals. Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. 
+` In a large sauce pan,cook the hot dogs in oil over medium heat for 3-4 minutes or until browned. Add rest of ingredients to hot dogs and stir well. Cook and stir for about 15 minutes or until heated through. 
 
- Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals.<|endoftext|>`
+ In a large sauce pan,cook the hot dogs in oil over medium heat for 3-4 minutes or until browned. Add rest of ingredients to hot dogs and stir well. Cook and stir for about 15 minutes or until heated through.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-` Boil all peppers, vinegar, sugar and salt at a rapid boil for 1 minute. Remove from heat; add Certo. Stir until partially cool; the mixture will be smooth. Ladle into hot jars and seal. Works well with paraffin seals.<|endoftext|>`
+` In a large sauce pan,cook the hot dogs in oil over medium heat for 3-4 minutes or until browned. Add rest of ingredients to hot dogs and stir well. Cook and stir for about 15 minutes or until heated through. 
+
+ In a large sauce pan,cook the hot dogs in oil over medium heat for 3-4 minutes or until browned. Add rest of ingredients to hot dogs and stir well. Cook and stir for about 15 minutes or until heated through.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Preheat oven to 400F. Divide dough in half; place on a lightly floured board and coat both sides with flour to seal. Seperate wedges and bake 12 min on an ungreased cookie sheet till golden. Cut in butter till mix resembles fine crumbs. Cold slightly on a wire rack; serve hot. Combine flour, oat bran, sugar, baking pwdr and salt. Form a 6" round 1" high circle; cut into 6 wedges with a floured knife. Stir in egg, lowfat milk and apricots just till dough leaves sides of bowl. 
+
+ Preheat oven to 400F. Combine flour, oat bran, sugar, baking pwdr and salt. Cut in butter till mix resembles fine crumbs. Stir in egg, lowfat milk and apricots just till dough leaves sides of bowl. Divide dough in half; place on a lightly floured board and coat both sides with flour to seal. Form a 6" round 1" high circle; cut into 6 wedges with a floured knife. Seperate wedges and bake 12 min on an ungreased cookie sheet till golden. Cold slightly on a wire rack; serve hot.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Preheat oven to 400F. Divide dough in half; place on a lightly floured board and coat both sides with flour to seal. Seperate wedges and bake 12 min on an ungreased cookie sheet till golden. Cut in butter till mix resembles fine crumbs. Cold slightly on a wire rack; serve hot. Combine flour, oat bran, sugar, baking pwdr and salt. Form a 6" round 1" high circle; cut into 6 wedges with a floured knife. Stir in egg, lowfat milk and apricots just till dough leaves sides of bowl. 
+
+ Preheat oven to 400F. Combine flour, oat bran, sugar, baking pwdr and salt. Cut in butter till mix resembles fine crumbs. Stir in egg, lowfat milk and apricots just till dough leaves sides of bowl. Divide dough in half; place on a lightly floured board and coat both sides with flour to seal. Form a 6" round 1" high circle; cut into 6 wedges with a floured knife. Seperate wedges and bake 12 min on an ungreased cookie sheet till golden. Cold slightly on a wire rack; serve hot.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Preheat oven to 400F. Divide dough in half; place on a lightly floured board and coat both sides with flour to seal. Seperate wedges and bake 12 min on an ungreased cookie sheet till golden. Cut in butter till mix resembles fine crumbs. Cold slightly on a wire rack; serve hot. Combine flour, oat bran, sugar, baking pwdr and salt. Form a 6" round 1" high circle; cut into 6 wedges with a floured knife. Stir in egg, lowfat milk and apricots just till dough leaves sides of bowl. 
+
+ Preheat oven to 400F. Combine flour, oat bran, sugar, baking pwdr and salt. Cut in butter till mix resembles fine crumbs. Stir in egg, lowfat milk and apricots just till dough leaves sides of bowl. Divide dough in half; place on a lightly floured board and coat both sides with flour to seal. Form a 6" round 1" high circle; cut into 6 wedges with a floured knife. Seperate wedges and bake 12 min on an ungreased cookie sheet till golden. Cold slightly on a wire rack; serve hot.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`0.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` In a small saucepan, bring herbs, if using, and 1/2 cup water to a boil. Remove from heat and stir in honey. Pour into a bowl and chill until cool. Strain into melon puree. Whirl melon in a blender or food processor until smooth. Pour into a bowl, cover, and chill until cold. Note: Nutritional analysis is per 1/2-cup serving. Freeze in an ice cream maker according to manufacturer's directions. Serve immediately. 
+
+ Whirl melon in a blender or food processor until smooth. Pour into a bowl, cover, and chill until cold. In a small saucepan, bring herbs, if using, and 1/2 cup water to a boil. Remove from heat and stir in honey. Pour into a bowl and chill until cool. Strain into melon puree. Freeze in an ice cream maker according to manufacturer's directions. Serve immediately. Note: Nutritional analysis is per 1/2-cup serving.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` In a small saucepan, bring herbs, if using, and 1/2 cup water to a boil. Remove from heat and stir in honey. Pour into a bowl and chill until cool. Strain into melon puree. Whirl melon in a blender or food processor until smooth. Pour into a bowl, cover, and chill until cold. Note: Nutritional analysis is per 1/2-cup serving. Freeze in an ice cream maker according to manufacturer's directions. Serve immediately. 
+
+ Whirl melon in a blender or food processor until smooth. Pour into a bowl, cover, and chill until cold. In a small saucepan, bring herbs, if using, and 1/2 cup water to a boil. Remove from heat and stir in honey. Pour into a bowl and chill until cool. Strain into melon puree. Freeze in an ice cream maker according to manufacturer's directions. Serve immediately. Note: Nutritional analysis is per 1/2-cup serving.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` In a small saucepan, bring herbs, if using, and 1/2 cup water to a boil. Remove from heat and stir in honey. Pour into a bowl and chill until cool. Strain into melon puree. Whirl melon in a blender or food processor until smooth. Pour into a bowl, cover, and chill until cold. Note: Nutritional analysis is per 1/2-cup serving. Freeze in an ice cream maker according to manufacturer's directions. Serve immediately. 
+
+ Whirl melon in a blender or food processor until smooth. Pour into a bowl, cover, and chill until cold. In a small saucepan, bring herbs, if using, and 1/2 cup water to a boil. Remove from heat and stir in honey. Pour into a bowl and chill until cool. Strain into melon puree. Freeze in an ice cream maker according to manufacturer's directions. Serve immediately. Note: Nutritional analysis is per 1/2-cup serving.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 

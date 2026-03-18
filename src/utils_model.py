@@ -77,14 +77,17 @@ class SmolLM2WithAbsPE(nn.Module):
             **kwargs,
         )
 
-def load_model_from_checkpoint(model_path, device='cpu', revision=None):
+def load_model_from_checkpoint(model_path, device='cpu', revision=None, dtype=None):
     """
     Load a model from a checkpoint directory. Automatically detects whether
     the checkpoint includes abs PE weights and wraps accordingly.
     Works for: plain HF models, HF hub IDs, and SmolLM2WithAbsPE checkpoints.
     """
     import os
-    base_model = AutoModelForCausalLM.from_pretrained(model_path, revision=revision)
+    kwargs = {}
+    if dtype is not None:
+        kwargs['dtype'] = dtype
+    base_model = AutoModelForCausalLM.from_pretrained(model_path, revision=revision, **kwargs)
     abs_pe_path = os.path.join(model_path, 'abs_position_embeddings.pt')
     if os.path.exists(abs_pe_path):
         state = torch.load(abs_pe_path, map_location='cpu')

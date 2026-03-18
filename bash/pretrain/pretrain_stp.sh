@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=0
+num_samples=1000000
 batch_mode="random_samples"
 batch_size=8
 
@@ -30,9 +30,10 @@ batch_size=8
 # model_name="rinna/japanese-gpt2-small" # APE
 # model_name="GroNLP/gpt2-small-italian" # APE
 
-model_name="openai-community/gpt2" # APE
-# model_name="openai-community/gpt2-medium" # APE
-# model_name="openai-community/gpt2-large" # APE
+# model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2-medium"
+# model_name="openai-community/gpt2-large"
+
 # model_name="EleutherAI/gpt-neo-125m" # APE
 # model_name="facebook/opt-125m" # APE
 # model_name="facebook/opt-350m" # APE
@@ -40,7 +41,7 @@ model_name="openai-community/gpt2" # APE
 # model_name="EleutherAI/pythia-160m" # RoPE
 # model_name="amd/AMD-Llama-135m" # RoPE
 # model_name="HuggingFaceTB/SmolLM2-135M" # RoPE
-# model_name="HuggingFaceTB/SmolLM2-360M" # RoPE
+model_name="HuggingFaceTB/SmolLM2-360M" # RoPE
 
 # model_name="Qwen/Qwen3-0.6B-Base" # RoPE
 # model_name="Qwen/Qwen3-4B-Base" # RoPE
@@ -73,11 +74,13 @@ mml_lambda=0.1
 use_stp=1
 stp_lambda=1.0
 stp_max_steps=15
+stp_sliced=0
 init_from_eos=0
 
 activations=real
 # activations=non-negative
 
+# dtype=bfloat16
 dtype=float32
 
 cmd="python src/pretrain.py
@@ -100,6 +103,7 @@ cmd="python src/pretrain.py
 --min_recipe_steps $min_recipe_steps
 --neg_ratio $neg_ratio
 --use_stp $use_stp
+--stp_sliced $stp_sliced
 --stp_lambda $stp_lambda
 --stp_max_steps $stp_max_steps
 --init_from_eos $init_from_eos

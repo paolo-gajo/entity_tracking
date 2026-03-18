@@ -27,9 +27,9 @@ batch_size=8
 # batch_mode="pos_neg"
 # batch_size=1
 
-model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2"
 # model_name="openai-community/gpt2-medium"
-# model_name="openai-community/gpt2-large"
+model_name="openai-community/gpt2-large"
 
 # model_name="Qwen/Qwen3-0.6B-Base"
 # model_name="facebook/opt-350m"
