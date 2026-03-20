@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=0
+num_samples=100000
 batch_mode="random_samples"
 batch_size=8
 
@@ -27,9 +27,9 @@ batch_size=8
 # batch_mode="pos_neg"
 # batch_size=1
 
-# model_name="openai-community/gpt2"
+model_name="openai-community/gpt2"
 # model_name="openai-community/gpt2-medium"
-model_name="openai-community/gpt2-large"
+# model_name="openai-community/gpt2-large"
 
 # model_name="Qwen/Qwen3-0.6B-Base"
 

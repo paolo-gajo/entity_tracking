@@ -48,12 +48,13 @@ class Seq2SeqDataset(Dataset):
                 make_fn_list.append((self.make_step_token_pair_samples, prompt_type))
 
         self.data_formatted = []
-
         for fn, prompt_type in make_fn_list:
             if self.batch_mode == 'pos_neg':
-                self.data_formatted += self.make_pos_neg_dataset(fn, prompt_type)
+                task_data = self.make_pos_neg_dataset(fn, prompt_type)
+                self.data_formatted += task_data
             elif self.batch_mode == 'random_samples':
-                self.data_formatted += self.make_random_samples_dataset(fn, prompt_type)
+                task_data = self.make_random_samples_dataset(fn, prompt_type)
+                self.data_formatted += task_data
 
         self.data_formatted = self.prune_long_token_lengths()
         self.data_formatted = self.prune_short_step_lengths()
@@ -61,7 +62,7 @@ class Seq2SeqDataset(Dataset):
 
         total_tokens_stp = sum(sum(item.get('stp_mask', [0])) for item in self.data_formatted)
         total_tokens_clm = sum(sum(item.get('clm_mask', [0])) for item in self.data_formatted)
-        print(f"Dataset: {len(self.data)} samples, {total_tokens_clm:,} CLM tokens, {total_tokens_stp:,} STP tokens, ", flush=True)
+        print(f"Dataset: {len(self.data_formatted)} samples, {total_tokens_clm:,} CLM tokens, {total_tokens_stp:,} STP tokens, ", flush=True)
 
     def prune_long_token_lengths(self):
         data_pruned = []

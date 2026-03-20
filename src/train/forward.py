@@ -1,6 +1,7 @@
 # src/train/forward.py
 from __future__ import annotations
 import torch
+from peft import PeftModel
 
 def compute_forward_bundle(
     args,
@@ -44,8 +45,14 @@ def compute_forward_bundle(
             lhs = outputs.hidden_states[-1]
             logits = outputs.logits
         else:
-            backbone = model.base_model
-            lm_head = model.get_output_embeddings()
+            # Unwrap PeftModel (LoRA) to reach the underlying CausalLM,
+            # then split backbone/head so we avoid output_hidden_states=True.
+            # LoRA layers are injected in-place, so the backbone still uses them.
+            
+            causal_lm = model.base_model.model if isinstance(model, PeftModel) else model
+
+            backbone = causal_lm.base_model
+            lm_head = causal_lm.get_output_embeddings()
 
             outputs = backbone(
                 input_ids=batch['input_ids'],

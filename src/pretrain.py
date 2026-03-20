@@ -73,8 +73,7 @@ def main(args):
         max_recipe_steps=args.stp_max_steps,
         step_token_id_map=step_token_id_map,
         prepend_bos=False,
-    )    
-
+    )
     collator = Collator(tokenizer=tokenizer)
     dataloader = DataLoader(
         dataset,
@@ -131,6 +130,8 @@ def main(args):
     use_amp = amp_dtype != torch.float32
 
     for batch_idx, batch in enumerate(tbar):
+        if args.max_steps > 0 and num_steps >= args.max_steps:
+            break
         batch = {k: v.to(device) for k, v in batch.items()}
 
         with torch.amp.autocast(device_type="cuda", dtype=amp_dtype, enabled=use_amp):
@@ -256,6 +257,8 @@ if __name__ == "__main__":
     parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
+    parser.add_argument("--max_steps", default=240000, type=int,
+                        help="Stop training after this many gradient steps (0 = no limit)")
     
     # Absolute positional embeddings
     parser.add_argument("--use_abs_pe", default=0, type=int,
