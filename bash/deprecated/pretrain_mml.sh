@@ -30,7 +30,6 @@ batch_size=8
 # model_name="openai-community/gpt2"
 model_name="HuggingFaceTB/SmolLM2-135M"
 # resume_from=""
-resume_from="models/recipenlg/mode=random_samples/bs=8/prompt=minimal_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=1/pos=0/stp=0/cos=0/eos_init=0/use_lora=0/act=non-negative/SmolLM2-135M/32000"
 # model_name="facebook/opt-350m"
 # model_name="Qwen/Qwen3-0.6B-Base"
 

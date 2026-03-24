@@ -780,8 +780,8 @@ def main(args):
     prompt = None
 
     for batch_idx, batch in enumerate(tbar):
-        if batch_idx < resume_steps:
-            continue
+        if args.max_train_steps > 0 and num_steps >= args.max_train_steps:
+            break
 
         batch = {k: v.to(device) for k, v in batch.items()}
 
@@ -875,14 +875,16 @@ if __name__ == "__main__":
     parser.add_argument("--resume_from", default=None, type=str)
 
     # ── Data ──
-    parser.add_argument("--data_path", default="./data/bw/bw_stp_dataset_100k_meta.json")
+    parser.add_argument("--data_path", default="./data/bw/bw_stp_dataset_meta.json")
     parser.add_argument("--num_samples", default=0, type=int,
                         help="0 = use all generated samples")
     parser.add_argument("--neg_ratio", default=0.5, type=float)
     parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
-
+    parser.add_argument("--max_train_steps", default=240000, type=int,
+                        help="Stop training after this many gradient steps (0 = no limit)")
+    
     # ── Prompt / mask ──
     parser.add_argument("--prompt_type", default="step_token_pairs")
     parser.add_argument("--attn_mask_type", default="full")
