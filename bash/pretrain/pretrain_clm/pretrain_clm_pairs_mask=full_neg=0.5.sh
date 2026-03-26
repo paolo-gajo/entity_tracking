@@ -29,11 +29,14 @@ batch_size=8
 
 # model_name="openai-community/gpt2"
 # model_name="openai-community/gpt2-medium"
-model_name="openai-community/gpt2-large"
+# model_name="openai-community/gpt2-large"
 
 # model_name="Qwen/Qwen3-0.6B-Base"
+model_name="Qwen/Qwen3-1.7B-Base" # RoPE
 # model_name="facebook/opt-350m"
 # model_name="EleutherAI/gpt-neo-125m"
+
+use_lora=1
 
 attn_mask_type='full' # N/A for minimal_mono
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
@@ -53,7 +56,8 @@ use_stp=0
 activations=real
 # activations=non-negative
 
-dtype=float32
+# dtype=float32
+dtype=bfloat16
 
 cmd="python src/pretrain.py
 --data_path $data_path
@@ -75,6 +79,7 @@ cmd="python src/pretrain.py
 --neg_ratio $neg_ratio
 --use_stp $use_stp
 --dtype $dtype
+--use_lora $use_lora
 "
 
 $cmd

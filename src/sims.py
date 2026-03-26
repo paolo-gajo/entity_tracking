@@ -355,7 +355,7 @@ if __name__ == "__main__":
     parser.add_argument("--n_runs", default=1, type=int)
     parser.add_argument("--save_results", default=1, type=int)
     parser.add_argument("--verbose_results", default=1, type=int)
-    parser.add_argument("--repeat", default=1, type=int)
+    parser.add_argument("--repeat", default=0, type=int)
     parser.add_argument("--activations", default="real", type=str, help="real | non-negative")
     parser.add_argument("--save_heatmaps", default=0, type=int)
     parser.add_argument("--use_gold_transpose", default=0, type=int)

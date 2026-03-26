@@ -31,7 +31,7 @@ batch_size=8
 # model_name="GroNLP/gpt2-small-italian" # APE
 
 # model_name="openai-community/gpt2"
-model_name="openai-community/gpt2-medium"
+# model_name="openai-community/gpt2-medium"
 # model_name="openai-community/gpt2-large"
 
 # model_name="EleutherAI/gpt-neo-125m" # APE
@@ -43,7 +43,7 @@ model_name="openai-community/gpt2-medium"
 # model_name="HuggingFaceTB/SmolLM2-135M" # RoPE
 # model_name="HuggingFaceTB/SmolLM2-360M" # RoPE
 
-# model_name="Qwen/Qwen3-0.6B-Base" # RoPE
+model_name="Qwen/Qwen3-0.6B-Base" # RoPE
 # model_name="Qwen/Qwen3-4B-Base" # RoPE
 # model_name="Qwen/Qwen3-1.7B-Base" # RoPE
 # model_name="Qwen/Qwen3.5-0.8B-Base" # RoPE
@@ -80,8 +80,8 @@ init_from_eos=0
 activations=real
 # activations=non-negative
 
-# dtype=bfloat16
-dtype=float32
+dtype=bfloat16
+# dtype=float32
 
 cmd="python src/pretrain.py
 --data_path $data_path
