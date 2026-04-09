@@ -64,7 +64,7 @@ def main(args):
     dataset = Seq2SeqDataset(
         data_pairs,
         tokenizer,
-        max_length=model.config.max_position_embeddings,
+        max_length=args.max_input_length or model.config.max_position_embeddings,
         prompt_type_list=train_config['prompt_type_list'],
         attn_mask_type=args.attn_mask_type,
         clm_mask_type=args.clm_mask_type,
@@ -225,7 +225,7 @@ def main(args):
             prompt = prepare_text_batch_prompt(batch, tokenizer)
             os.makedirs("./misc", exist_ok=True)
             print(prompt, file=open("./misc/last_prompt.txt", "w"), flush=True)
-
+        import pdb; pdb.set_trace()
         num_steps += 1
         if num_steps % args.save_interval == 0:
             save_config = train_config.copy()
@@ -251,12 +251,13 @@ if __name__ == "__main__":
     parser.add_argument("--batch_mode", default="random_samples", type=str)
     parser.add_argument("--prompt_type", default="minimal_pairs")
     parser.add_argument("--attn_mask_type", default="full")
-    parser.add_argument("--clm_mask_type", default="completion_only")
+    parser.add_argument("--clm_mask_type", default="full")
     parser.add_argument("--num_samples", default=1_000_000, type=int)
     parser.add_argument("--neg_ratio", default=0.5, type=float)
     parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
+    parser.add_argument("--max_input_length", default=0, type=int)
     parser.add_argument("--max_steps", default=240000, type=int,
                         help="Stop training after this many gradient steps (0 = no limit)")
     

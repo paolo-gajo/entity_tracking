@@ -1,12 +1,47 @@
 import os
+import re
 import json
 import torch
 import argparse
 import matplotlib.pyplot as plt
 from transformers import AutoModelForCausalLM
+from peft import PeftModel
 from tqdm.auto import tqdm
 
-def get_layer_group(param_name):
+def is_lora_checkpoint(ckpt_path):
+    """Check if a checkpoint directory contains a LoRA adapter."""
+    return os.path.exists(os.path.join(ckpt_path, "adapter_config.json"))
+
+def load_checkpoint(ckpt_path, base_model_name, is_lora):
+    """Load a checkpoint, merging LoRA weights if needed."""
+    if is_lora:
+        base = AutoModelForCausalLM.from_pretrained(base_model_name, device_map="cpu")
+        model = PeftModel.from_pretrained(base, ckpt_path)
+        model = model.merge_and_unload()
+        return model
+    else:
+        return AutoModelForCausalLM.from_pretrained(ckpt_path, device_map="cpu")
+
+def detect_num_layers(model):
+    """Auto-detect the number of transformer layers in a model."""
+    max_layer = -1
+    for name in model.state_dict().keys():
+        # Match h.{N}. (GPT-2) or layers.{N}. (LLaMA/Qwen/Mistral)
+        m = re.search(r'(?:h|layers)\.(\d+)\.', name)
+        if m:
+            max_layer = max(max_layer, int(m.group(1)))
+    return max_layer + 1 if max_layer >= 0 else 0
+
+def get_target_layers(num_layers):
+    """Pick bottom, middle, and top layer indices based on model depth."""
+    if num_layers == 0:
+        return {}
+    bottom = 0
+    middle = num_layers // 2
+    top = num_layers - 1
+    return {str(bottom): 'Bottom', str(middle): 'Middle', str(top): 'Top'}
+
+def get_layer_group(param_name, target_layers):
     """
     Groups parameters to keep the plot readable.
     Filters out LayerNorms and biases.
@@ -21,7 +56,6 @@ def get_layer_group(param_name):
     if 'lm_head' in param_name:
         return 'LM Head'
 
-    target_layers = {'0': 'Bottom', '5': 'Middle', '11': 'Top'}
     for layer_num, depth_label in target_layers.items():
         if f'h.{layer_num}.' in param_name or f'layers.{layer_num}.' in param_name:
             if 'attn' in param_name or 'self_attn' in param_name:
@@ -67,17 +101,27 @@ def main(args):
         return
     print(f"Loading baseline to determine vocab size and initial weights: {baseline_name}")
     baseline_model = AutoModelForCausalLM.from_pretrained(baseline_name, device_map="cpu")
+
+    num_layers = detect_num_layers(baseline_model)
+    target_layers = get_target_layers(num_layers)
+    print(f"Detected {num_layers} layers. Tracking layers: {target_layers}")
+
+    # Detect if checkpoints are LoRA adapters
+    use_lora = is_lora_checkpoint(checkpoints[0]["path"])
+    if use_lora:
+        print("Detected LoRA checkpoints — will merge adapters before comparing.")
+
     orig_vocab_sizes = {}
     W_init = {}
     for name, param in baseline_model.named_parameters():
         clean_name = name.replace("base_model.model.", "")
         is_embedding = ('wte' in clean_name or 'embed_tokens' in clean_name or 'lm_head' in clean_name)
-        if is_embedding:
+        if is_embedding and not use_lora:
             orig_vocab_sizes[clean_name] = param.shape[0]
             W_init[clean_name + '_orig'] = param.detach().clone()
             W_init[clean_name + '_new'] = torch.zeros(0, param.shape[1])  # placeholder; filled at first ckpt
         else:
-            group = get_layer_group(clean_name)
+            group = get_layer_group(clean_name, target_layers)
             if group:
                 W_init[clean_name] = param.detach().clone()
     del baseline_model
@@ -87,7 +131,7 @@ def main(args):
 
     for ckpt in tqdm(checkpoints, desc="Processing Checkpoints"):
         ckpt_path = ckpt["path"]
-        model = AutoModelForCausalLM.from_pretrained(ckpt_path, device_map="cpu")
+        model = load_checkpoint(ckpt_path, baseline_name, use_lora)
 
         step_dists = {}
         step_counts = {}
@@ -95,7 +139,7 @@ def main(args):
         for name, param in model.named_parameters():
             clean_name = name.replace("base_model.model.", "")
 
-            group = get_layer_group(clean_name)
+            group = get_layer_group(clean_name, target_layers)
             if not group:
                 continue
 

@@ -1,8 +1,9 @@
+import os
 import torch
 import torch.nn as nn
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.modeling_outputs import CausalLMOutputWithPast
-from peft import get_peft_model, LoraConfig
+from peft import get_peft_model, LoraConfig, PeftModel
 
 
 class SmolLM2WithAbsPE(nn.Module):
@@ -83,7 +84,6 @@ def load_model_from_checkpoint(model_path, device='cpu', revision=None, dtype=No
     the checkpoint includes abs PE weights and wraps accordingly.
     Works for: plain HF models, HF hub IDs, and SmolLM2WithAbsPE checkpoints.
     """
-    import os
     kwargs = {}
     if dtype is not None:
         kwargs['dtype'] = dtype
@@ -178,7 +178,6 @@ def build_model_tokenizer(args, device):
         print(f"Injecting absolute positional embeddings (max_len={abs_pe_len})", flush=True)
         model = SmolLM2WithAbsPE(model, max_position_embeddings=model.config.max_position_embeddings)
         # Load saved abs PE weights if resuming from a checkpoint
-        import os
         abs_pe_path = os.path.join(args.model_name, 'abs_position_embeddings.pt')
         if os.path.exists(abs_pe_path):
             print(f"Loading abs PE weights from {abs_pe_path}", flush=True)
@@ -222,23 +221,30 @@ def build_model_tokenizer(args, device):
 
     if args.use_lora:
         model.gradient_checkpointing_enable()
-        peft_config = LoraConfig(
-            task_type='CAUSAL_LM',
-            target_modules=[
-                'q_proj',
-                'k_proj',
-                'v_proj',
-                'o_proj',
-                'gate_proj',
-                'up_proj',
-                'down_proj',
-            ],
-            modules_to_save=[
-                'embed_tokens', 
-                'lm_head'
-            ],
-        )
-        model = get_peft_model(model, peft_config)
+        adapter_config_path = os.path.join(args.model_name, 'adapter_config.json')
+        if os.path.exists(adapter_config_path):
+            # Resuming from a PEFT checkpoint: load the saved adapter weights
+            # instead of creating a fresh LoraConfig with random weights.
+            print(f"Loading LoRA adapter from checkpoint: {args.model_name}", flush=True)
+            model = PeftModel.from_pretrained(model, args.model_name, is_trainable=True)
+        else:
+            peft_config = LoraConfig(
+                task_type='CAUSAL_LM',
+                target_modules=[
+                    'q_proj',
+                    'k_proj',
+                    'v_proj',
+                    'o_proj',
+                    'gate_proj',
+                    'up_proj',
+                    'down_proj',
+                ],
+                modules_to_save=[
+                    'embed_tokens',
+                    # 'lm_head'
+                ],
+            )
+            model = get_peft_model(model, peft_config)
     
     params_total = sum(p.numel() for p in model.parameters())
     print('params_total', params_total)

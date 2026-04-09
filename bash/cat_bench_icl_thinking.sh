@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J cat_bench_regression
+#SBATCH -J cat_bench_icl_thinking
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:l40:1
@@ -11,8 +11,8 @@
 module load arrow
 source .env/bin/activate
 
-# model_dir="Qwen/Qwen3-1.7B"
-# python src/cat_bench_regression.py --model_dir $model_dir
+model_dir="Qwen/Qwen3-1.7B"
+python src/cat_bench_icl_thinking.py --model_dir $model_dir
 
 model_dir="models/recipenlg/mode=grpo/neg_ratio=0.5/bs=1/prompt=grpo_step_tokens/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=1/abs_pe=0/act=real/Qwen3-1.7B/2026-04-05--07-58-50"
-python src/cat_bench_regression.py --model_dir $model_dir --step_interval 0
+python src/cat_bench_icl_thinking.py --model_dir $model_dir

@@ -837,7 +837,7 @@ def main(args):
             prompt = prepare_text_batch_prompt(batch, tokenizer)
             os.makedirs("./misc", exist_ok=True)
             print(prompt, file=open("./misc/last_prompt_bw.txt", "w"), flush=True)
-
+        # import pdb; pdb.set_trace()
         num_steps += 1
         if num_steps % args.save_interval == 0:
             save_config = train_config.copy()
@@ -888,7 +888,7 @@ if __name__ == "__main__":
     # ── Prompt / mask ──
     parser.add_argument("--prompt_type", default="step_token_pairs")
     parser.add_argument("--attn_mask_type", default="full")
-    parser.add_argument("--clm_mask_type", default="completion_only")
+    parser.add_argument("--clm_mask_type", default="full")
     parser.add_argument("--batch_mode", default="random_samples")
 
 

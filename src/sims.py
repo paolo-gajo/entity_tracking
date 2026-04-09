@@ -333,6 +333,9 @@ def main(args):
         model_list = sorted(model_list, key=lambda x: x['num_steps'])
         assert len(model_list) == len(set([el['num_steps'] for el in model_list])), "You're os.walking through 2+ model dir trees at once."
 
+    if args.step_interval > 0:
+        model_list = [m for m in model_list if m['num_steps'] % args.step_interval == 0]
+
     for model in model_list:
         model_name = model['path']
         save_path, train_config = get_model_info(model_name, args)
@@ -359,6 +362,8 @@ if __name__ == "__main__":
     parser.add_argument("--activations", default="real", type=str, help="real | non-negative")
     parser.add_argument("--save_heatmaps", default=0, type=int)
     parser.add_argument("--use_gold_transpose", default=0, type=int)
+    parser.add_argument("--step_interval", default=10000, type=int,
+                        help="If > 0, only evaluate checkpoints whose num_steps is a multiple of this value")
 
     args = parser.parse_args()
     main(args)
