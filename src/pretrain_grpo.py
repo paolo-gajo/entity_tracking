@@ -24,6 +24,8 @@ import re
 import gc
 import tempfile
 import shutil
+import wandb
+from datetime import datetime
 
 
 def build_grpo_prompt(item, tokenizer):
@@ -358,7 +360,32 @@ def grpo_generate(model, tokenizer, streamer, prompts_data, device, args, vllm_e
             })
 
     avg_reward = total_reward / n_prompts if n_prompts > 0 else 0.0
-    return all_prompt_data, avg_reward
+
+    # Collect completion length stats across all prompts
+    all_completion_lengths = []
+    n_clipped = 0
+    n_total = 0
+    all_rewards = []
+    for pdata in all_prompt_data:
+        for cids in pdata["completions_ids"]:
+            resp_len = cids.shape[1] - pdata["prompt_len"]
+            all_completion_lengths.append(resp_len)
+            n_total += 1
+            if resp_len >= args.max_new_tokens:
+                n_clipped += 1
+        all_rewards.extend(pdata["advantages"].tolist())  # raw rewards before baseline
+
+    gen_metrics = {}
+    if all_completion_lengths:
+        gen_metrics["completions/mean_length"] = sum(all_completion_lengths) / len(all_completion_lengths)
+        gen_metrics["completions/min_length"] = min(all_completion_lengths)
+        gen_metrics["completions/max_length"] = max(all_completion_lengths)
+        gen_metrics["completions/clipped_ratio"] = n_clipped / n_total if n_total > 0 else 0.0
+    if len(all_rewards) > 1:
+        rewards_t = torch.tensor(all_rewards)
+        gen_metrics["reward_std"] = rewards_t.std().item()
+
+    return all_prompt_data, avg_reward, gen_metrics
 
 
 def grpo_policy_loss(model, ref_model, all_prompt_data, device, args):
@@ -370,7 +397,12 @@ def grpo_policy_loss(model, ref_model, all_prompt_data, device, args):
     total_loss = torch.tensor(0.0, device=device)
 
     if not all_prompt_data:
-        return total_loss
+        return total_loss, {}
+
+    # Accumulators for logging
+    all_kl = []
+    all_clip_fracs = []
+    all_entropies = []
 
     model.train()
     for pdata in all_prompt_data:
@@ -384,13 +416,27 @@ def grpo_policy_loss(model, ref_model, all_prompt_data, device, args):
             full_ids = completions_ids[g].to(device)
             attn = torch.ones_like(full_ids)
 
-            new_lp, resp_mask = compute_log_probs(
-                model, full_ids, attn, prompt_len
-            )
+            logits = model(input_ids=full_ids, attention_mask=attn).logits
+            log_probs = F.log_softmax(logits[:, :-1, :], dim=-1)
+            new_lp = log_probs.gather(2, full_ids[:, 1:].unsqueeze(-1)).squeeze(-1)
+            resp_mask = torch.zeros_like(new_lp)
+            resp_mask[:, prompt_len - 1:] = 1.0
+
             old_lp = old_log_probs[g].detach()
+
+            # Entropy: -sum(p * log(p)) over vocab, averaged over response tokens
+            probs = F.softmax(logits[:, :-1, :], dim=-1)
+            token_entropy = -(probs * log_probs).sum(dim=-1)
+            avg_entropy = (token_entropy * resp_mask).sum() / (resp_mask.sum() + 1e-8)
+            all_entropies.append(avg_entropy.item())
 
             # Importance sampling ratio
             ratio = torch.exp(new_lp - old_lp)
+
+            # Clip fraction
+            clipped = ((ratio < 1 - args.clip_epsilon) | (ratio > 1 + args.clip_epsilon)).float()
+            clip_frac = (clipped * resp_mask).sum() / (resp_mask.sum() + 1e-8)
+            all_clip_fracs.append(clip_frac.item())
 
             # Clipped surrogate objective
             adv = advantages[g].to(device)
@@ -416,6 +462,7 @@ def grpo_policy_loss(model, ref_model, all_prompt_data, device, args):
 
                 kl_per_token = new_lp - ref_token_lp
                 kl_loss = (kl_per_token * resp_mask).sum() / (resp_mask.sum() + 1e-8)
+                all_kl.append(kl_loss.item())
 
             prompt_loss = prompt_loss + masked_loss + args.kl_beta * kl_loss
 
@@ -423,7 +470,16 @@ def grpo_policy_loss(model, ref_model, all_prompt_data, device, args):
         total_loss = total_loss + prompt_loss
 
     total_loss = total_loss / len(all_prompt_data)
-    return total_loss
+
+    loss_metrics = {}
+    if all_kl:
+        loss_metrics["kl"] = sum(all_kl) / len(all_kl)
+    if all_clip_fracs:
+        loss_metrics["clip_ratio"] = sum(all_clip_fracs) / len(all_clip_fracs)
+    if all_entropies:
+        loss_metrics["entropy"] = sum(all_entropies) / len(all_entropies)
+
+    return total_loss, loss_metrics
 
 
 def make_shuffled_dataset(data, min_steps=3, max_steps=15, neg_ratio=0.0):
@@ -460,6 +516,11 @@ def make_shuffled_dataset(data, min_steps=3, max_steps=15, neg_ratio=0.0):
 def main(args):
     train_config = setup_config(args.__dict__)
     print(f"Train config:\n{json.dumps(train_config, indent=4)}", flush=True)
+
+    # Wandb logging
+    model_short = args.model_name.split("/")[-1]
+    run_name = f"{model_short}_{datetime.now().strftime('%Y-%m-%d--%H-%M-%S')}"
+    wandb.init(project="pretrain_grpo", name=run_name, config=train_config)
 
     # Load data
     with open(args.data_path, "r", encoding="utf8") as f:
@@ -566,7 +627,7 @@ def main(args):
     # LR scheduler: linear warmup + cosine decay
     total_steps = len(range(0, len(data_pairs), args.batch_size))
     num_update_steps = total_steps // args.grad_accum_steps
-    warmup_steps = int(num_update_steps * args.warmup_ratio)
+    warmup_steps = args.warmup_steps
     if warmup_steps > 0:
         warmup_scheduler = LinearLR(optimizer, start_factor=1e-8 / args.lr, end_factor=1.0, total_iters=warmup_steps)
         cosine_scheduler = CosineAnnealingLR(optimizer, T_max=num_update_steps - warmup_steps, eta_min=args.lr * 0.1)
@@ -578,7 +639,9 @@ def main(args):
     # ---- Training loop ----------------------------------------------------
     optimizer.zero_grad()
     num_steps = 0
+    update_steps = 0
     losses = []
+    metric_accum = []
 
     tbar = tqdm(
         range(0, len(data_pairs), args.batch_size),
@@ -594,14 +657,23 @@ def main(args):
             continue
 
         # Generate completions and compute rewards + old log-probs (once)
-        all_prompt_data, avg_reward = grpo_generate(model, tokenizer, streamer, batch_items, device, args, vllm_engine=vllm_engine)
+        all_prompt_data, avg_reward, gen_metrics = grpo_generate(model, tokenizer, streamer, batch_items, device, args, vllm_engine=vllm_engine)
 
         # Single backward pass, accumulate gradients across batches
-        loss = grpo_policy_loss(model, ref_model, all_prompt_data, device, args)
+        loss, loss_metrics = grpo_policy_loss(model, ref_model, all_prompt_data, device, args)
+
+        loss_val = float(loss.detach().cpu()) if isinstance(loss, torch.Tensor) else 0.0
 
         if isinstance(loss, torch.Tensor) and loss.requires_grad:
             scaled_loss = loss / args.grad_accum_steps
             scaled_loss.backward()
+
+            metric_accum.append({
+                "loss": loss_val,
+                "reward": avg_reward,
+                **gen_metrics,
+                **loss_metrics,
+            })
 
             if (num_steps + 1) % args.grad_accum_steps == 0:
                 if args.max_grad_norm > 0:
@@ -615,18 +687,24 @@ def main(args):
                     print("Syncing weights to vLLM...", flush=True)
                     vllm_engine = sync_weights_to_vllm(model, vllm_engine, tokenizer, vllm_tmpdir, args)
 
-        loss_val = float(loss.detach().cpu()) if isinstance(loss, torch.Tensor) else 0.0
+                # Average accumulated metrics over the window and log once per update
+                avg_metrics = {}
+                for k in metric_accum[0].keys():
+                    vals = [m[k] for m in metric_accum if k in m]
+                    if vals:
+                        avg_metrics[k] = sum(vals) / len(vals)
+                avg_metrics["lr"] = scheduler.get_last_lr()[0]
+                wandb.log(avg_metrics, step=update_steps)
+
+                losses.append({"update_step": update_steps, **avg_metrics})
+                update_steps += 1
+                metric_accum = []
+
         updated = (num_steps + 1) % args.grad_accum_steps == 0 and isinstance(loss, torch.Tensor) and loss.requires_grad
         print(f"\n[Step {num_steps}] Loss: {loss_val:.4f} | Reward: {avg_reward:.3f} | Updated: {updated}", flush=True)
         tbar.set_description(
             f"Loss: {loss_val:.4f} | Reward: {avg_reward:.3f}"
         )
-
-        losses.append({
-            "step": num_steps,
-            "loss": loss_val,
-            "reward": avg_reward,
-        })
 
         num_steps += 1
         if num_steps % args.save_interval == 0:
@@ -654,6 +732,8 @@ def main(args):
     if vllm_tmpdir and os.path.exists(vllm_tmpdir):
         shutil.rmtree(vllm_tmpdir)
 
+    wandb.finish()
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -676,7 +756,7 @@ if __name__ == "__main__":
     parser.add_argument("--stp_max_steps", default=15, type=int)
 
     # GRPO hyperparameters
-    parser.add_argument("--num_generations", default=8, type=int,
+    parser.add_argument("--num_generations", default=16, type=int,
                         help="G: completions sampled per prompt")
     parser.add_argument("--max_new_tokens", default=4096, type=int)
     parser.add_argument("--max_prompt_length", default=512, type=int)
@@ -690,9 +770,9 @@ if __name__ == "__main__":
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--adam_beta1", default=0.9, type=float)
     parser.add_argument("--adam_beta2", default=0.999, type=float)
-    parser.add_argument("--warmup_ratio", default=0.1, type=float)
+    parser.add_argument("--warmup_steps", default=50, type=int)
     parser.add_argument("--max_grad_norm", default=1.0, type=float)
-    parser.add_argument("--grad_accum_steps", default=4, type=int)
+    parser.add_argument("--grad_accum_steps", default=8, type=int)
     parser.add_argument("--save_interval", default=100, type=int)
 
     # LoRA

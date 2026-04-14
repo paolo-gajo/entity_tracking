@@ -138,6 +138,20 @@ def run_model(model, input_ids, attention_mask, activations='real'):
         lhs = torch.abs(lhs)
     return lhs
 
+def get_random_lhs(model, input_ids, step_indices, activations='real'):
+    seq_len = input_ids.shape[0]
+    hidden_size = model.config.hidden_size
+    device = input_ids.device
+    lhs = torch.zeros(seq_len, hidden_size, device=device)
+    unique_steps = step_indices.unique().tolist()
+    for s in unique_steps:
+        mask = (step_indices == s)
+        v = torch.randn(hidden_size, device=device)
+        lhs[mask] = v
+    if activations == 'non-negative':
+        lhs = torch.abs(lhs)
+    return lhs
+
 def compute_scores(hidden_states, step_indices, step_order):
     H_steps = get_step_embeddings(hidden_states, step_indices, step_order)
     # directed: S[i,j] = -||relu(H[i]-H[j])||^2
@@ -197,16 +211,18 @@ def process_model(model_name, args, data):
     collator = Collator(tokenizer)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, collate_fn=collator.dag_collate)
 
-    results = {'directed': {}, 'undirected': {}}
+    sources = ['real', 'random']
+    modes = ['directed', 'undirected', 'directed_raw', 'undirected_raw']
+    results = {src: {m: {} for m in modes} for src in sources}
     shuffle_types = ['unshuffled', 'topological', 'permutations']
 
     for shuffle_type in shuffle_types:
-        run_means = {'directed': [], 'undirected': []}
+        run_means = {src: {m: [] for m in modes} for src in sources}
         n_runs = args.n_runs if shuffle_type != 'unshuffled' else 1
 
         print(f"Processing {shuffle_type} (reachability)...")
         for run_idx in tqdm(range(n_runs), desc="Runs"):
-            cur = {'directed': [], 'undirected': []}
+            cur = {src: {m: [] for m in modes} for src in sources}
 
             for batch_idx, batch in enumerate(dataloader):
                 batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
@@ -229,57 +245,56 @@ def process_model(model_name, args, data):
 
                 input_ids, step_indices = apply_step_order(orig_input_ids, step_order, orig_indices)
 
-                # Run + score
-                lhs = run_model(model, input_ids, batch['attention_mask'][0], args.activations)
-                S_dir, S_undir, _ = compute_scores(lhs, step_indices, step_order)
-
-                # Optional plot first example
-                if run_idx == 0 and batch_idx == 0 and args.save_heatmaps:
-                    base = model.config.name_or_path if 'models' in model.config.name_or_path else os.path.join('models', 'baseline', 'gpt2')
-                    os.makedirs(base, exist_ok=True)
-                    plot_tensor_heatmap(S_dir, os.path.join(base, f"S_directed_{shuffle_type}.pdf"))
-                    plot_tensor_heatmap(S_undir, os.path.join(base, f"S_undirected_{shuffle_type}.pdf"))
-
-                # Gold reachability
-                # NOTE: the adjacency matrix order is also permuted.
-                # we want to compare A_ij to S_ij, so with a model whose embedding topology
-                # perfectly resembles the DAG underlying the recipe
-                # we should see that the energy of the node pairs
-                # always matches perfectly with the gold reachabilities
-                # no matter the permutation of the input into the model
-                # i.e. the model's representations 
                 A_gold = gold_reachability_matrix(G, step_order)
 
-                # Predicted reachability scores from S
-                R_dir = widest_path_closure(S_dir)
-                R_undir = widest_path_closure(S_undir)
+                lhs_map = {
+                    'real': run_model(model, input_ids, batch['attention_mask'][0], args.activations),
+                    'random': get_random_lhs(model, input_ids, step_indices, args.activations),
+                }
 
-                # NOTE: keep your historical transpose convention if needed.
-                # If your earlier sims needed A.T to align, keep it here too:
-                #   auc = get_auc(R_dir, A_gold.T)
-                # Otherwise use A_gold.
-                if args.use_gold_transpose:
-                    auc_d = get_auc(R_dir, A_gold.T)
-                    auc_u = get_auc(R_undir, A_gold.T)
-                else:
-                    auc_d = get_auc(R_dir, A_gold)
-                    auc_u = get_auc(R_undir, A_gold)
+                for src in sources:
+                    lhs = lhs_map[src]
+                    S_dir, S_undir, _ = compute_scores(lhs, step_indices, step_order)
 
-                if not np.isnan(auc_d): cur['directed'].append(auc_d)
-                if not np.isnan(auc_u): cur['undirected'].append(auc_u)
+                    # if run_idx == 0 and batch_idx == 0 and args.save_heatmaps:
+                    #     base = model.config.name_or_path if 'models' in model.config.name_or_path else os.path.join('models', 'baseline', 'gpt2')
+                    #     base = os.path.join(base, src)
+                    #     os.makedirs(base, exist_ok=True)
+                    #     plot_tensor_heatmap(S_dir, os.path.join(base, f"S_directed_{shuffle_type}.pdf"))
+                    #     plot_tensor_heatmap(S_undir, os.path.join(base, f"S_undirected_{shuffle_type}.pdf"))
 
-            if cur['directed']:
-                run_means['directed'].append(np.mean(cur['directed']))
-            if cur['undirected']:
-                run_means['undirected'].append(np.mean(cur['undirected']))
+                    R_dir = widest_path_closure(S_dir)
+                    R_undir = widest_path_closure(S_undir)
 
-        for mode in ['directed', 'undirected']:
-            mu, moe, _ = calculate_statistics(run_means[mode])
-            results[mode][shuffle_type] = {
-                'mu': mu,
-                'moe': moe,
-                'auc': f'{mu:.3f} ± {moe:.3f}'
-            }
+                    A_eval = A_gold.T if args.use_gold_transpose else A_gold
+                    auc_d = get_auc(R_dir, A_eval)
+                    auc_u = get_auc(R_undir, A_eval)
+                    auc_d_raw = get_auc(S_dir, A_eval)
+                    auc_u_raw = get_auc(S_undir, A_eval)
+
+                    if not np.isnan(auc_d): cur[src]['directed'].append(auc_d)
+                    if not np.isnan(auc_u): cur[src]['undirected'].append(auc_u)
+                    if not np.isnan(auc_d_raw): cur[src]['directed_raw'].append(auc_d_raw)
+                    if not np.isnan(auc_u_raw): cur[src]['undirected_raw'].append(auc_u_raw)
+
+            for src in sources:
+                for m in modes:
+                    if cur[src][m]:
+                        run_means[src][m].append(np.mean(cur[src][m]))
+
+        for src in sources:
+            for mode in modes:
+                mu, moe, _ = calculate_statistics(run_means[src][mode])
+                vals = run_means[src][mode]
+                mn = float(np.min(vals)) if vals else 0.0
+                mx = float(np.max(vals)) if vals else 0.0
+                results[src][mode][shuffle_type] = {
+                    'mu': mu,
+                    'moe': moe,
+                    'min': mn,
+                    'max': mx,
+                    'auc': f'{mu:.3f} ± {moe:.3f} [{mn:.3f}, {mx:.3f}]'
+                }
 
     return results
 

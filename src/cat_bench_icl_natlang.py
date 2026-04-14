@@ -160,22 +160,20 @@ def evaluate_batch(batch_df, tokenizer, model, device, thinking=True,
 
         # Find the yes/no token position in generated sequence and get its prob
         # Look for the first yes/no token after </think> (or from start if no thinking)
-        think_token_id = None
+
         # Find </think> token id
         think_end_ids = tokenizer.encode("</think>", add_special_tokens=False)
+        last_think_end_id = think_end_ids[-1]
+        scores_offset = 0
+        if thinking and last_think_end_id in gen_ids:
+            scores_offset = torch.where(gen_ids == last_think_end_id)[0][0].item()
+            gen_ids = gen_ids[scores_offset:]
 
         answer_token_idx = None
-        in_answer_region = not thinking  # If no thinking, start looking immediately
         for t in range(len(gen_ids)):
             tok_id = gen_ids[t].item()
-            # Check if we've passed </think>
-            if not in_answer_region:
-                if tok_id in think_end_ids:
-                    in_answer_region = True
-                continue
-            # Check if this is a yes or no token
             if tok_id in yes_ids or tok_id in no_ids:
-                answer_token_idx = t
+                answer_token_idx = scores_offset + t
                 break
 
         prob_yes = 0.0
@@ -185,7 +183,6 @@ def evaluate_batch(batch_df, tokenizer, model, device, thinking=True,
             probs = F.softmax(logits, dim=-1)
             prob_yes = probs[yes_ids].sum().item()
             prob_no = probs[no_ids].sum().item()
-
         # Map answer to prediction
         label_map = {"yes": 1, "no": 0}
         pred_label = label_map.get(answer, -1)
@@ -216,6 +213,7 @@ def main(args):
     if args.sample_type != "all":
         df_test = df_test[df_test["type"] == args.sample_type]
     if args.num_samples > 0:
+        df_test = df_test.sample(frac=1)
         df_test = df_test.head(args.num_samples)
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
