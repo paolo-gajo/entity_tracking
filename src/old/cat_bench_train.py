@@ -2,8 +2,8 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import pandas as pd
 from torch.utils.data.dataloader import DataLoader
-from utils_data import make_cat_bench_sample, pad_collate
-from utils_models import prep_inputs_for_causal_lm
+from utils.utils_data import make_cat_bench_sample, pad_collate
+from utils.utils_models import prep_inputs_for_causal_lm
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from tqdm.auto import tqdm

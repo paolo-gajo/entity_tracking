@@ -191,7 +191,7 @@ def extract_spans_by_markers(full_text, offsets, markers_in_order, char_start=0)
     for mi, m in enumerate(markers_in_order):
         pos = full_text.find(m, search)
         if pos == -1:
-            return None
+            return None  # if even just one of the markers is not found we return None
         anchors.append((pos, pos + len(m), mi))
         search = pos + len(m)
 
@@ -218,6 +218,35 @@ def mean_pool_span(hidden, tok_start, tok_end):
     if tok_start >= tok_end:
         return None
     return hidden[tok_start:tok_end].mean(dim=0)
+
+
+def pool_completion_by_gold_id(
+    hidden, spans, full_text, gold_norm, n, hidden_dim, device, dtype,
+):
+    """Pool each emitted "Step k:" span and place it at its gold-id slot.
+
+    Returns (H, predicted_order) where H[g - 1] is the pooled vector for
+    gold step g (1-based) and predicted_order[k] is the gold id emitted at
+    emission position k. Returns (None, None) on any alignment failure:
+    unknown step text, duplicate step, empty span, or wrong total count.
+    """
+    H = torch.zeros(n, hidden_dim, device=device, dtype=dtype)
+    predicted_order = []
+    used = set()
+    for (_, tok_start, tok_end, char_after, char_next) in spans:
+        key = normalize_text(full_text[char_after:char_next])
+        g = gold_norm.get(key)
+        if g is None or g in used:
+            return None, None
+        pooled = mean_pool_span(hidden, tok_start, tok_end)
+        if pooled is None:
+            return None, None
+        H[g - 1] = pooled
+        predicted_order.append(g)
+        used.add(g)
+    if len(predicted_order) != n:
+        return None, None
+    return H, predicted_order
 
 
 # -------------------------
@@ -352,16 +381,15 @@ def process_recipe(
             top_p=top_p,
             top_k=top_k,
         )
-    prompt_len = gen_inputs["input_ids"].shape[1]
+    prompt_ids = gen_inputs["input_ids"][0]
+    
     tokenizer.padding_side = "right"
 
-    gen_ids = gen_sequences[0, prompt_len:]
+    gen_ids = gen_sequences[0, len(prompt_ids):]
     if tokenizer.eos_token_id is not None:
         eos_pos = (gen_ids == tokenizer.eos_token_id).nonzero(as_tuple=True)[0]
         if len(eos_pos) > 0:
             gen_ids = gen_ids[: eos_pos[0]]
-    prompt_ids = gen_inputs["input_ids"][0]
-
     full_ids = torch.cat([prompt_ids, gen_ids], dim=0)
     model_max = getattr(model.config, "max_position_embeddings", 8192)
     full_ids = full_ids[:model_max]
@@ -419,27 +447,14 @@ def process_recipe(
         if len(gold_norm) != n:
             alignment_ok = False
         else:
-            predicted_order = []
-            used = set()
-            for (mi, tok_start, tok_end, char_after, char_next) in comp_spans:
-                slice_text = gen_full[char_after:char_next]
-                key = normalize_text(slice_text)
-                if key not in gold_norm:
-                    alignment_ok = False
-                    break
-                g = gold_norm[key]
-                if g in used:
-                    alignment_ok = False
-                    break
-                used.add(g)
-                predicted_order.append(g)
-                pooled = mean_pool_span(gen_hidden, tok_start, tok_end)
-                if pooled is None:
-                    alignment_ok = False
-                    break
-                H_completion[g - 1] = pooled
-            if alignment_ok and len(predicted_order) != n:
+            H_comp, predicted_order = pool_completion_by_gold_id(
+                gen_hidden, comp_spans, gen_full, gold_norm,
+                n, hidden_dim, device, hidden_full.dtype,
+            )
+            if H_comp is None:
                 alignment_ok = False
+            else:
+                H_completion = H_comp
 
     gen_text = gen_full
 
@@ -457,7 +472,7 @@ def process_recipe(
 
     if prompt_ok:
         result.prompt_aucs = all_aucs(H_prompt, G)
-
+    import pdb; pdb.set_trace()
     return result
 
 
@@ -528,6 +543,10 @@ def set_seed(seed):
 
 
 def main(args):
+    assert args.can_think or not args.thinking, (
+        f"--thinking=1 but --can_think=0 for {args.model_dir}: "
+        f"this model does not support a thinking trace."
+    )
     set_seed(args.seed)
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -537,6 +556,16 @@ def main(args):
     if args.limit > 0:
         recipes = recipes[: args.limit]
     print(f"Loaded {len(recipes)} recipes after filtering.")
+
+    model_leaf = os.path.basename(os.path.normpath(args.model_dir))
+    save_dir = os.path.join(
+        args.results_base_dir, "sims_thinking",
+        f"thinking={args.thinking}", model_leaf,
+    )
+    result_path = os.path.join(save_dir, "results.json")
+    if os.path.exists(result_path) and not args.repeat:
+        print(f"Skipping {args.model_dir}: results exist at {result_path}")
+        return
 
     print(f"Loading model: {args.model_dir}")
     tokenizer = AutoTokenizer.from_pretrained(args.model_dir, padding_side="right")
@@ -573,11 +602,6 @@ def main(args):
     print(json.dumps(summary, indent=2))
 
     if args.save_results:
-        model_leaf = os.path.basename(os.path.normpath(args.model_dir))
-        save_dir = os.path.join(
-            args.results_base_dir, "sims_thinking",
-            f"thinking={args.thinking}", model_leaf,
-        )
         os.makedirs(save_dir, exist_ok=True)
         out = {
             "eval_config": vars(args),
@@ -596,10 +620,9 @@ def main(args):
                 for r in flat
             ],
         }
-        path = os.path.join(save_dir, "results.json")
-        with open(path, "w", encoding="utf8") as f:
+        with open(result_path, "w", encoding="utf8") as f:
             json.dump(out, f, ensure_ascii=False, indent=2)
-        print(f"Saved: {path}")
+        print(f"Saved: {result_path}")
 
 
 if __name__ == "__main__":
@@ -608,6 +631,8 @@ if __name__ == "__main__":
     parser.add_argument("--n_runs", default=1, type=int)
     parser.add_argument("--seed", default=42, type=int)
     parser.add_argument("--thinking", default=1, type=int)
+    parser.add_argument("--can_think", default=1, type=int,
+                        help="Whether the model architecture supports a thinking trace")
     parser.add_argument("--max_new_tokens", default=4096, type=int)
     parser.add_argument("--do_sample", default=1, type=int)
     parser.add_argument("--limit", default=0, type=int,
@@ -615,5 +640,42 @@ if __name__ == "__main__":
     parser.add_argument("--save_results", default=1, type=int)
     parser.add_argument("--save_generations", default=1, type=int)
     parser.add_argument("--results_base_dir", default="./results", type=str)
+    parser.add_argument("--repeat", default=0, type=int)
     args = parser.parse_args()
     main(args)
+
+"""
+1. in aggiunta al roc auc score  fare un'analisi di quanto sia simile lo spettro della matrice prompt vs completion. this is to check whether there are very incorrect dimensions
+
+2. invece di vendrov, addestrare un mapping su ERFGC, tutti i topo orders di tutte le ricette, 80/20 train test, eval roc auc score on the 20 test.
+
+3. PCA: per capire come sono distribuiti gli embedding fatti dall'llm, per vedere magari se fa clustreing o riesce a vedere qcs. tu passi un batch di ricette all'llm che deve ordinare, estrai embedding che ti servono per ogni ricetta scrambled, e.g. passi n ricette, ma ogni ricetta puo avere un numero variable di step
+
+quindi, dato per scontato che il modelo outputta l'ordine corretto, analizzi quegli output del modello con N step
+
+ale: hai una ricetta con n step, prendi mean pooled embedding dall'llm. prendi tutti i possibili pair di step in cui uno viene prima dell'altro, quindi e.g. A -> C, B -> C...
+
+hai una ricetta, prendi gli step, poi quello che serve è calcolare le feat su tutte le edge valide e non valide, ossia indexi H \in N x N con R \in N x N. ora abbiamo una matrice k x d e facciamo pca su questa matrice. k è il numreo di feat che abbiamo. 
+
+vogliamo vedere le edges encodate in direzioni dlela pca, ossia vogliamo vedere se l'llm è capace di separare gli step in maniera che appaiano separate nella pca. il punto è trovare un modo di plottare in 2d
+
+VOGLIAMO VEDERE SE IN 2D LE EDGES VALIDE SONO CLUSTERATE SEPARATAMENTE DA QUELLE NON VALIDE
+
+usando le feature della probe, che calcola feature per un pair di step, puoi vedere se il modello encoda ordering delle edges, e.g. A->B, B->C, quindi AB viene prima di BC
+
+-------
+trovare qcs di alternativo per vedere se quello che l'llm ha senso o no. pssiamo fre mean pooling fra 2 step e fare pca, oppure fare con feature imparate dal linaer probe. ci si aspetta che le feat del linear probe abbiano molto più senso. ha più senso provare a ricostruire la reachability dalle feature del linear probe.
+
+------
+il punto di sto esperimento è vedere se il reasoning aiuta a produrre embedding che retrievano R
+
+con queste analisi è anche un paper molto di explainability
+
+se le feat del linear probe sono meglio, la linear probe è solo un mapping, quindi hai solo bisogno di una trasformazione affine per ottenere la reachability matrix
+
+gli embedding dell'llm magari hanno bisogno di una semplice trasformazione affine, quindi se la performnace della probe con l'llm standard è buona, allora 
+
+è una trasformazione lineare, quindi la geometria non cmbia, ma magari cosine similarity ha più senso
+
+
+"""

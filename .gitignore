@@ -13,3 +13,5 @@ viz/
 misc/
 paper/
 wandb/
+figs/
+src/proc_causal_reasoning.egg-info/

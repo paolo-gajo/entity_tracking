@@ -14,7 +14,7 @@ from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, average_pre
 import json
 import argparse
 import os
-from utils_sys import setup_config
+from utils.utils_sys import setup_config
 
 # -------------------------
 # Model setup (same as sims_step_tokens.py)

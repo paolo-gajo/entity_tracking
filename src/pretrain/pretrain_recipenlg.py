@@ -1,18 +1,18 @@
 import torch
 from torch.optim import AdamW
 from torch.utils.data.dataloader import DataLoader
-from utils_data import (
+from utils.utils_data import (
     Seq2SeqDataset, Collator, make_random_samples_dataset,
     make_pos_neg_samples_dataset, prepare_text_batch_prompt,
 )
-from utils_sys import save_run, setup_config, capture_source_snapshot
-from utils_viz import save_heatmaps
-from utils_model import PositionHead, build_model_tokenizer
-from train.forward import compute_forward_bundle
-from train.pos_adv import compute_pos_adv_loss
-from train.logging import log_probe_stats
-from sims import compute_scores
-from loss_functions import (
+from utils.utils_sys import save_run, setup_config, capture_source_snapshot
+from utils.utils_viz import save_heatmaps
+from utils.utils_model import PositionHead, build_model_tokenizer
+from utils.utils_train import compute_forward_bundle
+from utils.utils_train import compute_pos_adv_loss
+from utils.utils_train import log_probe_stats
+from reachability.utils_reachability import compute_scores
+from utils.loss_functions import (
     KLDivergenceLoss,
     CausalLMLoss,
     MaxMarginLoss,

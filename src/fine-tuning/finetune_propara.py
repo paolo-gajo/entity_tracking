@@ -2,7 +2,7 @@ import torch
 from torch.optim import AdamW
 from torch.utils.data import Dataset, DataLoader
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from utils_model import load_model_from_checkpoint
+from utils.utils_model import load_model_from_checkpoint
 from tqdm.auto import tqdm
 import argparse
 import json

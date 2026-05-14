@@ -36,16 +36,16 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 # ── Imports from existing codebase ────────────────────────────────────────
-from utils_data import Collator
-from utils_model import build_model_tokenizer
-from utils_sys import save_run, setup_config
-from loss_functions import (
+from utils.utils_data import Collator
+from utils.utils_model import build_model_tokenizer
+from utils.utils_sys import save_run, setup_config
+from utils.loss_functions import (
     StepTokenLoss,
     CausalLMLoss,
     MaxMarginLoss,
     gather_losses,
 )
-from train.forward import compute_forward_bundle
+from utils.utils_train import compute_forward_bundle
 
 torch.set_printoptions(linewidth=100000)
 
@@ -832,7 +832,7 @@ def main(args):
 
         # Save a decoded prompt on the first step for debugging
         if num_steps == 0:
-            from utils_data import prepare_text_batch_prompt
+            from utils.utils_data import prepare_text_batch_prompt
 
             prompt = prepare_text_batch_prompt(batch, tokenizer)
             os.makedirs("./misc", exist_ok=True)

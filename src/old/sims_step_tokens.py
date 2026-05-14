@@ -8,8 +8,8 @@
 
 import torch
 from transformers import AutoModel, AutoTokenizer
-from utils_data import ProcTextDataset, Collator
-from utils_viz import plot_tensor_heatmap
+from utils.utils_data import ProcTextDataset, Collator
+from utils.utils_viz import plot_tensor_heatmap
 from torch.utils.data.dataloader import DataLoader
 import networkx as nx
 import json
@@ -20,7 +20,7 @@ import argparse
 from scipy import stats
 import os
 from sklearn.metrics import roc_auc_score
-from utils_sys import setup_config
+from utils.utils_sys import setup_config
 
 # -------------------------
 # Metrics (same as sims.py)

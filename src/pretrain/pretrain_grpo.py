@@ -14,7 +14,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingLR, LinearLR, SequentialLR
 from peft import get_peft_model, LoraConfig
-from utils_sys import save_run, setup_config
+from utils.utils_sys import save_run, setup_config
 from tqdm.auto import tqdm
 import argparse
 import json
