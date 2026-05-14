@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import PeftModel, PeftConfig
-from utils_model import load_model_from_checkpoint
+from utils.utils_model import load_model_from_checkpoint
 from tqdm.auto import tqdm
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, classification_report, roc_auc_score
@@ -11,7 +11,7 @@ import os
 import json
 import argparse
 import random
-from utils_sys import get_current_time_string
+from utils.utils_sys import get_current_time_string
 
 def get_step_embeddings(batch_df, tokenizer, model, device, use_positional=False, shuffle_steps=False):
     """
@@ -195,13 +195,14 @@ def load_and_extract(path, tokenizer, model, device, sample_type='real', batch_s
 def get_model_info(model_path, args, task_name="cat_bench_regression"):
     train_conf_path = os.path.join(model_path, "train_config.json")
     sample_dir = f"samples={args.sample_type}"
+    results_base = getattr(args, 'results_base_dir', './results') or './results'
 
     if os.path.exists(train_conf_path):
         with open(train_conf_path, "r", encoding="utf8") as f:
             train_config = json.load(f)
         # train_config = setup_config(train_config_raw)
         rel = os.path.relpath(model_path, start=os.path.normpath("./models"))
-        save_path = os.path.join("./results", task_name, sample_dir, rel)
+        save_path = os.path.join(results_base, task_name, sample_dir, rel)
         print(f'save_path: {save_path}')
         return save_path, train_config
 
@@ -210,7 +211,7 @@ def get_model_info(model_path, args, task_name="cat_bench_regression"):
     revision = getattr(args, 'revision', None)
     if revision:
         model_leaf = f"{model_leaf}_{revision}"
-    save_path = os.path.join("./results", task_name, sample_dir, "baseline", model_leaf, "0")
+    save_path = os.path.join(results_base, task_name, sample_dir, "baseline", model_leaf, "0")
     return save_path, train_config
 
 def save_results_to_disk(results, save_path, train_config, args):
@@ -250,6 +251,9 @@ def main(args):
             model_list = [{"path": args.model_dir, "num_steps": 0}]
         model_list = sorted(model_list, key=lambda x: x["num_steps"])
 
+    if args.step_interval > 0:
+        model_list = [m for m in model_list if m["num_steps"] % args.step_interval == 0]
+    
     for m in model_list:
         model_name = m["path"]
         task_name = "cat_bench_regression"
@@ -278,7 +282,7 @@ def main(args):
             config = PeftConfig.from_pretrained(model_name)
             base_model = AutoModelForCausalLM.from_pretrained(
                 config.base_model_name_or_path,
-                torch_dtype=torch.bfloat16,
+                dtype=torch.bfloat16,
             ).to(device)
 
             # Resize base model to match checkpoint vocab size if they differ
@@ -299,8 +303,8 @@ def main(args):
         else:
             print("-> Loading model (auto-detects abs PE wrapper)...")
             model = load_model_from_checkpoint(model_name, device=device, revision=revision, dtype=torch.bfloat16)
-        if len(tokenizer) != model.config.vocab_size:
-            model.resize_token_embeddings(len(tokenizer))
+            if len(tokenizer) != model.config.vocab_size:
+                model.resize_token_embeddings(len(tokenizer))
 
         model.eval()
 
@@ -334,6 +338,8 @@ def main(args):
             "acc": float(np.mean(preds == y_test)),
             "f1_macro": float(f1_score(y_test, preds, average='macro')),
             "f1_binary": float(f1_score(y_test, preds, average='binary')),
+            "y_test": y_test.tolist(),
+            "preds": preds.tolist(),
         }
         if len(np.unique(y_test)) == 2:
             results["roc_auc"] = float(roc_auc_score(y_test, probs))
@@ -367,7 +373,11 @@ if __name__ == "__main__":
                         help="Fraction of data to use (0.0-1.0)")
     parser.add_argument("--max_iter", default=2000, type=int,
                         help="Max iterations for logistic regression")
+    parser.add_argument("--step_interval", default=10000, type=int,
+                        help="If > 0, only evaluate checkpoints whose num_steps is a multiple of this value")
     parser.add_argument("--revision", default=None, type=str,
                         help="Model revision/checkpoint to load (e.g. 'step4000' for Pythia early checkpoints)")
+    parser.add_argument("--results_base_dir", default="./results", type=str,
+                        help="Base directory for saving results (default: ./results)")
     args = parser.parse_args()
     main(args)

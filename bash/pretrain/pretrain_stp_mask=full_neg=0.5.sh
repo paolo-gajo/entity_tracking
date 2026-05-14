@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=0
+num_samples=350000
 batch_mode="random_samples"
 batch_size=8
 
@@ -31,8 +31,8 @@ batch_size=8
 # model_name="GroNLP/gpt2-small-italian" # APE
 
 # model_name="openai-community/gpt2"
-model_name="openai-community/gpt2-medium"
-# model_name="openai-community/gpt2-large"
+# model_name="openai-community/gpt2-medium"
+model_name="openai-community/gpt2-large"
 
 # model_name="EleutherAI/gpt-neo-125m" # APE
 # model_name="facebook/opt-125m" # APE
@@ -50,6 +50,7 @@ model_name="openai-community/gpt2-medium"
 # model_name="Qwen/Qwen3.5-9B-Base" # RoPE
 # model_name="Qwen/Qwen3.5-4B-Base" # RoPE
 
+resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=full/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/gpt2-large/2026-03-25--17-42-12/225000"
 # resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs/attn=full/loss=completion_only/clm=0/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/gpt2-large/2026-03-16--17-13-15/121000"
 
 # revision="step4000"

@@ -15,9 +15,9 @@ from sklearn.metrics import f1_score, classification_report, roc_auc_score
 import os
 import json
 import argparse
-from utils_sys import setup_config
+from utils.utils_sys import setup_config
 from peft import PeftModel, PeftConfig
-from utils_model import load_model_from_checkpoint
+from utils.utils_model import load_model_from_checkpoint
 
 # -------------------------
 # Model setup (same as sims_step_tokens.py)

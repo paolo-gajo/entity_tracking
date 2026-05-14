@@ -122,7 +122,94 @@ def generate_bw_problem(n_blocks: int, n_towers: int):
 
 # ── Plan + DAG ──
 
+def get_step_preconditions_and_effects(step):
+    """
+    Return (preconditions, add_effects, delete_effects) for one plan step.
+
+    Each step in the data is really TWO basic blocksworld moves glued together:
+
+      "Remove X from Y"  =  unstack(X, Y)  then  putdown(X)
+      "Stack X onto Y"   =  pickup(X)      then  stack(X, Y)
+
+    We figure out the NET result of the pair:
+      preconditions  – what must be true BEFORE the step
+      add_effects    – what is true AFTER the step
+      delete_effects – what is NO LONGER true after the step
+
+    We leave out "arm_empty" because every step both needs it and restores
+    it, so it never forces one step to come before another.
+
+    Each fact is a tuple like ('on', 'A', 'B') or ('clear', 'A') or
+    ('on_table', 'A').
+    """
+    block = step["block"]
+
+    if step["phase"] == "unstack":
+        #   "Remove block X from block Y and place it on the table."
+        #
+        #   BEFORE the step we need:
+        #     - X sits on Y          ('on', X, Y)
+        #     - nothing is on top of X ('clear', X)
+        #
+        #   AFTER the step:
+        #     - X is on the table     ('on_table', X)   ← NEW
+        #     - Y is now clear        ('clear', Y)      ← NEW  (X was removed)
+        #     - X is still clear      ('clear', X)      ← preserved
+        #     - X is no longer on Y   ('on', X, Y)      ← GONE
+        #
+        Y = step["from_"]
+        preconditions  = {("on", block, Y), ("clear", block)}
+        add_effects    = {("on_table", block), ("clear", block), ("clear", Y)}
+        delete_effects = {("on", block, Y)}
+
+    else:  # "stack"
+        #   "Stack block X onto block Y."
+        #
+        #   BEFORE the step we need:
+        #     - X is on the table     ('on_table', X)
+        #     - nothing is on top of X ('clear', X)
+        #     - nothing is on top of Y ('clear', Y)
+        #
+        #   AFTER the step:
+        #     - X sits on Y           ('on', X, Y)      ← NEW
+        #     - X is still clear      ('clear', X)      ← preserved
+        #     - X is no longer on table ('on_table', X)  ← GONE
+        #     - Y is no longer clear   ('clear', Y)      ← GONE  (X is on Y)
+        #
+        Y = step["to"]
+        preconditions  = {("on_table", block), ("clear", block), ("clear", Y)}
+        add_effects    = {("on", block, Y), ("clear", block)}
+        delete_effects = {("on_table", block), ("clear", Y)}
+
+    return preconditions, add_effects, delete_effects
+
+
 def compute_plan_and_dag(initial_towers, goal_tower):
+    """
+    Compute the plan (list of steps) and the dependency DAG.
+
+    The DAG tells you which steps MUST happen before which other steps.
+    If two steps are NOT connected by any path in the DAG, they are
+    independent — you can do them in either order and the plan still works.
+
+    HOW WE BUILD THE DAG — the EOG algorithm
+    (Explanation-Based Order Generalization):
+
+    The idea is simple.  For each step, we ask: "where does each of its
+    preconditions come from?"  That gives us CAUSAL LINKS — edges that
+    say "step j must happen before step i because j produces something
+    i needs."
+
+    Then we check for THREATS: if some other step k could destroy a fact
+    that a causal link is carrying, we add an extra edge to make sure k
+    doesn't sneak in between the step that provides it and the step
+    that needs it.
+
+    That's it — causal links + threat protection = correct DAG.
+    """
+
+    # ── Generate the plan steps (same logic as before) ──────────────
+
     support = {}
     for tower in initial_towers:
         for i, block in enumerate(tower):
@@ -138,7 +225,7 @@ def compute_plan_and_dag(initial_towers, goal_tower):
 
     steps = []
 
-    # Phase 1: unstack
+    # Phase 1: unstack — take apart towers from top to bottom
     for tower in initial_towers:
         for block in reversed(tower):
             if block in in_position:
@@ -151,13 +238,11 @@ def compute_plan_and_dag(initial_towers, goal_tower):
                 "text": f"Remove block {block} from block {support[block]} and place it on the table.",
             })
 
-    # Phase 2: stack goal tower bottom-up
+    # Phase 2: stack — build the goal tower from bottom to top
     start = len(in_position)
     for i in range(start, len(goal_tower)):
         block = goal_tower[i]
         target = goal_tower[i - 1] if i > 0 else "TABLE"
-        # If this block's goal is "on the table", it's already there after
-        # the unstack phase (US puts every misplaced block on the table).
         if target == "TABLE":
             continue
         steps.append({
@@ -169,65 +254,119 @@ def compute_plan_and_dag(initial_towers, goal_tower):
     if len(steps) < 2:
         return steps, nx.DiGraph(), in_position
 
+    # ── Build the dependency DAG using EOG ──────────────────────────
+
+    # STEP 1: What is true in the world BEFORE any step runs?
+    #
+    # We read this off the initial tower configuration.
+    # Example: towers [["D","C","E"], ["B","A"]] gives us:
+    #   ('on_table', 'D'), ('on', 'C', 'D'), ('on', 'E', 'C'), ('clear', 'E')
+    #   ('on_table', 'B'), ('on', 'A', 'B'), ('clear', 'A')
+
+    initial_state = set()
+    for tower in initial_towers:
+        initial_state.add(("on_table", tower[0]))        # bottom block on table
+        for i in range(1, len(tower)):
+            initial_state.add(("on", tower[i], tower[i - 1]))  # each block on the one below
+        initial_state.add(("clear", tower[-1]))           # top block is clear
+
+    # STEP 2: For each step, figure out what it needs and what it changes.
+
+    n = len(steps)
+    step_pre = []   # step_pre[i]  = set of precondition facts for step i
+    step_add = []   # step_add[i]  = set of facts that become true after step i
+    step_del = []   # step_del[i]  = set of facts that become false after step i
+
+    for s in steps:
+        pre, add, delete = get_step_preconditions_and_effects(s)
+        step_pre.append(pre)
+        step_add.append(add)
+        step_del.append(delete)
+
+    # STEP 3: Build the DAG — one node per step, edges = ordering constraints.
+
     dag = nx.DiGraph()
-    dag.add_nodes_from(range(len(steps)))
+    dag.add_nodes_from(range(n))
 
-    unstack_step = {}
-    stack_step = {}
-    for idx, s in enumerate(steps):
-        (unstack_step if s["phase"] == "unstack" else stack_step)[s["block"]] = idx
+    for i in range(n):
+        for p in step_pre[i]:
 
-    # Rule 1: within-tower unstack chain
-    for tower in initial_towers:
-        chain = []
-        for block in reversed(tower):
-            if block in in_position:
-                break
-            if block in unstack_step:
-                chain.append(unstack_step[block])
-        for j in range(len(chain) - 1):
-            dag.add_edge(chain[j], chain[j + 1])
+            # ── 3a. Find the SUPPORTER of precondition p for step i ─────
+            #
+            # The supporter is the latest step BEFORE i whose add effects
+            # include p.  It's the step that "provides" p to step i.
+            #
+            # If no earlier step provides p, then p must already be true
+            # in the initial state (before any steps run).
 
-    # Rule 2: stack chain (only blocks that actually have a stack step)
-    stack_indices = [
-        stack_step[goal_tower[i]]
-        for i in range(len(in_position), len(goal_tower))
-        if goal_tower[i] in stack_step
-    ]
-    for j in range(len(stack_indices) - 1):
-        dag.add_edge(stack_indices[j], stack_indices[j + 1])
+            supporter = None                        # None means "initial state"
+            for j in range(i - 1, -1, -1):          # scan backwards from i
+                if p in step_add[j]:
+                    supporter = j
+                    break
 
-    # Rule 3: unstack block before stacking it
-    for block, si in stack_step.items():
-        if block in unstack_step:
-            dag.add_edge(unstack_step[block], si)
+            # Add a causal-link edge:  supporter ──→ i
+            # meaning "supporter must happen before i"
+            if supporter is not None:
+                dag.add_edge(supporter, i)
 
-    # Rule 4: clear a block before picking it up to stack
-    on_top_of = {}
-    for tower in initial_towers:
-        for i in range(len(tower) - 1):
-            on_top_of[tower[i]] = tower[i + 1]
-    for block, si in stack_step.items():
-        if block in on_top_of:
-            above = on_top_of[block]
-            if above in unstack_step:
-                dag.add_edge(unstack_step[above], si)
+            # ── 3b. Protect this causal link from THREATS ───────────────
+            #
+            # A threat is any step k that DELETES p.  If k were to run
+            # between the supporter and step i, it would destroy p and
+            # step i would fail.
+            #
+            # To prevent that, we force k to be OUTSIDE the window:
+            #   - either k runs before the supporter (so the supporter
+            #     re-establishes p after k destroys it), or
+            #   - k runs after step i (so step i uses p before k
+            #     destroys it).
+            #
+            # Example from the bug we found:
+            #   step 3 = "Remove G from A"  needs ('clear', 'G')
+            #   step 4 = "Stack D onto G"   deletes ('clear', 'G')
+            #   Without threat protection, the DAG would allow step 4
+            #   before step 3, and G would have D on top → can't remove G.
+            #   Threat protection adds edge 3→4: step 3 before step 4.
 
-    # Rule 5: if stacking X onto Y, and Y has a block above it in the
-    #         initial state that needs unstacking, that unstack must
-    #         precede stacking X.  (Handles the bottom-of-goal block
-    #         that was skipped from stack_step because it's already on
-    #         the table.)
-    for step_idx, s in enumerate(steps):
-        if s["phase"] != "stack":
-            continue
-        target = s["to"]
-        if target in on_top_of:
-            above_target = on_top_of[target]
-            if above_target in unstack_step:
-                dag.add_edge(unstack_step[above_target], step_idx)
+            for k in range(n):
+                if k == i or k == supporter:
+                    continue
+                if p not in step_del[k]:
+                    continue
 
-    assert nx.is_directed_acyclic_graph(dag)
+                # Step k deletes p — it's a threat.  Force it outside.
+
+                if supporter is None:
+                    # p comes from the initial state (before all steps).
+                    # We can't put k "before the initial state", so the
+                    # only option is: k must come AFTER step i.
+                    dag.add_edge(i, k)
+
+                elif k < supporter:
+                    # k is before the supporter in the original plan.
+                    # Keep it that way: k must stay before the supporter.
+                    dag.add_edge(k, supporter)
+
+                elif k > i:
+                    # k is after step i in the original plan.
+                    # Keep it that way: k must stay after step i.
+                    dag.add_edge(i, k)
+
+                # The remaining case (supporter < k < i) is impossible
+                # in a correct plan — it would mean k destroys p between
+                # the step that provides it and the step that needs it,
+                # so the plan wouldn't work.
+
+    # STEP 4: Remove redundant edges.
+    #
+    # If we have A→B and B→C, we don't also need A→C — it's implied.
+    # The "transitive reduction" strips out these redundant edges,
+    # leaving only the essential ones.
+
+    dag = nx.transitive_reduction(dag)
+
+    assert nx.is_directed_acyclic_graph(dag), "BUG: produced a cyclic graph!"
     return steps, dag, in_position
 
 
@@ -372,7 +511,7 @@ def generate_dataset(
             "n_steps": len(steps),
             "dag_edges": edges,
             "dag_width": max(len(ac) for ac in nx.antichains(dag)) if dag.number_of_nodes() > 0 else 0,
-            "n_valid_toposorts": count_valid_toposorts(dag, limit=1000),
+            # "n_valid_toposorts": count_valid_toposorts(dag, limit=1000),
             "initial_towers": initial,
             "goal_tower": goal,
             "steps": step_texts,
@@ -446,7 +585,7 @@ def inspect_sample(entry, meta_entry):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--n_problems", type=int, default=50_000)
+    parser.add_argument("--n_problems", type=int, default=10_000)
     parser.add_argument("--n_blocks_min", type=int, default=6)
     parser.add_argument("--n_blocks_max", type=int, default=15)
     parser.add_argument("--n_towers_min", type=int, default=2)

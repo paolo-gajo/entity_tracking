@@ -799,6 +799,11 @@ class ProcTextDataset(Dataset):
         G.add_nodes_from(unique_steps)
         return G
 
+    def add_num_topos(self):
+        for i in tqdm(range(len(self.data)), desc='add_num_topos', disable=self.disable_tqdm):
+            G_i = self.data[i]['G_tokens']
+            self.data[i]['num_topos'] = len([el for el in nx.all_topological_sorts(G_i)])
+
     def make_edge_list(self, head_indices, step_indices):
         head_indices = [0] + head_indices
         step_indices = [0] + step_indices

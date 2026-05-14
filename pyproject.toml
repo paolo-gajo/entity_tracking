@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proc_causal_reasoning"
+version = "0.1.0"
+description = "Package for causal reasoning experiments on procedural texts."
+authors = [
+    {name = "Paolo Gajo", email = "paolo.gajo2@unibo.it"}
+]

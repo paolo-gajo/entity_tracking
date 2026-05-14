@@ -77,7 +77,7 @@ def save_model_tokenizer(model, tokenizer, save_config, model_save_dir, filename
     with open(os.path.join(model_save_dir, filename), 'w', encoding='utf8') as f:
         json.dump(save_config, f, ensure_ascii = False, indent = 4, default = str)
 
-    from utils_model import SmolLM2WithAbsPE
+    from utils.utils_model import SmolLM2WithAbsPE
     if isinstance(model, SmolLM2WithAbsPE):
         # Save the base HF model and the abs PE weights separately
         model.base_model.save_pretrained(model_save_dir)

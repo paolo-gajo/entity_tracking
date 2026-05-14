@@ -1,19 +1,21 @@
-# sims.py
+# src/reachability/utils_reachability.py
 import torch
-from transformers import AutoModel, AutoTokenizer
-from utils_data import ProcTextDataset, Collator
-from utils_viz import plot_tensor_heatmap
-from torch.utils.data.dataloader import DataLoader
-import networkx as nx
-import json
 import numpy as np
-import random
-from tqdm.auto import tqdm
-import argparse
-from scipy import stats
-import os
 from sklearn.metrics import roc_auc_score
-from utils_sys import setup_config
+import random
+from scipy import stats
+import json
+import networkx as nx
+from transformers import AutoModel, AutoTokenizer
+from torch.utils.data.dataloader import DataLoader
+from tqdm.auto import tqdm
+import os
+
+from utils.utils_data import ProcTextDataset, Collator
+from utils.utils_viz import plot_tensor_heatmap
+from utils.utils_sys import setup_config
+
+from data_analysis.pca_utils import run_and_plot_pca
 
 # -------------------------
 # Metrics
@@ -138,6 +140,20 @@ def run_model(model, input_ids, attention_mask, activations='real'):
         lhs = torch.abs(lhs)
     return lhs
 
+def get_random_lhs(model, input_ids, step_indices, activations='real'):
+    seq_len = input_ids.shape[0]
+    hidden_size = model.config.hidden_size
+    device = input_ids.device
+    lhs = torch.zeros(seq_len, hidden_size, device=device)
+    unique_steps = step_indices.unique().tolist()
+    for s in unique_steps:
+        mask = (step_indices == s)
+        v = torch.randn(hidden_size, device=device)
+        lhs[mask] = v
+    if activations == 'non-negative':
+        lhs = torch.abs(lhs)
+    return lhs
+
 def compute_scores(hidden_states, step_indices, step_order):
     H_steps = get_step_embeddings(hidden_states, step_indices, step_order)
     # directed: S[i,j] = -||relu(H[i]-H[j])||^2
@@ -193,20 +209,32 @@ def process_model(model_name, args, data):
     )
     dataset.filter_non_dags()
     dataset.filter_short_dags(k=2)
+    dataset.add_num_topos()
 
+    max_steps = max([max(el['step_indices']) for el in dataset])
+    h_steps_dict = {k+1: [] for k in range(max_steps)}
+    
     collator = Collator(tokenizer)
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, collate_fn=collator.dag_collate)
 
-    results = {'directed': {}, 'undirected': {}}
-    shuffle_types = ['unshuffled', 'topological', 'permutations']
+    sources = ['real',
+            #    'random',
+               ]
+    modes = ['directed', 'undirected', 'directed_raw', 'undirected_raw']
+    results = {src: {m: {} for m in modes} for src in sources}
+    shuffle_types = [
+        'unshuffled',
+        # 'topological',
+        # 'permutations',
+        ]
 
     for shuffle_type in shuffle_types:
-        run_means = {'directed': [], 'undirected': []}
+        run_means = {src: {m: [] for m in modes} for src in sources}
         n_runs = args.n_runs if shuffle_type != 'unshuffled' else 1
 
-        print(f"Processing {shuffle_type} (reachability)...")
-        for run_idx in tqdm(range(n_runs), desc="Runs"):
-            cur = {'directed': [], 'undirected': []}
+        print(f"Running N={n_runs} random runs for setting={shuffle_type}")
+        for run_idx in tqdm(range(n_runs)):
+            cur = {src: {m: [] for m in modes} for src in sources}
 
             for batch_idx, batch in enumerate(dataloader):
                 batch = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
@@ -222,64 +250,101 @@ def process_model(model_name, args, data):
                 # consistency checks
                 nodes = set(G.nodes()) - {0}
                 so = set(step_order)
-                assert so == nodes, f"node mismatch: missing={sorted(nodes - so)[:10]} extra={sorted(so - nodes)[:10]}"
+                assert so == nodes, (f"node mismatch: missing={sorted(nodes - so)[:10]}"
+                                     f"extra={sorted(so - nodes)[:10]}")
 
                 steps_in_seq = set(orig_indices.unique().tolist()) - {0}
                 assert set(step_order) == steps_in_seq
 
                 input_ids, step_indices = apply_step_order(orig_input_ids, step_order, orig_indices)
 
-                # Run + score
-                lhs = run_model(model, input_ids, batch['attention_mask'][0], args.activations)
-                S_dir, S_undir, _ = compute_scores(lhs, step_indices, step_order)
-
-                # Optional plot first example
-                if run_idx == 0 and batch_idx == 0 and args.save_heatmaps:
-                    base = model.config.name_or_path if 'models' in model.config.name_or_path else os.path.join('models', 'baseline', 'gpt2')
-                    os.makedirs(base, exist_ok=True)
-                    plot_tensor_heatmap(S_dir, os.path.join(base, f"S_directed_{shuffle_type}.pdf"))
-                    plot_tensor_heatmap(S_undir, os.path.join(base, f"S_undirected_{shuffle_type}.pdf"))
-
-                # Gold reachability
-                # NOTE: the adjacency matrix order is also permuted.
-                # we want to compare A_ij to S_ij, so with a model whose embedding topology
-                # perfectly resembles the DAG underlying the recipe
-                # we should see that the energy of the node pairs
-                # always matches perfectly with the gold reachabilities
-                # no matter the permutation of the input into the model
-                # i.e. the model's representations 
                 A_gold = gold_reachability_matrix(G, step_order)
+                with torch.no_grad():
+                    lhs_map = {
+                        'real': run_model(model, input_ids, batch['attention_mask'][0], args.activations),
+                        'random': get_random_lhs(model, input_ids, step_indices, args.activations),
+                    }
+                
+                for src in sources:
+                    lhs = lhs_map[src]
+                    S_dir, S_undir, H_steps = compute_scores(lhs, step_indices, step_order)
 
-                # Predicted reachability scores from S
-                R_dir = widest_path_closure(S_dir)
-                R_undir = widest_path_closure(S_undir)
+                    # if run_idx == 0 and batch_idx == 0 and args.save_heatmaps:
+                    #     base = (model.config.name_or_path
+                    #                 if 'models' in model.config.name_or_path 
+                    #                 else os.path.join('models', 'baseline', 'gpt2'))
+                    #     base = os.path.join(base, src)
+                    #     os.makedirs(base, exist_ok=True)
+                    #     plot_tensor_heatmap(S_dir,                                          
+                    #                       f"./figs/heatmaps/S_directed_{shuffle_type}.pdf")
+                    #     plot_tensor_heatmap(S_undir,                                          
+                    #                       f"./figs/heatmaps/S_undirected_{shuffle_type}.pdf")
 
-                # NOTE: keep your historical transpose convention if needed.
-                # If your earlier sims needed A.T to align, keep it here too:
-                #   auc = get_auc(R_dir, A_gold.T)
-                # Otherwise use A_gold.
-                if args.use_gold_transpose:
-                    auc_d = get_auc(R_dir, A_gold.T)
-                    auc_u = get_auc(R_undir, A_gold.T)
-                else:
-                    auc_d = get_auc(R_dir, A_gold)
-                    auc_u = get_auc(R_undir, A_gold)
+                    R_dir = widest_path_closure(S_dir)
+                    R_undir = widest_path_closure(S_undir)
 
-                if not np.isnan(auc_d): cur['directed'].append(auc_d)
-                if not np.isnan(auc_u): cur['undirected'].append(auc_u)
+                    A_eval = A_gold.T if args.use_gold_transpose else A_gold
+                    auc_d = get_auc(R_dir, A_eval)
+                    auc_u = get_auc(R_undir, A_eval)
+                    auc_d_raw = get_auc(S_dir, A_eval)
+                    auc_u_raw = get_auc(S_undir, A_eval)
+                    
+                    for pos, step_idx in enumerate(step_order):
+                        h_steps_dict[step_idx].append(H_steps[pos])
+                    # import pdb; pdb.set_trace()
 
-            if cur['directed']:
-                run_means['directed'].append(np.mean(cur['directed']))
-            if cur['undirected']:
-                run_means['undirected'].append(np.mean(cur['undirected']))
+                    if not np.isnan(auc_d): cur[src]['directed'].append(auc_d)
+                    if not np.isnan(auc_u): cur[src]['undirected'].append(auc_u)
+                    if not np.isnan(auc_d_raw): cur[src]['directed_raw'].append(auc_d_raw)
+                    if not np.isnan(auc_u_raw): cur[src]['undirected_raw'].append(auc_u_raw)
 
-        for mode in ['directed', 'undirected']:
-            mu, moe, _ = calculate_statistics(run_means[mode])
-            results[mode][shuffle_type] = {
-                'mu': mu,
-                'moe': moe,
-                'auc': f'{mu:.3f} ± {moe:.3f}'
-            }
+            for src in sources:
+                for m in modes:
+                    if cur[src][m]:
+                        run_means[src][m].append(np.mean(cur[src][m]))
+            
+            h_steps_dict_stacked = {k: torch.stack(v) for k, v in h_steps_dict.items()}
+            
+            pre_centroid_dists = np.zeros((max_steps, max_steps))
+            post_centroid_dists = np.zeros((max_steps, max_steps))
+            if os.path.exists(model_name):
+                figs_save_path = model_name
+            else:
+                figs_save_path = os.path.join('models', 'baseline', model_name)
+                os.makedirs(figs_save_path, exist_ok = True)
+
+            figs_save_path = os.path.join(figs_save_path, 'pca')
+            if os.path.exists(figs_save_path):
+                for file_path in os.listdir(figs_save_path):
+                    file_path_abs = os.path.join(figs_save_path, file_path)
+                    os.remove(file_path_abs)
+            else:
+                os.makedirs(figs_save_path)
+            for i in tqdm(range(max_steps)):
+                for j in range(i+1, max_steps):
+                    filename_pca = os.path.join(figs_save_path, f'pca_{i+1}_{j+1}.pdf')
+                    centroids = run_and_plot_pca(filename_pca, h_steps_dict_stacked[i+1], h_steps_dict_stacked[j+1])
+                    pre_centroid_dists[i, j] = np.linalg.norm(centroids['pre_pca_g1'] - centroids['pre_pca_g2'])
+                    post_centroid_dists[i, j] = np.linalg.norm(centroids['post_pca_g1'] - centroids['post_pca_g2'])
+            filename_centroid_pre = os.path.join(figs_save_path, 'pre_cent_distances.pdf')
+            plot_tensor_heatmap(pre_centroid_dists, filename = filename_centroid_pre)
+            filename_centroid_post = os.path.join(figs_save_path, 'post_cent_distances.pdf')
+            plot_tensor_heatmap(post_centroid_dists, filename = filename_centroid_post)
+            # import pdb; pdb.set_trace()
+
+        for src in sources:
+            for mode in modes:
+                mu, moe, _ = calculate_statistics(run_means[src][mode])
+                vals = run_means[src][mode]
+                mn = float(np.min(vals)) if vals else 0.0
+                mx = float(np.max(vals)) if vals else 0.0
+                results[src][mode][shuffle_type] = {
+                    'mu': mu,
+                    'moe': moe,
+                    'min': mn,
+                    'max': mx,
+                    'auc': f'{mu:.3f} ± {moe:.3f} [{mn:.3f}, {mx:.3f}]'
+                }
 
     return results
 
@@ -301,7 +366,13 @@ def get_model_info(model_path, args, task_name="erfgc_reachability"):
 
     train_config = {"num_steps": 0}
     model_leaf = os.path.basename(os.path.normpath(model_path))
-    save_path = os.path.join("./results", task_name, "baseline", model_leaf, f"activations={args.activations}", "0")
+    save_path = os.path.join("./results",
+                            task_name,
+                            "baseline",
+                            model_leaf,
+                            f"activations={args.activations}",
+                            "0"
+                            )
     return save_path, train_config
 
 def save_results_to_disk(results, save_path, train_config, args):
@@ -316,49 +387,3 @@ def save_results_to_disk(results, save_path, train_config, args):
         json.dump(out_dict, f, ensure_ascii=False, indent=4)
     print(f"Results saved to: {json_path}")
 
-def main(args):
-    json_files = [f'./data/erfgc/bio/{split}.json' for split in ['train', 'val', 'test']]
-    data = load_data(json_files)
-
-    if not os.path.exists(args.model_dir):
-        model_list = [{'path': args.model_dir, 'num_steps': 0}]
-    else:
-        model_list = []
-        for root, dirs, files in os.walk(args.model_dir):
-            for F in files:
-                if F == 'train_config.json':
-                    with open(os.path.join(root, F), 'r', encoding='utf8') as f:
-                        num_steps = json.load(f)['num_steps']
-                    model_list.append({'path': root, 'num_steps': num_steps})
-        model_list = sorted(model_list, key=lambda x: x['num_steps'])
-        assert len(model_list) == len(set([el['num_steps'] for el in model_list])), "You're os.walking through 2+ model dir trees at once."
-
-    for model in model_list:
-        model_name = model['path']
-        save_path, train_config = get_model_info(model_name, args)
-        result_file = os.path.join(save_path, "results.json")
-        if os.path.exists(result_file) and not args.repeat:
-            print(f"Skipping {model_name}: results exist at {result_file}")
-            continue
-
-        results = process_model(model_name, args, data)
-
-        if args.verbose_results:
-            print(json.dumps(results, indent=4))
-
-        if args.save_results:
-            save_results_to_disk(results, save_path, train_config, args)
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model_dir", default="openai-community/gpt2")
-    parser.add_argument("--n_runs", default=1, type=int)
-    parser.add_argument("--save_results", default=1, type=int)
-    parser.add_argument("--verbose_results", default=1, type=int)
-    parser.add_argument("--repeat", default=1, type=int)
-    parser.add_argument("--activations", default="real", type=str, help="real | non-negative")
-    parser.add_argument("--save_heatmaps", default=0, type=int)
-    parser.add_argument("--use_gold_transpose", default=0, type=int)
-
-    args = parser.parse_args()
-    main(args)

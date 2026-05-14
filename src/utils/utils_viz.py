@@ -41,6 +41,7 @@ def plot_tensor_heatmap(tensor, filename = 'tensor.pdf', title="Tensor Heatmap",
     fig.tight_layout()
 
     plt.savefig(filename, dpi=dpi)
+    print(f'PCA plot saved to: {filename}')
     plt.show()
 
 

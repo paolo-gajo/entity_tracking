@@ -1,18 +1,18 @@
 import torch
 from torch.optim import AdamW
 from torch.utils.data.dataloader import DataLoader
-from utils_data import (
+from utils.utils_data import (
     Seq2SeqDataset, Collator, make_random_samples_dataset,
     make_pos_neg_samples_dataset, prepare_text_batch_prompt,
 )
-from utils_sys import save_run, setup_config, capture_source_snapshot
-from utils_viz import save_heatmaps
-from utils_model import PositionHead, build_model_tokenizer
-from train.forward import compute_forward_bundle
-from train.pos_adv import compute_pos_adv_loss
-from train.logging import log_probe_stats
-from sims import compute_scores
-from loss_functions import (
+from utils.utils_sys import save_run, setup_config, capture_source_snapshot
+from utils.utils_viz import save_heatmaps
+from utils.utils_model import PositionHead, build_model_tokenizer
+from utils.utils_train import compute_forward_bundle
+from utils.utils_train import compute_pos_adv_loss
+from utils.utils_train import log_probe_stats
+from reachability.utils_reachability import compute_scores
+from utils.loss_functions import (
     KLDivergenceLoss,
     CausalLMLoss,
     MaxMarginLoss,
@@ -64,7 +64,7 @@ def main(args):
     dataset = Seq2SeqDataset(
         data_pairs,
         tokenizer,
-        max_length=model.config.max_position_embeddings,
+        max_length=args.max_input_length or model.config.max_position_embeddings,
         prompt_type_list=train_config['prompt_type_list'],
         attn_mask_type=args.attn_mask_type,
         clm_mask_type=args.clm_mask_type,
@@ -225,7 +225,7 @@ def main(args):
             prompt = prepare_text_batch_prompt(batch, tokenizer)
             os.makedirs("./misc", exist_ok=True)
             print(prompt, file=open("./misc/last_prompt.txt", "w"), flush=True)
-
+        import pdb; pdb.set_trace()
         num_steps += 1
         if num_steps % args.save_interval == 0:
             save_config = train_config.copy()
@@ -251,12 +251,13 @@ if __name__ == "__main__":
     parser.add_argument("--batch_mode", default="random_samples", type=str)
     parser.add_argument("--prompt_type", default="minimal_pairs")
     parser.add_argument("--attn_mask_type", default="full")
-    parser.add_argument("--clm_mask_type", default="completion_only")
+    parser.add_argument("--clm_mask_type", default="full")
     parser.add_argument("--num_samples", default=1_000_000, type=int)
     parser.add_argument("--neg_ratio", default=0.5, type=float)
     parser.add_argument("--batch_size", default=8, type=int)
     parser.add_argument("--lr", default=5e-5, type=float)
     parser.add_argument("--save_interval", default=1000, type=int)
+    parser.add_argument("--max_input_length", default=0, type=int)
     parser.add_argument("--max_steps", default=240000, type=int,
                         help="Stop training after this many gradient steps (0 = no limit)")
     

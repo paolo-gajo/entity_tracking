@@ -1,9 +1,10 @@
 import torch
 import torch.nn.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel, PeftConfig
 import pandas as pd
 from torch.utils.data import DataLoader
-from utils_data import ICLDataset, pad_collate
+from utils.utils_data import ICLDataset, pad_collate
 from tqdm.auto import tqdm
 import os
 import json
@@ -56,39 +57,60 @@ def main(args):
         # ----------------------------
         # Load Model
         # ----------------------------
-        add_prefix_space = True if "gpt2" in m['path'] else False
+        model_name = m['path']
+        add_prefix_space = "gpt2" in model_name
 
-        model = AutoModelForCausalLM.from_pretrained(m['path'],
-                                                     ignore_mismatched_sizes=True,
-                                                     ).to(device)
         tokenizer = AutoTokenizer.from_pretrained(
-            m['path'],
-            add_prefix_space=add_prefix_space
+            model_name, add_prefix_space=add_prefix_space
         )
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token_id = tokenizer.eos_token_id
 
-        if "gpt2" in m['path']:
-            if tokenizer.pad_token_id is None:
-                tokenizer.pad_token_id = tokenizer.eos_token_id
-            if tokenizer.bos_token_id is None:
-                tokenizer.bos_token_id = tokenizer.eos_token_id
-        elif "llama" in m['path']:
-            if tokenizer.pad_token_id is None:
-                tokenizer.pad_token_id = tokenizer.eos_token_id
+        adapter_config_path = os.path.join(model_name, "adapter_config.json")
+
+        if os.path.exists(adapter_config_path):
+            print("-> Detected LoRA adapter. Using PEFT two-stage loading...")
+            config = PeftConfig.from_pretrained(model_name)
+            base_model = AutoModelForCausalLM.from_pretrained(
+                config.base_model_name_or_path, dtype=torch.bfloat16,
+            ).to(device)
+
+            from safetensors import safe_open
+            adapter_safetensors = os.path.join(model_name, "adapter_model.safetensors")
+            checkpoint_vocab_size = None
+            if os.path.exists(adapter_safetensors):
+                with safe_open(adapter_safetensors, framework="pt") as f:
+                    for key in f.keys():
+                        if "modules_to_save" in key and ("embed_tokens" in key or "lm_head" in key):
+                            checkpoint_vocab_size = f.get_slice(key).get_shape()[0]
+                            break
+            if checkpoint_vocab_size is not None and checkpoint_vocab_size != base_model.config.vocab_size:
+                base_model.resize_token_embeddings(checkpoint_vocab_size)
+
+            model = PeftModel.from_pretrained(base_model, model_name)
+        else:
+            print(f"-> Loading model from: {model_name}")
+            model = AutoModelForCausalLM.from_pretrained(
+                model_name, dtype=torch.bfloat16,
+            ).to(device)
+            if len(tokenizer) != model.config.vocab_size:
+                model.resize_token_embeddings(len(tokenizer))
         # ----------------------------
         # Build Dataset
         # ----------------------------
+        max_length = getattr(model.config, "max_position_embeddings", 4096)
         dataset = ICLDataset(
             icl_dataset=df_train,
             test_dataset=df_test,
             tokenizer=tokenizer,
-            n_icl=3,
-            max_length=tokenizer.max_model_length,
-            num_samples=100,
+            n_icl=args.n_icl,
+            max_length=max_length,
+            num_samples=args.num_samples,
         )
 
         dataloader = DataLoader(
             dataset,
-            batch_size=8,
+            batch_size=args.batch_size,
             shuffle=False,
             collate_fn=lambda x: pad_collate(x, tokenizer, side="left"),
         )
@@ -118,14 +140,26 @@ def main(args):
         # ----------------------------
         model.eval()
 
-        all_scores = []
-        all_preds  = []
-        all_labels = []
+        all_scores    = []
+        all_preds     = []
+        all_labels    = []
+        all_prob_yes  = []
+        all_prob_no   = []
 
         for i, batch in enumerate(tqdm(dataloader)):
 
             batch = {k: v.to(device) for k, v in batch.items()}
 
+            if i == 0:
+                # Save decoded first sample for inspection
+                first_ids = batch["input_ids"][0]
+                first_attn = batch["attention_mask"][0] == 1
+                decoded = tokenizer.decode(first_ids[first_attn], skip_special_tokens=False)
+                os.makedirs("./misc", exist_ok=True)
+                with open("./misc/cat_bench_icl_sample.txt", "w", encoding="utf-8") as f:
+                    f.write(decoded)
+                print(f"Saved decoded first sample to ./misc/cat_bench_icl_sample.txt")
+            import pdb; pdb.set_trace()
             # Remove last token to predict next token after "Answer:"
             input_ids = batch["input_ids"][:, :-1]
             attention_mask = batch["attention_mask"][:, :-1]
@@ -153,6 +187,8 @@ def main(args):
             all_preds.extend(preds.cpu().tolist())
             all_scores.extend(score.cpu().tolist())
             all_labels.extend(batch["label"].cpu().tolist())
+            all_prob_yes.extend(prob_yes.cpu().tolist())
+            all_prob_no.extend(prob_no.cpu().tolist())
 
             # Debug first batch
             if i == 0:
@@ -182,11 +218,23 @@ def main(args):
         # ----------------------------
         os.makedirs(model_save_dir, exist_ok=True)
 
+        # Per-sample predictions
+        predictions = []
+        for idx in range(len(all_labels)):
+            predictions.append({
+                "gold_label": all_labels[idx],
+                "pred_label": all_preds[idx],
+                "score": all_scores[idx],
+                "prob_yes": all_prob_yes[idx],
+                "prob_no": all_prob_no[idx],
+            })
+
         results = {
             "accuracy": acc,
             "f1": f1,
             "roc_auc": roc,
             "pr_auc": pr,
+            "predictions": predictions,
         }
 
         save_path = os.path.join(
@@ -203,5 +251,8 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_dir", default="openai-community/gpt2", help="Path or HF name of model")
+    parser.add_argument("--n_icl", default=3, type=int, help="Number of ICL examples per group")
+    parser.add_argument("--num_samples", default=100, type=int, help="Number of test samples (0 = all)")
+    parser.add_argument("--batch_size", default=8, type=int)
     args = parser.parse_args()
     main(args)

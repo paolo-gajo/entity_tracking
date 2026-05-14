@@ -1,26 +1,28 @@
 ####################################################################################################
 
 ALL input_ids:
-` In a small mixing bowl, beat cream cheese, 3/4 cup sugar and cream.<step_0> Combine the cinnamon and remaining sugar; sprinkle over the top.<step_1> Cool on wire rack for 1 hour.<step_2> Pour into a greased 8-inch square baking dish.<step_3> Combine the flour, pudding mix, baking powder and salt; add to milk mixture.<step_4> Drop by tablespoonfuls over peaches.<step_5> Bake at 350 degrees for 55-60 minutes or until puffed and golden brown.<step_6> Beat on medium speed for 2 minutes.<step_7> Refrigerate for at leasxt 2 hours before cutting.<step_8> Top with peaches.<step_9> In a mixing bowl, beat the milk, butter and egg.<step_10> 
+` Add oats to beef and stir well to incorporate. Bake for 20-30 minutes or until hot and cheese is melted. In a skillet, cook beef until browned and crumbled. Add spaghetti sauce, cottage cheese, and rigatoni to the beef and mix well. Preheat oven to 350 degrees. Hint: I usually use a full pound of meat and 2% cottage cheese. In a casserole dish, add your rigatoni mixture and top with mozzarella and romano cheeses. Drain grease. 
 
-<step_10><step_4><step_7><step_3><step_9><step_0><step_5><step_1><step_6><step_2><step_8><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ Preheat oven to 350 degrees. In a skillet, cook beef until browned and crumbled. Drain grease. Add oats to beef and stir well to incorporate. Add spaghetti sauce, cottage cheese, and rigatoni to the beef and mix well. In a casserole dish, add your rigatoni mixture and top with mozzarella and romano cheeses. Bake for 20-30 minutes or until hot and cheese is melted. Hint: I usually use a full pound of meat and 2% cottage cheese.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` In a small mixing bowl, beat cream cheese, 3/4 cup sugar and cream.<step_0> Combine the cinnamon and remaining sugar; sprinkle over the top.<step_1> Cool on wire rack for 1 hour.<step_2> Pour into a greased 8-inch square baking dish.<step_3> Combine the flour, pudding mix, baking powder and salt; add to milk mixture.<step_4> Drop by tablespoonfuls over peaches.<step_5> Bake at 350 degrees for 55-60 minutes or until puffed and golden brown.<step_6> Beat on medium speed for 2 minutes.<step_7> Refrigerate for at leasxt 2 hours before cutting.<step_8> Top with peaches.<step_9> In a mixing bowl, beat the milk, butter and egg.<step_10> 
+` Add oats to beef and stir well to incorporate. Bake for 20-30 minutes or until hot and cheese is melted. In a skillet, cook beef until browned and crumbled. Add spaghetti sauce, cottage cheese, and rigatoni to the beef and mix well. Preheat oven to 350 degrees. Hint: I usually use a full pound of meat and 2% cottage cheese. In a casserole dish, add your rigatoni mixture and top with mozzarella and romano cheeses. Drain grease. 
 
-<step_10><step_4><step_7><step_3><step_9><step_0><step_5><step_1><step_6><step_2><step_8><|endoftext|>`
+ Preheat oven to 350 degrees. In a skillet, cook beef until browned and crumbled. Drain grease. Add oats to beef and stir well to incorporate. Add spaghetti sauce, cottage cheese, and rigatoni to the beef and mix well. In a casserole dish, add your rigatoni mixture and top with mozzarella and romano cheeses. Bake for 20-30 minutes or until hot and cheese is melted. Hint: I usually use a full pound of meat and 2% cottage cheese.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-``
+` Add oats to beef and stir well to incorporate. Bake for 20-30 minutes or until hot and cheese is melted. In a skillet, cook beef until browned and crumbled. Add spaghetti sauce, cottage cheese, and rigatoni to the beef and mix well. Preheat oven to 350 degrees. Hint: I usually use a full pound of meat and 2% cottage cheese. In a casserole dish, add your rigatoni mixture and top with mozzarella and romano cheeses. Drain grease. 
+
+ Preheat oven to 350 degrees. In a skillet, cook beef until browned and crumbled. Drain grease. Add oats to beef and stir well to incorporate. Add spaghetti sauce, cottage cheese, and rigatoni to the beef and mix well. In a casserole dish, add your rigatoni mixture and top with mozzarella and romano cheeses. Bake for 20-30 minutes or until hot and cheese is melted. Hint: I usually use a full pound of meat and 2% cottage cheese.<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_10><step_4><step_7><step_3><step_9><step_0><step_5><step_1><step_6><step_2><step_8><|endoftext|>`
+``
 
 ----------------------------------------------------------------------------------------------------
 
@@ -32,181 +34,28 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Drain asparagus; use juice to dilute mushroom soup to make a sauce.<step_0> Bake at 350° for 25 minutes.<step_1> Mix all together; top with French fried onions.<step_2> 
+` 1. Put all ingredients, except chicken, in slow cooker. 2.Cook on low for 8 hours. Add chicken to soup to heat through. 3.Serve with cheese, sour cream, tortilla chips, whatever you like! 
 
-<step_0><step_2><step_1><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Drain asparagus; use juice to dilute mushroom soup to make a sauce.<step_0> Bake at 350° for 25 minutes.<step_1> Mix all together; top with French fried onions.<step_2> 
-
-<step_0><step_2><step_1><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_2><step_1><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Serve immediately.<step_0> Warm the butter until soft and brush a little over the paper round. Heat the remaining butter in the saute pan. Add the vegetable julienne and the herbs. Salt and pepper to taste and stir.<step_1> Set the paper round on the vegetables, butter-side down. Cover the pan with the lid and cook over low heat, stirring occasionally, until the vegetables are crisp-tender, 15-20 minutes, taking care not to burn them.<step_2> Unfold the paper round.<step_3> Holding the paper cone over the pan with the tip hovering over the center, use the edge of the pan as a gauge to cut the cone. (Alternately trace a circle around an inverted saucepan onto the paper and cut the just inside the circle so that it will fit inside the saucepan).<step_4> Reserve 4 sprigs of tarragon for garnish. Remove the leaves from the remaining tarragon sprigs and chop them.<step_5> Make a parchment paper lid to fit the saute pan: Fold a square of parchment in half, triangularly, then in half again. Fold it over once or twice more to form a slender cone.<step_6> With a chefs knife, cut the carrots, celery stalks and turnip into julienned strips about 1/4"x 1/4" by about 3" long.<step_7> 
-
-<step_5><step_7><step_6><step_4><step_3><step_1><step_2><step_0><|endoftext|>`
+ 1. Put all ingredients, except chicken, in slow cooker. 2.Cook on low for 8 hours. Add chicken to soup to heat through. 3.Serve with cheese, sour cream, tortilla chips, whatever you like!<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Serve immediately.<step_0> Warm the butter until soft and brush a little over the paper round. Heat the remaining butter in the saute pan. Add the vegetable julienne and the herbs. Salt and pepper to taste and stir.<step_1> Set the paper round on the vegetables, butter-side down. Cover the pan with the lid and cook over low heat, stirring occasionally, until the vegetables are crisp-tender, 15-20 minutes, taking care not to burn them.<step_2> Unfold the paper round.<step_3> Holding the paper cone over the pan with the tip hovering over the center, use the edge of the pan as a gauge to cut the cone. (Alternately trace a circle around an inverted saucepan onto the paper and cut the just inside the circle so that it will fit inside the saucepan).<step_4> Reserve 4 sprigs of tarragon for garnish. Remove the leaves from the remaining tarragon sprigs and chop them.<step_5> Make a parchment paper lid to fit the saute pan: Fold a square of parchment in half, triangularly, then in half again. Fold it over once or twice more to form a slender cone.<step_6> With a chefs knife, cut the carrots, celery stalks and turnip into julienned strips about 1/4"x 1/4" by about 3" long.<step_7> 
+` 1. Put all ingredients, except chicken, in slow cooker. 2.Cook on low for 8 hours. Add chicken to soup to heat through. 3.Serve with cheese, sour cream, tortilla chips, whatever you like! 
 
-<step_5><step_7><step_6><step_4><step_3><step_1><step_2><step_0><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_5><step_7><step_6><step_4><step_3><step_1><step_2><step_0><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Add cooked chicken, mushrooms, coconut milk, fish sauce, and sugar, and stir to mix. Enhance warmth to medium-excessive till it reaches a simmer, then proceed to cooking for 1-2 extra minutes till the mushrooms are cooked and softened, stirring sometimes. Style and season with salt and pepper, if wanted.<step_0> Utilizing the against of a knife, frivolously smash the lemongrass on a chopping board. Lower the lemongrass into 1-inch items, and add to a big stockpot.<step_1> Serve instantly and garnish liberally along with your desired toppings and the green components of the onions.<step_2> Add lemongrass, ginger, contemporary lime juice (or kaffir lime leaves), chicken broth, and the white components of the green onions to the stockpot, and stir to mix. Convey to a boil over excessive warmth. Then scale back warmth to medium-low and simmer for 10 minutes, stirring sometimes. Pressure out the broth and discard the solids, then scale back the broth to the stockpot.<step_3> 
-
-<step_1><step_3><step_0><step_2><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Add cooked chicken, mushrooms, coconut milk, fish sauce, and sugar, and stir to mix. Enhance warmth to medium-excessive till it reaches a simmer, then proceed to cooking for 1-2 extra minutes till the mushrooms are cooked and softened, stirring sometimes. Style and season with salt and pepper, if wanted.<step_0> Utilizing the against of a knife, frivolously smash the lemongrass on a chopping board. Lower the lemongrass into 1-inch items, and add to a big stockpot.<step_1> Serve instantly and garnish liberally along with your desired toppings and the green components of the onions.<step_2> Add lemongrass, ginger, contemporary lime juice (or kaffir lime leaves), chicken broth, and the white components of the green onions to the stockpot, and stir to mix. Convey to a boil over excessive warmth. Then scale back warmth to medium-low and simmer for 10 minutes, stirring sometimes. Pressure out the broth and discard the solids, then scale back the broth to the stockpot.<step_3> 
-
-<step_1><step_3><step_0><step_2><|endoftext|>`
+ 1. Put all ingredients, except chicken, in slow cooker. 2.Cook on low for 8 hours. Add chicken to soup to heat through. 3.Serve with cheese, sour cream, tortilla chips, whatever you like!<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 CLM tokens:
-``
+` 1. Put all ingredients, except chicken, in slow cooker. 2.Cook on low for 8 hours. Add chicken to soup to heat through. 3.Serve with cheese, sour cream, tortilla chips, whatever you like! 
+
+ 1. Put all ingredients, except chicken, in slow cooker. 2.Cook on low for 8 hours. Add chicken to soup to heat through. 3.Serve with cheese, sour cream, tortilla chips, whatever you like!<|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_1><step_3><step_0><step_2><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Add eggs one at a time, followed by the vanilla.<step_0> Sieve flour and baking powder and mix in to the butter eggs and sugar.<step_1> Place the guava paste (cut in slices) so as to cover all the batter.<step_2> Cream butter and add sugar little by little.<step_3> Pour the rest of the batter and bake for 45-60 min, or until an inserted toothpick comes out clean.<step_4> Pour half the batter on a greased mold.<step_5> Preheat oven to 350°F.<step_6> 
-
-<step_6><step_3><step_0><step_1><step_5><step_2><step_4><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Add eggs one at a time, followed by the vanilla.<step_0> Sieve flour and baking powder and mix in to the butter eggs and sugar.<step_1> Place the guava paste (cut in slices) so as to cover all the batter.<step_2> Cream butter and add sugar little by little.<step_3> Pour the rest of the batter and bake for 45-60 min, or until an inserted toothpick comes out clean.<step_4> Pour half the batter on a greased mold.<step_5> Preheat oven to 350°F.<step_6> 
-
-<step_6><step_3><step_0><step_1><step_5><step_2><step_4><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
 ``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_6><step_3><step_0><step_1><step_5><step_2><step_4><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Mix all ingredients and make a sushi vinegar.<step_0> Cut the squid into a size like in the picture if you are using a different shape squid.<step_1> I used the squid somen which you can buy in the supermarket.<step_2> ( This is to make to roll a middle size roll)<step_3> Cut the roll in 8 pieces.<step_4> Cut 1/4 of the dried seaweed sheet off.<step_5> Spreed some rice thinly on the dried seaweed sheet and spreed some Japanese apricot paste on the rice and then place the shiso leaf and squid on it and roll it.<step_6> 
-
-<step_0><step_5><step_3><step_2><step_1><step_6><step_4><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Mix all ingredients and make a sushi vinegar.<step_0> Cut the squid into a size like in the picture if you are using a different shape squid.<step_1> I used the squid somen which you can buy in the supermarket.<step_2> ( This is to make to roll a middle size roll)<step_3> Cut the roll in 8 pieces.<step_4> Cut 1/4 of the dried seaweed sheet off.<step_5> Spreed some rice thinly on the dried seaweed sheet and spreed some Japanese apricot paste on the rice and then place the shiso leaf and squid on it and roll it.<step_6> 
-
-<step_0><step_5><step_3><step_2><step_1><step_6><step_4><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_5><step_3><step_2><step_1><step_6><step_4><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-Binary label:
-`0.0`
-
-####################################################################################################
-
-####################################################################################################
-
-ALL input_ids:
-` Mix 3/4 cup sugar with 2 tablespoons cinnamon.<step_0> Roll each piece of biscuit quarter in this sugar mixture.<step_1> Place layer of these in tube pan that has been buttered.<step_2> Sprinkle nuts over each layer.<step_3> 
-
-<step_0><step_1><step_2><step_3><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-ATTN TOKENS:
-` Mix 3/4 cup sugar with 2 tablespoons cinnamon.<step_0> Roll each piece of biscuit quarter in this sugar mixture.<step_1> Place layer of these in tube pan that has been buttered.<step_2> Sprinkle nuts over each layer.<step_3> 
-
-<step_0><step_1><step_2><step_3><|endoftext|>`
-
-----------------------------------------------------------------------------------------------------
-
-CLM tokens:
-``
-
-----------------------------------------------------------------------------------------------------
-
-Step tokens:
-`<step_0><step_1><step_2><step_3><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -218,16 +67,148 @@ Binary label:
 ####################################################################################################
 
 ALL input_ids:
-` Heat oil in a large skillet.<step_0> Combine the beef, garlic, 1 tsp salt and 1/4 tsp pepper together and shape into 36 small meatballs.<step_1> Beat the eggs, flour, 1 tsp salt, 1/4 tsp pepper together to make a thin batter.<step_2> Dip the meatballs in the batter with fingers.<step_3> Shake off excess and drop into the hot oil.<step_4> Cook slowly to brown on all sides.<step_5> Lift out the meatballs as they brown.<step_6> Discard all but 1 tbsp of oil left in the pan when all the meat balls are browned.<step_7> Add the chicken stock, green peppers and pineapple chunks to the pan.<step_8> Cover and simmer for 5 minutes.<step_9> Return meatballs to the pan and simmer 3 more minutes (green peppers should still be slightly crisp).<step_10> Mix cornstarch, sugar, pineapple juice, vinegar and soy sauce together until smooth.<step_11> Add gradually to the pan, stirring constantly.<step_12> Continue cooking and stirring until thickened.<step_13> Add tomato pieces just before serving and serve over rice.<step_14> 
+` Cook bacon. Put small chopped onion in drippings and simmer until onion is shiny. Shred cabbage, add tomatoes and cut up all other ingredients. Simmer 1 to 1 1/2 hours until everything cooks down. Great at Thanksgiving. 
 
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><step_12><step_13><step_14><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+ Cook bacon. Put small chopped onion in drippings and simmer until onion is shiny. Shred cabbage, add tomatoes and cut up all other ingredients. Simmer 1 to 1 1/2 hours until everything cooks down. Great at Thanksgiving.<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
 ATTN TOKENS:
-` Heat oil in a large skillet.<step_0> Combine the beef, garlic, 1 tsp salt and 1/4 tsp pepper together and shape into 36 small meatballs.<step_1> Beat the eggs, flour, 1 tsp salt, 1/4 tsp pepper together to make a thin batter.<step_2> Dip the meatballs in the batter with fingers.<step_3> Shake off excess and drop into the hot oil.<step_4> Cook slowly to brown on all sides.<step_5> Lift out the meatballs as they brown.<step_6> Discard all but 1 tbsp of oil left in the pan when all the meat balls are browned.<step_7> Add the chicken stock, green peppers and pineapple chunks to the pan.<step_8> Cover and simmer for 5 minutes.<step_9> Return meatballs to the pan and simmer 3 more minutes (green peppers should still be slightly crisp).<step_10> Mix cornstarch, sugar, pineapple juice, vinegar and soy sauce together until smooth.<step_11> Add gradually to the pan, stirring constantly.<step_12> Continue cooking and stirring until thickened.<step_13> Add tomato pieces just before serving and serve over rice.<step_14> 
+` Cook bacon. Put small chopped onion in drippings and simmer until onion is shiny. Shred cabbage, add tomatoes and cut up all other ingredients. Simmer 1 to 1 1/2 hours until everything cooks down. Great at Thanksgiving. 
 
-<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><step_12><step_13><step_14><|endoftext|>`
+ Cook bacon. Put small chopped onion in drippings and simmer until onion is shiny. Shred cabbage, add tomatoes and cut up all other ingredients. Simmer 1 to 1 1/2 hours until everything cooks down. Great at Thanksgiving.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Cook bacon. Put small chopped onion in drippings and simmer until onion is shiny. Shred cabbage, add tomatoes and cut up all other ingredients. Simmer 1 to 1 1/2 hours until everything cooks down. Great at Thanksgiving. 
+
+ Cook bacon. Put small chopped onion in drippings and simmer until onion is shiny. Shred cabbage, add tomatoes and cut up all other ingredients. Simmer 1 to 1 1/2 hours until everything cooks down. Great at Thanksgiving.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Cream margarine, sugar; beat in eggs. Add flour, salt and cinnamon. Dissolve baking soda in sour milk and add to mixture. Then add vanilla and apples. Bake in small greased loaf pan. Add cinnamon topping before baking. (Dough will be stiff.) 
+
+ Cream margarine, sugar; beat in eggs. Add flour, salt and cinnamon. Dissolve baking soda in sour milk and add to mixture. Then add vanilla and apples. Bake in small greased loaf pan. Add cinnamon topping before baking. (Dough will be stiff.)<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Cream margarine, sugar; beat in eggs. Add flour, salt and cinnamon. Dissolve baking soda in sour milk and add to mixture. Then add vanilla and apples. Bake in small greased loaf pan. Add cinnamon topping before baking. (Dough will be stiff.) 
+
+ Cream margarine, sugar; beat in eggs. Add flour, salt and cinnamon. Dissolve baking soda in sour milk and add to mixture. Then add vanilla and apples. Bake in small greased loaf pan. Add cinnamon topping before baking. (Dough will be stiff.)<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Cream margarine, sugar; beat in eggs. Add flour, salt and cinnamon. Dissolve baking soda in sour milk and add to mixture. Then add vanilla and apples. Bake in small greased loaf pan. Add cinnamon topping before baking. (Dough will be stiff.) 
+
+ Cream margarine, sugar; beat in eggs. Add flour, salt and cinnamon. Dissolve baking soda in sour milk and add to mixture. Then add vanilla and apples. Bake in small greased loaf pan. Add cinnamon topping before baking. (Dough will be stiff.)<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Place in refrigerator and eat when chilled. Boil until falls easily off the bone. Let cool. Place cooled chicken into lettuce and grape bowl. Cook whole chicken. Cut up grapes into lettuce. Easy and refreshing! Pull chicken meat off bones and place in bowl. Prepare lettuce for salad. Mix in mayonnaise to taste. Season with black pepper. 
+
+ Cook whole chicken. Boil until falls easily off the bone. Let cool. Pull chicken meat off bones and place in bowl. Prepare lettuce for salad. Cut up grapes into lettuce. Place cooled chicken into lettuce and grape bowl. Mix in mayonnaise to taste. Season with black pepper. Place in refrigerator and eat when chilled. Easy and refreshing!<|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Place in refrigerator and eat when chilled. Boil until falls easily off the bone. Let cool. Place cooled chicken into lettuce and grape bowl. Cook whole chicken. Cut up grapes into lettuce. Easy and refreshing! Pull chicken meat off bones and place in bowl. Prepare lettuce for salad. Mix in mayonnaise to taste. Season with black pepper. 
+
+ Cook whole chicken. Boil until falls easily off the bone. Let cool. Pull chicken meat off bones and place in bowl. Prepare lettuce for salad. Cut up grapes into lettuce. Place cooled chicken into lettuce and grape bowl. Mix in mayonnaise to taste. Season with black pepper. Place in refrigerator and eat when chilled. Easy and refreshing!<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Place in refrigerator and eat when chilled. Boil until falls easily off the bone. Let cool. Place cooled chicken into lettuce and grape bowl. Cook whole chicken. Cut up grapes into lettuce. Easy and refreshing! Pull chicken meat off bones and place in bowl. Prepare lettuce for salad. Mix in mayonnaise to taste. Season with black pepper. 
+
+ Cook whole chicken. Boil until falls easily off the bone. Let cool. Pull chicken meat off bones and place in bowl. Prepare lettuce for salad. Cut up grapes into lettuce. Place cooled chicken into lettuce and grape bowl. Mix in mayonnaise to taste. Season with black pepper. Place in refrigerator and eat when chilled. Easy and refreshing!<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`0.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Do not over cook, remove from skillet& keep warm In the same skillet combine noodles, carrot, cilantro, seasoning packet from noodles and the steak sauce, cook until heated through over medium heat Add beef, mix& serve, Garnish with peanuts. Have your steak half frozen for easy cutting and slice into 1" strips by 3" long (or buy pre cut stir fry) In a medium bowl combine the beef, jalapeno& oil, toss to coat. Break the noodles into 3 or 4 pieces and cook according to instructions& drain Add beef& peppers with oil to a hot skillet and stir fry until the ouside surface of the meat is no longer pink, about i min. 
+
+ Have your steak half frozen for easy cutting and slice into 1" strips by 3" long (or buy pre cut stir fry) In a medium bowl combine the beef, jalapeno& oil, toss to coat. Break the noodles into 3 or 4 pieces and cook according to instructions& drain Add beef& peppers with oil to a hot skillet and stir fry until the ouside surface of the meat is no longer pink, about i min. Do not over cook, remove from skillet& keep warm In the same skillet combine noodles, carrot, cilantro, seasoning packet from noodles and the steak sauce, cook until heated through over medium heat Add beef, mix& serve, Garnish with peanuts.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Do not over cook, remove from skillet& keep warm In the same skillet combine noodles, carrot, cilantro, seasoning packet from noodles and the steak sauce, cook until heated through over medium heat Add beef, mix& serve, Garnish with peanuts. Have your steak half frozen for easy cutting and slice into 1" strips by 3" long (or buy pre cut stir fry) In a medium bowl combine the beef, jalapeno& oil, toss to coat. Break the noodles into 3 or 4 pieces and cook according to instructions& drain Add beef& peppers with oil to a hot skillet and stir fry until the ouside surface of the meat is no longer pink, about i min. 
+
+ Have your steak half frozen for easy cutting and slice into 1" strips by 3" long (or buy pre cut stir fry) In a medium bowl combine the beef, jalapeno& oil, toss to coat. Break the noodles into 3 or 4 pieces and cook according to instructions& drain Add beef& peppers with oil to a hot skillet and stir fry until the ouside surface of the meat is no longer pink, about i min. Do not over cook, remove from skillet& keep warm In the same skillet combine noodles, carrot, cilantro, seasoning packet from noodles and the steak sauce, cook until heated through over medium heat Add beef, mix& serve, Garnish with peanuts.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+` Do not over cook, remove from skillet& keep warm In the same skillet combine noodles, carrot, cilantro, seasoning packet from noodles and the steak sauce, cook until heated through over medium heat Add beef, mix& serve, Garnish with peanuts. Have your steak half frozen for easy cutting and slice into 1" strips by 3" long (or buy pre cut stir fry) In a medium bowl combine the beef, jalapeno& oil, toss to coat. Break the noodles into 3 or 4 pieces and cook according to instructions& drain Add beef& peppers with oil to a hot skillet and stir fry until the ouside surface of the meat is no longer pink, about i min. 
+
+ Have your steak half frozen for easy cutting and slice into 1" strips by 3" long (or buy pre cut stir fry) In a medium bowl combine the beef, jalapeno& oil, toss to coat. Break the noodles into 3 or 4 pieces and cook according to instructions& drain Add beef& peppers with oil to a hot skillet and stir fry until the ouside surface of the meat is no longer pink, about i min. Do not over cook, remove from skillet& keep warm In the same skillet combine noodles, carrot, cilantro, seasoning packet from noodles and the steak sauce, cook until heated through over medium heat Add beef, mix& serve, Garnish with peanuts.<|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`0.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` cook spaghetti, drain, and set aside.<step_0> while spaghetti is cooking, saute onions and garlic in butter and oil in large skillet for 2-3 minutes<step_1> add artichokes and tomatoes to skillet and cook for 8-10 minutes<step_2> reduce heat to low and stir in cream and chicken broth.<step_3> add salt and pepper and cook over low heat until heated through<step_4> place pasta in large bowl and sprinkle with parmesan cheese.<step_5> pour sauce over the top and add herbs.<step_6> toss lightly to combine and coat, add more chicken broth if sauce seems too thick<step_7> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` cook spaghetti, drain, and set aside.<step_0> while spaghetti is cooking, saute onions and garlic in butter and oil in large skillet for 2-3 minutes<step_1> add artichokes and tomatoes to skillet and cook for 8-10 minutes<step_2> reduce heat to low and stir in cream and chicken broth.<step_3> add salt and pepper and cook over low heat until heated through<step_4> place pasta in large bowl and sprinkle with parmesan cheese.<step_5> pour sauce over the top and add herbs.<step_6> toss lightly to combine and coat, add more chicken broth if sauce seems too thick<step_7> 
+
+<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
@@ -237,7 +218,38 @@ CLM tokens:
 ----------------------------------------------------------------------------------------------------
 
 Step tokens:
-`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><step_8><step_9><step_10><step_11><step_12><step_13><step_14><|endoftext|>`
+`<step_0><step_1><step_2><step_3><step_4><step_5><step_6><step_7><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+Binary label:
+`1.0`
+
+####################################################################################################
+
+####################################################################################################
+
+ALL input_ids:
+` Chop the spinach very finely (feel free to use a food processor and pulse 3-4 times).<step_0> Add the chickpeas, onion, and spinach to a large bowl. In the same food processor add the lime juice, cilantro, sugar, mustard, garlic, chili powder, and olive oil. Process til it comes together into a dressing, about 30-45 seconds.<step_1> Pour over the chickpea mixture and stir to combine.<step_2> Add salt and pepper to taste.<step_3> Let sit for about 10 minutes on the counter or overnight in the fridge to let the flavors marry. Enjoy!<step_4> 
+
+<step_0><step_1><step_2><step_3><step_4><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+ATTN TOKENS:
+` Chop the spinach very finely (feel free to use a food processor and pulse 3-4 times).<step_0> Add the chickpeas, onion, and spinach to a large bowl. In the same food processor add the lime juice, cilantro, sugar, mustard, garlic, chili powder, and olive oil. Process til it comes together into a dressing, about 30-45 seconds.<step_1> Pour over the chickpea mixture and stir to combine.<step_2> Add salt and pepper to taste.<step_3> Let sit for about 10 minutes on the counter or overnight in the fridge to let the flavors marry. Enjoy!<step_4> 
+
+<step_0><step_1><step_2><step_3><step_4><|endoftext|>`
+
+----------------------------------------------------------------------------------------------------
+
+CLM tokens:
+``
+
+----------------------------------------------------------------------------------------------------
+
+Step tokens:
+`<step_0><step_1><step_2><step_3><step_4><|endoftext|>`
 
 ----------------------------------------------------------------------------------------------------
 
