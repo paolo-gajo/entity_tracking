@@ -281,14 +281,27 @@ def main(args):
                 torch_dtype=torch.bfloat16,
             ).to(device)
 
-            # Resize the base model to accept the new embeddings
-            base_model.resize_token_embeddings(len(tokenizer))
+            # Resize base model to match checkpoint vocab size if they differ
+            # (e.g. stp models shrink the embedding table; no-stp models keep native size)
+            from safetensors import safe_open
+            adapter_safetensors = os.path.join(model_name, "adapter_model.safetensors")
+            checkpoint_vocab_size = None
+            with safe_open(adapter_safetensors, framework="pt") as f:
+                for key in f.keys():
+                    if "modules_to_save" in key and ("embed_tokens" in key or "lm_head" in key):
+                        checkpoint_vocab_size = f.get_slice(key).get_shape()[0]
+                        break
+            if checkpoint_vocab_size is not None and checkpoint_vocab_size != base_model.config.vocab_size:
+                base_model.resize_token_embeddings(checkpoint_vocab_size)
 
             # Wrap in PEFT to inject LoRA weights and trained embeddings
             model = PeftModel.from_pretrained(base_model, model_name)
         else:
             print("-> Loading model (auto-detects abs PE wrapper)...")
             model = load_model_from_checkpoint(model_name, device=device, revision=revision, dtype=torch.bfloat16)
+        if len(tokenizer) != model.config.vocab_size:
+            model.resize_token_embeddings(len(tokenizer))
+
         model.eval()
 
         if tokenizer.pad_token is None:
