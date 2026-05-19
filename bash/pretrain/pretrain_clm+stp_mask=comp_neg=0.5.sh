@@ -18,7 +18,7 @@ min_recipe_steps=1
 neg_ratio=0.5
 
 data_path='./data/recipenlg/recipenlg_clean.json'
-num_samples=100000
+num_samples=0
 batch_mode="random_samples"
 batch_size=8
 
@@ -27,11 +27,15 @@ batch_size=8
 # batch_mode="pos_neg"
 # batch_size=1
 
-model_name="openai-community/gpt2"
+# model_name="openai-community/gpt2"
 # model_name="openai-community/gpt2-medium"
-# model_name="openai-community/gpt2-large"
+model_name="openai-community/gpt2-large"
 
 # model_name="Qwen/Qwen3-0.6B-Base"
+
+resume_from="models/recipenlg/mode=random_samples/neg_ratio=0.5/bs=8/prompt=step_token_pairs+minimal_pairs/attn=full/loss=completion_only/clm=1/kl=0/mml=0/pos=0/stp=1/cos=0/eos_init=0/use_lora=0/abs_pe=0/act=real/gpt2-large/2026-03-22--18-22-43/164000"
+
+# revision="step4000"
 
 attn_mask_type='full' # N/A for minimal_mono
 # attn_mask_type='completion_only' # N/A for minimal_mono, only_shuffled, only_original
@@ -86,6 +90,8 @@ cmd="python src/pretrain.py
 --stp_max_steps $stp_max_steps
 --use_grl $use_grl
 --dtype $dtype
+${resume_from:+--resume_from $resume_from}
+${revision:+--revision $revision}
 "
 
 $cmd

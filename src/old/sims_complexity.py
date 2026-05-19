@@ -1,6 +1,6 @@
 import torch
 from transformers import AutoModel, AutoTokenizer
-from utils_data import ProcTextDataset, Collator
+from utils.utils_data import ProcTextDataset, Collator
 from torch.utils.data.dataloader import DataLoader
 import networkx as nx
 import json
